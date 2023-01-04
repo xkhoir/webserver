@@ -17,6 +17,6 @@ Isikan di dalam file **adguardhome.conf** dengan isi dibawah ini :
     DNS=127.0.0.1
     DNSStubListener=no
 
-Lalu lakukan aktivasi config tersebut dengan command di bawah ini :
+Lalu lakukan aktivasi config dan restart service adguard dengan command di bawah ini :
 
     sudo mv /etc/resolv.conf /etc/resolv.conf.backup && sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf && sudo systemctl reload-or-restart systemd-resolved
