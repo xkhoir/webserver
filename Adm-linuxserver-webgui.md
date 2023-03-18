@@ -9,7 +9,7 @@ Berikut Cara Install Keduanya :
 ## Cockpit
 berikut adalah perintah install cockpit : 
 
-    sudo apt install cockpit-{storaged,storaged,packagekit,file-sharing,navigator} && sudo systemctl enable cockpit
+    sudo apt install cockpit-{storaged,storaged,packagekit,file-sharing,navigator} -y && sudo systemctl enable cockpit
 Cek status service cockpit :
 
     sudo sudo systemctl status cockpit
