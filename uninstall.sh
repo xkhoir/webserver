@@ -27,17 +27,19 @@ if [ $pil -eq 1 ];
 then
    clear
    echo -e "\n\nMengupdate & Upgrade Paket APT Terbaru\n"
+   sleep 2
    sudo apt-get update -y
    sudo apt-get upgrade -y
    value="Update & Upgrade APT";
 elif [ $pil -eq 2 ];
 then
    clear
-   echo -e "\n\nUninstalling Apache2 Webserver\n"
-   sudo apt-get remove --purge apache2* libexpat1 ssl-cert -y
+   echo -e "\n\nUninstalling Apache2 Webserver\n" sleep 2
+   sudo apt-get remove --purge apache2* -y
    
    clear
    echo -e "\n\nRunning Autoremove\n"
+   sleep 2
    sudo apt autoremove -y
    sudo apt clean
    value="Apache2";
@@ -45,10 +47,12 @@ elif [ $pil -eq 3 ];
 then
    clear
    echo -e "\n\nUninstalling Mariadb\n"
+   sleep 2
    sudo apt-get remove --purge mariadb* -y
    
    clear
    echo -e "\n\nRunning Autoremove\n"
+   sleep 2
    sudo apt autoremove -y
    sudo apt clean
    clear
@@ -57,10 +61,12 @@ elif [ $pil -eq 4 ];
 then
    clear
    echo -e "\n\nUninstalling PHP\n"
+   sleep 2
    sudo apt-get remove --purge php8.* -y
    
    clear
    echo -e "\n\nRunning Autoremove\n"
+   sleep 2
    sudo apt autoremove -y
    sudo apt clean
    value="PHP";
@@ -68,27 +74,33 @@ elif [ $pil -eq 5 ];
 then
    clear
    echo -e "\n\nMengupdate & Upgrade Paket APT Terbaru\n"
+   sleep 2
    sudo apt update -y
    sudo apt upgrade -y
    
    clear
    echo -e "\n\nUninstalling Apache2 Web Server\n"
+   sleep 2
    sudo apt-get remove --purge apache2* -y
 
    clear
+   echo -e "\n\nUninstalling PhpMyAdmin\n"
+   sleep 2
+   sudo apt-get remove --purge phpmy* -y
+   
+   clear
    echo -e "\n\nUninstalling PHP dan Extention penting\n"
+   sleep 2
    sudo apt-get remove --purge php8.* -y
 
    clear
    echo -e "\n\nUninstalling Mariadb\n"
+   sleep 2
    sudo apt-get remove --purge mariadb* -y
    
    clear
-   echo -e "\n\nUninstalling PhpMyAdmin\n"
-   sudo apt-get remove --purge phpmy* -y
-   
-   clear
    echo -e "\n\nRunning Autoremove\n"
+   sleep 2
    sudo apt autoremove -y
    sudo apt clean
    
@@ -97,10 +109,12 @@ elif [ $pil -eq 6 ];
 then
    clear
    echo -e "\n\nUninstalling PhpMyAdmin\n"
+   sleep 2
    sudo apt-get remove --purge phpmy* -y
    
    clear
    echo -e "\n\nRunning Autoremove\n"
+   sleep 2
    sudo apt autoremove -y
    sudo apt clean
    value="PhpMyAdmin";
@@ -108,13 +122,16 @@ elif [ $pil -eq 7 ];
 then
    clear
    echo -e "\n\nUninstalling Composer\n"
+   sleep 2
    sudo rm -rf /usr/bin/composer
    value="Composer";
 elif [ $pil -eq 8 ];
 then
    clear
    echo -e "\n\nReturn permissions for /var/www to root\n"
+   sleep 2
    sudo chown -R root:root /var/www
+   sleep 2
    echo -e "\nPermissions have been set\n"
    value="www-data Permissions";
 elif [ $pil -eq 9 ];
