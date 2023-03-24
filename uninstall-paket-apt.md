@@ -11,5 +11,5 @@ ganti **namapaket** dengan namapaket yang akan di uninstall
     sudo apt-get remove --purge namapaket -y
  Lakukan autoremove agar bersih sampai ke akar.
 
-    sudo apt autoremove -y && sudo apt clean
+    sudo apt autoremove --purge -y && sudo apt clean
     
