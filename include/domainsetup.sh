@@ -32,15 +32,14 @@ domain_setup() {
     sudo chown www-data:www-data /var/www/$domain/public_html
     
     echo -e "Membuat file konfigurasi VirtualHost apache untuk $domain\n"
-    echo "
-    <VirtualHost *:80>
-        ServerAdmin webmin@$domain
-        ServerName $domain
-        DocumentRoot /var/www/$domain/public_html
-        ErrorLog ${APACHE_LOG_DIR}/error.log
-        CustomLog ${APACHE_LOG_DIR}/access.log combined
-    </VirtualHost>
-    " | cat > /etc/apache2/sites-available/$domain.conf
+echo "<VirtualHost *:80>
+    ServerAdmin webmin@$domain
+    ServerName $domain
+    ServerAlias www.$domain
+    DocumentRoot /var/www/$domain/public_html
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>" | cat > /etc/apache2/sites-available/$domain.conf
     
     clear
     echo -e "Enable /etc/apache2/sites-available/$domain.conf\n"
@@ -53,6 +52,7 @@ domain_setup() {
     clear
     echo -e "Restart service apache2\n"
     sleep 2
+    systemctl reload apache2
     systemctl restart apache2
     echo -e "Direktori /var/www/$domain/public_html sudah ready\n"
     sleep 3
@@ -90,49 +90,7 @@ if ! dpkg -s certbot ufw >/dev/null 2>&1; then
     fi
     # continue with your next command here
 
-# Dapatkan status UFW
-ufw_status=$(sudo ufw status)
-
-# Periksa apakah Apache Full diizinkan
-apache_full=$(echo "$ufw_status" | grep "Apache Full" | awk '{print $2}')
-if [ "$apache_full" == "ALLOW" ]; then
-  echo -e "Apache Full diizinkan"
-else
-  echo -e "Apache Full tidak diizinkan"
-fi
-
-# Periksa apakah Apache Secure diizinkan
-apache_secure=$(echo "$ufw_status" | grep "Apache Secure" | awk '{print $2}')
-if [ "$apache_secure" == "ALLOW" ]; then
-  echo -e "Apache Secure diizinkan\n"
-else
-  echo -e "Apache Secure tidak diizinkan\n"
-fi
-
-# Jika Apache Full atau Apache Secure tidak diizinkan, berikan opsi kepada pengguna untuk mengizinkannya
-if [ "$apache_full" != "ALLOW" ] || [ "$apache_secure" != "ALLOW" ]; then
-  echo -e "Apache Full memberikan akses ke port 80 dan 443."
-  echo -e "sementara Apache Secure hanya memberikan akses ke port 443.\n"
-  valid_choice=false
-  while [ "$valid_choice" == false ]; do
-    read -p "Anda perlu mengizinkan akses ke Apache Full atau Apache Secure, pilih salah satu [full/secure]: " choice
-    case "$choice" in
-      full)
-        sudo ufw allow "Apache Full"
-        valid_choice=true
-        ;;
-      secure)
-        sudo ufw allow "Apache Secure"
-        valid_choice=true
-        ;;
-      *)
-        echo "Pilihan tidak valid, silakan coba lagi."
-        ;;
-    esac
-  done
-fi
-
-# Lanjutkan dengan perintah selanjutnya di sini
+    
     
     #install Let's Encrypt SSL
     clear
