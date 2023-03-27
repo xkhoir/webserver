@@ -1,18 +1,19 @@
 #!/bin/bash
 
 cek_root () {
-    # Memeriksa apakah pengguna saat ini login sebagai root
-    if [ $(whoami) != "root" ]; then
+	# Mengecek apakah pengguna saat ini adalah root atau bukan
+	if [[ $(whoami) != "root" ]]; then
+	  clear
+ 	  echo "Error: Anda harus menjalankan skrip ini sebagai root" 
+ 	  sleep 2
+	  clear
+	  exit 1
+	fi
+	
+	# Perintah selanjutnya jika login sebagai root
 	clear
-        echo -e "\nAnda harus login sebagai root untuk menjalankan perintah ini.\n"
-        sleep 2
-	return 1
-    fi
-    return 0
+	echo -e "\n Anda dideteksi login sebagai root."
+	echo -e " Script akan dijalankan.\n"
+	sleep 2
 }
 
-# Perintah selanjutnya jika login sebagai root
-clear
-echo -e "\n Anda dideteksi login sebagai root."
-echo -e " Script akan dijalankan.\n"
-sleep 2

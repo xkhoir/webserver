@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Memanggil banyak file bash dari folder include
-source include/headermenu.sh
 source include/cek_root.sh
+source include/headermenu.sh
 source include/check_package.sh
 source include/apache2.sh
 source include/domainsetup.sh
@@ -15,14 +15,13 @@ source include/server.sh
 #cek root
 cek_root
 
-# tampilkan header
-show_header
-
-# tampilkan menu utama
-show_menu
-
 # terus tampilkan menu sampai pengguna memilih untuk keluar
 while true; do
+  # tampilkan header
+  show_header
+
+  # tampilkan menu utama
+  show_menu
   read -p "Masukkan pilihan Anda: " choice
 
   case $choice in
