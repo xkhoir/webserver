@@ -37,6 +37,11 @@ echo "<VirtualHost *:80>
     ServerName $domain
     ServerAlias www.$domain
     DocumentRoot /var/www/$domain/public_html
+    <Directory /var/www/>
+	Options Indexes FollowSymLinks
+	AllowOverride None
+	Require all granted
+    </Directory>
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
     </VirtualHost>" | cat > /etc/apache2/sites-available/$domain.conf
