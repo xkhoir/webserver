@@ -37,7 +37,7 @@ echo "<VirtualHost *:80>
     ServerName $domain
     ServerAlias www.$domain
     DocumentRoot /var/www/$domain/public_html
-    <Directory /var/www/>
+    <Directory /var/www/$domain/public_html>
 	Options Indexes FollowSymLinks
 	AllowOverride None
 	Require all granted
