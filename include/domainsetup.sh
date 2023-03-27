@@ -7,9 +7,9 @@ source check_package.sh
 domain_setup() {
     read -p "Masukkan nama domain kamu :" domain;
 
-    # echo -e "\nProses pembuatan direktori /var/www/$domain"
-    # sleep 2
-    # mkdir /var/www/$domain
+    echo -e "\nProses pembuatan direktori /var/www/$domain"
+    sleep 2
+    mkdir /var/www/$domain
     echo -e "\nProses pembuatan direktori /var/www/$domain/public_html"
     sleep 2
     mkdir /var/www/$domain/public_html
@@ -57,7 +57,7 @@ domain_setup() {
     echo -e "Direktori /var/www/$domain/public_html sudah ready\n"
     sleep 3
 clear
-echo "Apakah Anda ingin menginstal SSL? (y/n)"
+echo "Apakah Anda ingin menginstal SSL untuk $domain? (y/n)"
 read install_ssl
 
 if [ "$install_ssl" == "y" ]; then
@@ -67,8 +67,6 @@ else
     echo -e "\nOK, anda masih tetap dapat menginstall SSL secara manual,\n"
     echo -e "Atau anda dapat menuju submenu apache no.4\n"
 fi
-
-    
     exit 0
 }
 
