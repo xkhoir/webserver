@@ -7,6 +7,10 @@ Ada banyak beredar webgui untuk administarsi server linux. tapi yang bisa diguna
 Berikut Cara Install Keduanya :
 
 ## Cockpit
+berikut adalah perintah penambahan repo : 
+
+    curl -sSL https://repo.45drives.com/setup -o setup-repo.sh
+    sudo bash setup-repo.sh
 berikut adalah perintah install cockpit : 
 
     sudo apt install cockpit-{storaged,storaged,packagekit,file-sharing,navigator} -y && sudo systemctl enable cockpit
