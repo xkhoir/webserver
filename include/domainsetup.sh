@@ -7,49 +7,65 @@ source check_package.sh
 domain_setup() {
     read -p "Masukkan nama domain kamu :" domain;
 
-    echo -e "\nProses pembuatan direktori /var/www/$domain"
-    sleep 2
+    clear
     mkdir /var/www/$domain
-    echo -e "\nProses pembuatan direktori /var/www/$domain/public_html"
+    echo -e "\nPembuatan direktori /var/www/$domain Sukses"
     sleep 2
+
     mkdir /var/www/$domain/public_html
-    
-    echo -e "\nMembuat file cek pada index.php /var/www/$domain/public_html\n"
+    echo -e "\nPembuatan direktori /var/www/$domain/public_html Sukses"
     sleep 2
-    echo "
-    <html>
-        <head>
-            <title>Welcome to $domain!</title>
-        </head>
-        <body>
-            <h1>Success!  The $domain virtual host is working!</h1>
-        </body>
-    </html>
-    " | cat > /var/www/$domain/public_html/index.html
     
-    echo -e "\nProses perubahan permission ke 755 dan www-data\n"
+    echo "<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to $domain!</title>
+</head>
+<body>
+	<center>
+		<h1 style="color:green">Success !</h1>
+		<p>The $domain virtual host is working!</p>
+	</center>
+</body>
+</html>" | cat > /var/www/$domain/public_html/index.html
+    echo -e "\nPembuatan file index.php /var/www/$domain/public_html Sukses"
+    sleep 2
+
+    mkdir /var/log/apache2/$domain
+    echo -e "\nPembuatan direktori log /var/log/apache2/$domain Sukses"
+    sleep 2
+
+    echo -e "\nProses perubahan permission ke 755 dan www-data"
     sudo chmod -R 755 /var/www/$domain
     sudo chown www-data:www-data /var/www/$domain/public_html
     
-    echo -e "Membuat file konfigurasi VirtualHost apache untuk $domain\n"
-echo "<VirtualHost *:80>
+    echo -e "Membuat file konfigurasi VirtualHost Apache2"
+    echo -e "/etc/apache2/sites-available/$domain.conf\n"
+    echo "<VirtualHost *:80>
     ServerAdmin webmin@$domain
     ServerName $domain
     ServerAlias www.$domain
     DocumentRoot /var/www/$domain/public_html
+
     <Directory /var/www/$domain/public_html>
-	Options Indexes FollowSymLinks
-	AllowOverride None
-	Require all granted
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from all
     </Directory>
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <FilesMatch \.php$>
+        SetHandler 'proxy:unix:/run/php/php8.0-fpm.sock|fcgi://localhost/'
+    </FilesMatch>
+
+    ErrorLog \${APACHE_LOG_DIR}/$domain/error.log
+    CustomLog \${APACHE_LOG_DIR}/$domain/access.log combined
     </VirtualHost>" | cat > /etc/apache2/sites-available/$domain.conf
     
     clear
+    a2ensite $domain.conf
     echo -e "Enable /etc/apache2/sites-available/$domain.conf\n"
     sleep 2
-    a2ensite $domain.conf
     clear
     echo -e "Disable /etc/apache2/sites-available/000-default.conf\n"
     sleep 2
