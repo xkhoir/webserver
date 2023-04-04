@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Memanggil fungsi bash dari file yang berbeda
 source check_package.sh
 source domainsetup.sh
