@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Memanggil fungsi bash dari file yang berbeda
-source check_package.sh
-source php.sh
+# source check_package.sh
+# source php.sh
 
 # fungsi untuk menampilkan submenu Apache
 domain_setup() {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source server.sh
+# source server.sh
 
 cek_new () {
     # Check if there are updates available

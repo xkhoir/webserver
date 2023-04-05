@@ -8,8 +8,8 @@ show_header() {
    echo "       Lamp Stack Server Auto Installer by       ";
    echo "                   xkhoitech                     ";
    echo "=================================================";
-   echo "Nama prosesor       : $processor";
-   echo "Arsitektur          : $architecture";
+   echo "Nama prosesor    :$processor";
+   echo "Arsitektur       : $architecture";
    echo -n "Waktu system     : "; date
    echo -n "Status pengguna  : "; whoami
    echo "=================================================";

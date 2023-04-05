@@ -9,9 +9,9 @@ check_package() {
     elif [ "$2" == "uninstall" ]; then
       clear
       echo -e "\nMenguninstall paket $1 ..\n"
-      apt -qq remove --purge "$1"* -y
-      apt -qq autoremove --purge -y
-      apt -qq clean 
+      apt remove --purge "$1"* -y
+      apt autoremove --purge -y
+      apt clean 
       echo -e "\nPaket $1 suskses teruninstall\n"
       sleep 2
     else
@@ -22,11 +22,10 @@ check_package() {
     if [ "$2" == "install" ]; then
       clear
       echo -e "\nMenginstall paket $1 ..\n"
-      sudo apt -qq install "$1" -y
+      sudo apt install "$1" -y
       echo -e "\nPaket $1 suskses terinstall\n"
       sleep 2
     elif [ "$2" == "uninstall" ]; then
-      clear
       echo -e "\nPaket $1 belum terpasang, silahkan install dulu melalui opsi install.\n"
       sleep 3
     else

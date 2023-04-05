@@ -1,5 +1,5 @@
 # Memanggil fungsi bash dari file yang berbeda
-source check_package.sh
+# source check_package.sh
 
 # fungsi untuk menampilkan submenu PhpMyAdmin
 show_phpmyadmin_submenu() {
