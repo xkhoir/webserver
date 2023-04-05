@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Memanggil banyak file bash dari folder include
-source include/cek_root.sh
+source include/manage_script.sh
 source include/headermenu.sh
 source include/check_package.sh
 source include/apache2.sh
@@ -12,8 +12,17 @@ source include/phpmyadmin.sh
 source include/composer.sh
 source include/server.sh
 
+#cek available update
+cek_con
+
 #cek root
 cek_root
+
+#cek ditro
+cek_distro
+
+#cek available update
+cek_new
 
 # terus tampilkan menu sampai pengguna memilih untuk keluar
 while true; do
@@ -96,7 +105,78 @@ while true; do
         esac
       done
       ;;
-    2) # PHP
+    2) # Nginx
+      clear
+      show_header
+      show_nginx_submenu
+      while true; do
+        read -p "Masukkan pilihan Anda: " nginx_choice
+
+        case $nginx_choice in
+          1) # Install Nginx
+            manage_nginx install
+            # kembali ke submenu Nginx
+            clear
+      	    show_header
+            show_nginx_submenu
+            ;;
+          2) # Uninstall Nginx
+            manage_nginx uninstall
+            # kembali ke submenu Nginx
+            clear
+      	    show_header
+            show_nginx_submenu
+            ;;
+          3) # Domain Setup
+            manage_nginx domainsetup
+            # kembali ke submenu Nginx
+            clear
+      	    show_header
+            show_nginx_submenu
+            ;;
+          4) # SSL Setup
+            manage_nginx ssl
+            # kembali ke submenu Nginx
+            clear
+      	    show_header
+            show_nginx_submenu
+            ;;
+          5) # SSL Renew
+            manage_nginx sslrenew
+            # kembali ke submenu Nginx
+            clear
+      	    show_header
+            show_nginx_submenu
+            ;;
+          6) # a2enmod Rewrite
+            manage_nginx a2enmod
+            # kembali ke submenu Nginx
+            clear
+      	    show_header
+            show_nginx_submenu
+            ;;
+          7) # Restart Nginx Services
+            manage_nginx restart
+            # kembali ke submenu Nginx
+            clear
+      	    show_header
+            show_nginx_submenu
+            ;;
+          8) # Kembali ke menu utama
+	        clear
+      	    show_header
+            show_menu
+            break
+            ;;
+          *) # Input salah
+            clear
+            echo -e "\nPilihan tidak valid.\n"
+            sleep 2
+            ;;
+        esac
+      done
+      ;;
+    3) # PHP
       clear
       show_header
       show_php_submenu
@@ -132,7 +212,7 @@ while true; do
         esac
       done
       ;;
-    3) # Mariadb
+    4) # Mariadb
       clear
       show_header
       show_mariadb_submenu
@@ -175,7 +255,7 @@ while true; do
         esac
       done
       ;;
-    4) # PhpMyAdmin
+    5) # PhpMyAdmin
       clear
       show_header
       show_phpmyadmin_submenu
@@ -218,7 +298,7 @@ while true; do
         esac
       done
       ;;
-    5) # Composer
+    6) # Composer
       clear
       show_header
       show_composer_submenu
@@ -254,7 +334,7 @@ while true; do
         esac
       done
       ;;
-    6) # Server
+    7) # Manage Server
       clear
       show_header
       show_server_submenu
@@ -263,20 +343,27 @@ while true; do
 
         case $server_choice in
           1) # Install Server
+            manage_server update
+            # kembali ke submenu Server
+            clear
+      	    show_header
+            show_server_submenu
+            ;;
+          2) # Reboot Server
             manage_server reboot
             # kembali ke submenu Server
             clear
       	    show_header
             show_server_submenu
             ;;
-          2) # Uninstall Server
+          3) #  Poweroff Server
             manage_server poweroff
             # kembali ke submenu Server
             clear
       	    show_header
             show_server_submenu
             ;;
-          3) # Kembali ke menu utama
+          4) # Kembali ke menu utama
 	        clear
       	    show_header
             show_menu
@@ -290,7 +377,7 @@ while true; do
         esac
       done
       ;;
-    7) # Keluar
+    8) # Keluar
       clear
       echo -e "\nTerima kasih telah menggunakan program ini.\n"
       sleep 2

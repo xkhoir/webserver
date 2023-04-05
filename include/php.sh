@@ -17,8 +17,11 @@ manage_php() {
   action=$1
 
   if [ "$action" == "uninstall" ]; then
+    add-apt-repository --remove ppa:ondrej/php
     #parsing data ke fungsi check_package
     check_package "$package" "uninstall"
+    a2dismod proxy_fcgi setenvif
+    a2disconf $package-fpm //ganti sesuai versi php yang diinstall
 
     # Uninstall ekstensi PHP
     extensions=("bz2" "cli" "intl" "common" "mysql" "zip" "curl" "gd" "mbstring" "xml" "bcmath" "phpdbg" "cgi")
@@ -27,10 +30,13 @@ manage_php() {
       #parsing data ke fungsi check_package
       check_package "$ext_package" "uninstall"
     done
+    
   elif [ "$action" == "install" ]; then
+    sudo add-apt-repository ppa:ondrej/php
     #parsing data ke fungsi check_package
     check_package "$package" "install"
-
+    a2enmod proxy_fcgi setenvif
+    a2enconf $package-fpm //ganti sesuai versi php yang diinstall
     # Instalasi ekstensi PHP
     extensions=("bz2" "cli" "intl" "common" "mysql" "zip" "curl" "gd" "mbstring" "xml" "bcmath" "phpdbg" "cgi")
     for ext in "${extensions[@]}"; do
@@ -42,3 +48,27 @@ manage_php() {
     echo "Perintah tidak valid."
   fi
 }
+
+# fungsi untuk cek versi PHP yang digunakan
+cek_php() {
+  php_path=`which php`
+
+  if [ $? -ne 0 ]
+  then
+    echo "PHP tidak terinstall pada sistem Anda"
+    exit 1
+  fi
+
+  php_version=`$php_path -v | awk '/^PHP/ {print $2}'`
+
+  if [ $? -eq 0 ]
+  then
+    echo "Versi PHP yang terinstall pada sistem Anda adalah $php_version"
+  else
+    echo "Gagal memeriksa versi PHP"
+    exit 1
+  fi
+}
+
+# contoh penggunaan fungsi
+cek_php
