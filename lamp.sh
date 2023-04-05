@@ -23,7 +23,7 @@ cek_root
 cek_distro
 
 #cek available update
-cek_new
+#cek_new
 
 # terus tampilkan menu sampai pengguna memilih untuk keluar
 while true; do
