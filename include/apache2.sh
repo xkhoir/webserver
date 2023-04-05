@@ -23,6 +23,10 @@ manage_apache() {
     action=$1
   if [ "$action" == "uninstall" ]; then
     #parsing data ke fungsi check_package
+    rm -rf /var/lib/apache
+    rm -rf /var/www
+    rm -rf /etc/apache*
+    rm -rf /var/log/apache*
     check_package "$package" "uninstall"
   elif [ "$action" == "install" ]; then
     #parsing data ke fungsi check_package
