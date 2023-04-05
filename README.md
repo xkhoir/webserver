@@ -1,5 +1,13 @@
 # Perintah CLI penting untuk linux web server
 
+## Menjalankan autoinstaller lamp.sh
+berikut adalah baris perintah untuk menjalankan lamp.sh : 
+
+    git clone https://github.com/xkhoir/webserver.git
+    cd webserver
+    chmod -R 755 *
+    sudo ./lamp.sh
+
 ## Berikut command install penting untuk linux web server
 
  - [Install Webserver](https://github.com/xkhoir/webserver/blob/main/Install-webserver.md)
