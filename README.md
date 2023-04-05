@@ -1,15 +1,11 @@
 # Perintah CLI penting untuk linux web server
 
-## clone lamp.sh
-berikut adalah baris perintah cloning lamp.sh repo : 
+## Menjalankan autoinstaller lamp.sh
+berikut adalah baris perintah untuk menjalankan lamp.sh : 
 
     git clone https://github.com/xkhoir/webserver.git
     cd webserver
     chmod -R 755 *
-
-## Menjalankan autoinstaller lamp.sh
-berikut adalah baris perintah untuk menjalankan lamp.sh : 
-
     ./lamp.sh
 
 ## Berikut command install penting untuk linux web server
