@@ -4,7 +4,7 @@
 berikut adalah baris perintah cloning lamp.sh repo : 
 
     git clone https://github.com/xkhoir/webserver.git
-    cd /webserver
+    cd webserver
     chmod -R 755 *
 
 ## Menjalankan autoinstaller lamp.sh
