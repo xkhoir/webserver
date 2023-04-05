@@ -10,11 +10,7 @@ check_package() {
       clear
       echo -e "\nMenguninstall paket $1 ..\n"
       apt -qq remove --purge "$1"* -y
-      sleep 1
-      clear
       apt -qq autoremove --purge -y
-      sleep 1
-      clear
       apt -qq clean 
       echo -e "\nPaket $1 suskses teruninstall\n"
       sleep 2

@@ -381,6 +381,7 @@ while true; do
       clear
       echo -e "\nTerima kasih telah menggunakan program ini.\n"
       sleep 2
+      clear
       exit
       ;;
     *) # Input salah
