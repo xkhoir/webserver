@@ -28,13 +28,13 @@ manage_apache() {
     #parsing data ke fungsi check_package
     check_package "$package" "install"
   elif [ "$action" == "domainsetup" ]; then
-    #code
+    #call function domain setup
     domain_setup
   elif [ "$action" == "ssl" ]; then
-    #code
+    #call function ssl setup
     ssl_setup
   elif [ "$action" == "sslrenew" ]; then
-    #code
+    #call function ssl renew
     ssl_renew
   elif [ "$action" == "restart" ]; then
     #Proses restart/reload apache2 service

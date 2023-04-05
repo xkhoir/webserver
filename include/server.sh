@@ -1,8 +1,9 @@
 # fungsi untuk menampilkan submenu Manage server
 show_server_submenu() {
-    echo "1. Reboot"
-    echo "2. Poweroff"
-    echo "3. Kembali ke menu utama"
+    echo "1. APT update & upgrade"
+    echo "2. Reboot"
+    echo "3. Poweroff"
+    echo "4. Kembali ke menu utama"
 }
 
 # fungsi untuk proses manage server
@@ -11,10 +12,18 @@ manage_server() {
     action=$1
   if [ "$action" == "reboot" ]; then
     #perintah reboot linux
-    sudo reboot
+    reboot
   elif [ "$action" == "poweroff" ]; then
     #perintah poweroff linux
-    sudo poweroff
+    poweroff
+  elif [ "$action" == "update" ]; then
+    #perintah poweroff linux
+    apt update 
+    clear
+    apt upgrade -y
+  elif [ "$action" == "update" ]; then
+    #perintah poweroff linux
+    apt -qq update && apt -qq upgrade -y
   else
     echo "Perintah tidak valid."
   fi

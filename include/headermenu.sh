@@ -1,12 +1,17 @@
+# Mengambil informasi tentang prosesor pada sistem
+processor=$(cat /proc/cpuinfo | grep "model name" | head -n 1 | cut -d ":" -f 2)
+architecture=$(uname -m)
+
 # fungsi untuk menampilkan header
 show_header() {
    clear
    echo "       Lamp Stack Server Auto Installer by       ";
-   figlet xkhoirtech
+   echo "                   xkhoitech                     ";
    echo "=================================================";
-   echo -n "Waktu system    : "; date
-   echo -n "Status pengguna : "; whoami
-   echo -n "Banyak user     : "; who | wc -l
+   echo "Nama prosesor       : $processor";
+   echo "Arsitektur          : $architecture";
+   echo -n "Waktu system     : "; date
+   echo -n "Status pengguna  : "; whoami
    echo "=================================================";
    echo "-------- Silahkan pilih salah satu opsi: --------";
 }
@@ -14,10 +19,11 @@ show_header() {
 # fungsi untuk menampilkan menu utama
 show_menu() {
     echo "1. Apache"
-    echo "2. PHP"
-    echo "3. Mariadb"
-    echo "4. PhpMyAdmin";
-    echo "5. Composer";
-    echo "6. Reboot Server";
-    echo "7. Keluar"
+    echo "2. Nginx"
+    echo "3. PHP"
+    echo "4. Mariadb"
+    echo "5. PhpMyAdmin";
+    echo "6. Composer";
+    echo "7. Reboot Server";
+    echo "8. Keluar"
 }
