@@ -1,10 +1,8 @@
 #!/bin/bash
 
-# source server.sh
-
 cek_new () {
     # Check if there are updates available
-    if [[ $(apt list --upgradable 2>/dev/null | wc -l) -gt 1 ]]; then
+    if [[ $(apt list --upgradable >/dev/null | wc -l) -gt 1 ]]; then
         clear
         echo -e "\nUpdates are available. Running apt update and upgrade."
         manage_server update
