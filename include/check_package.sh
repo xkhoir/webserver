@@ -10,7 +10,9 @@ check_package() {
       clear
       echo -e "\nMenguninstall paket $1 ..\n"
       apt remove --purge "$1"* -y
+      clear
       apt autoremove --purge -y
+      clear
       apt clean 
       echo -e "\nPaket $1 suskses teruninstall\n"
       sleep 2
@@ -23,6 +25,7 @@ check_package() {
       clear
       echo -e "\nMenginstall paket $1 ..\n"
       sudo apt install "$1" -y
+      clear
       echo -e "\nPaket $1 suskses terinstall\n"
       sleep 2
     elif [ "$2" == "uninstall" ]; then
