@@ -15,35 +15,34 @@ manage_php() {
 
   package="php$version"
   action=$1
+  # list of PHP extensions to install
+  extensions=("bcmath" "bz2" "cgi" "cli" "common" "curl" "dba" "dev" "enchant" "fpm" "gd" "gmp" "imap" "interbase" "intl" "json" "mbstring" "mysql" "odbc" "opcache" "pgsql" "phpdbg" "pspell" "readline" "snmp" "soap" "sqlite3" "sybase" "tidy" "xml" "xmlrpc" "xsl" "zip")
 
   if [ "$action" == "uninstall" ]; then
-    add-apt-repository --remove ppa:ondrej/php
-    #parsing data ke fungsi check_package
-    check_package "$package" "uninstall"
     a2dismod proxy_fcgi setenvif
     a2disconf $package-fpm //ganti sesuai versi php yang diinstall
-
-    # Uninstall ekstensi PHP
-    extensions=("bz2" "cli" "intl" "common" "mysql" "zip" "curl" "gd" "mbstring" "xml" "bcmath" "phpdbg" "cgi")
+    # Uninstall PHP & ekstensi
     for ext in "${extensions[@]}"; do
       ext_package="$package-$ext"
       #parsing data ke fungsi check_package
       check_package "$ext_package" "uninstall"
     done
+    #hapus repo php
+    add-apt-repository --remove ppa:ondrej/php
+    #hapus direktori
+    rm -rf /etc/php/*
     
   elif [ "$action" == "install" ]; then
+    #install repo php
     sudo add-apt-repository ppa:ondrej/php
-    #parsing data ke fungsi check_package
-    check_package "$package" "install"
-    a2enmod proxy_fcgi setenvif
-    a2enconf $package-fpm //ganti sesuai versi php yang diinstall
-    # Instalasi ekstensi PHP
-    extensions=("bz2" "cli" "intl" "common" "mysql" "zip" "curl" "gd" "mbstring" "xml" "bcmath" "phpdbg" "cgi")
+    # Instalasi PHP & ekstensi
     for ext in "${extensions[@]}"; do
       ext_package="$package-$ext"
       #parsing data ke fungsi check_package
       check_package "$ext_package" "install"
     done
+    a2enmod proxy_fcgi setenvif
+    a2enconf $package-fpm //ganti sesuai versi php yang diinstall
   else
     echo "Perintah tidak valid."
   fi
@@ -51,24 +50,13 @@ manage_php() {
 
 # fungsi untuk cek versi PHP yang digunakan
 cek_php() {
-  php_path=`which php`
-
-  if [ $? -ne 0 ]
-  then
-    echo "PHP tidak terinstall pada sistem Anda"
-    exit 1
-  fi
-
-  php_version=`$php_path -v | awk '/^PHP/ {print $2}'`
-
-  if [ $? -eq 0 ]
-  then
-    echo "Versi PHP yang terinstall pada sistem Anda adalah $php_version"
+  # Periksa apakah PHP terinstal dan dapat diakses dari PATH
+  if command -v php > /dev/null 2>&1; then
+      # Tampilkan versi PHP
+      version = php -v | head -n 1 | awk '/^PHP/ {print $2}'
+      echo "$version"
   else
-    echo "Gagal memeriksa versi PHP"
-    exit 1
+      # Tampilkan pesan kesalahan
+      echo "PHP tidak terinstal atau tidak dapat diakses dari PATH."
   fi
 }
-
-# contoh penggunaan fungsi
-cek_php
