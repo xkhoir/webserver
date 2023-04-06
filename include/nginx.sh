@@ -27,7 +27,7 @@ manage_nginx() {
     domain_setup
   elif [ "$action" == "ssl" ]; then
     #code
-    ssl_setup
+    ssl_setup "nginx"
   elif [ "$action" == "sslrenew" ]; then
     #code
     ssl_renew

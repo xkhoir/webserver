@@ -6,7 +6,7 @@ source include/headermenu.sh
 source include/check_package.sh
 source include/apache2.sh
 source include/nginx.sh
-source include/domainsetup.sh
+source include/domain_setup.sh
 source include/php.sh
 source include/mariadb.sh
 source include/phpmyadmin.sh

@@ -26,7 +26,7 @@ manage_composer() {
     #uninstall composer
     echo -e "\n\nUninstall Composer\n"
     sleep 1
-    sudo rm -rf /usr/bin/composer
+    rm -rf /usr/bin/composer
     echo -e "\nUninstall composer sukses\n"
     sleep 1
   else

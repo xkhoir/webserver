@@ -14,7 +14,8 @@ manage_php() {
   package="php$version"
   action=$1
   # list of PHP extensions to install
-  extensions=("bcmath" "bz2" "cgi" "cli" "common" "curl" "dba" "dev" "enchant" "fpm" "gd" "gmp" "imap" "interbase" "intl" "json" "mbstring" "mysql" "odbc" "opcache" "pgsql" "phpdbg" "pspell" "readline" "snmp" "soap" "sqlite3" "sybase" "tidy" "xml" "xmlrpc" "xsl" "zip")
+  extensions=("fpm" "bz2" "cli" "intl" "common" "mysql" "zip" "curl" "gd" "mbstring" "xml" "bcmath" "phpdbg" "cgi")
+  #extensions=("bcmath" "bz2" "cgi" "cli" "common" "curl" "dba" "dev" "enchant" "fpm" "gd" "gmp" "imap" "interbase" "intl" "json" "mbstring" "mysql" "odbc" "opcache" "pgsql" "phpdbg" "pspell" "readline" "snmp" "soap" "sqlite3" "sybase" "tidy" "xml" "xmlrpc" "xsl" "zip")
 
   if [ "$action" == "uninstall" ]; then
     a2dismod proxy_fcgi setenvif

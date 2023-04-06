@@ -31,7 +31,7 @@ manage_apache() {
     domain_setup
   elif [ "$action" == "ssl" ]; then
     #call function ssl setup
-    ssl_setup
+    ssl_setup "apache"
   elif [ "$action" == "sslrenew" ]; then
     #call function ssl renew
     ssl_renew
