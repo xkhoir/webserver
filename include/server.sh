@@ -18,11 +18,6 @@ manage_server() {
     poweroff
   elif [ "$action" == "update" ]; then
     #perintah poweroff linux
-    apt update 
-    clear
-    apt upgrade -y
-  elif [ "$action" == "update" ]; then
-    #perintah poweroff linux
     apt -qq update
     apt -qq upgrade -y
   else

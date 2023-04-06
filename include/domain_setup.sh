@@ -44,7 +44,7 @@ function cek_php() {
 
 # Fungsi untuk setup domain dengan Nginx atau Apache dan memperoleh sertifikat SSL dari Let's Encrypt
 domain_setup() {
-    read -p "Masukkan nama domain kamu :" DOMAIN;
+    read -p "Masukkan nama domain kamu :" DOMAIN
 
     DIRECTORY="/var/www/$DOMAIN/public_html"
     LOG="/var/log/apache/$DOMAIN"
@@ -186,7 +186,15 @@ EOF
 # Argumen:
 #   $1 - apache atau nginx
 #   $2 - domain yang akan disertifikasi
-function ssl_setup() {
+ssl_setup() {
+    package = "certbot"
+    # Cek apakah Certbot sudah terinstal
+    if ! command -v $package &> /dev/null; then
+        # Jika Certbot belum terinstal, jalankan perintah instalasi terlebih dahulu
+        echo -e "Cerbot belum terinstall. malakukan install certbot"
+        check_package "$package" "install"
+    fi
+
     # Cek apakah argumen pertama adalah apache
     if [ "$1" == "apache" ]; then
         # Jika argumen kedua tidak kosong, jalankan Certbot dengan opsi --apache dan -d $2
