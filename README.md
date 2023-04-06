@@ -1,4 +1,4 @@
-# Perintah CLI penting untuk linux web server
+# Auto Installer Lamp / Lemp Stack on Linux system
 
 ## Menjalankan autoinstaller lamp.sh
 berikut adalah baris perintah untuk menjalankan lamp.sh : 
