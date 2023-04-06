@@ -1,14 +1,24 @@
-#!/bin/bash
-
+# Fungsi untuk memeriksa os baru diinstall dalama kurun waktu 1 jam, maka perintah update jalan
 cek_new () {
-    # Check if there are updates available
-    if [[ $(apt list --upgradable 2>/dev/null | wc -l) -gt 1 ]]; then
-        clear
-        echo -e "\nUpdates are available. Running apt update and upgrade."
-        manage_server update
-        echo -e "\nUpdates Success !!."
-        clear
+    # Dapatkan waktu instalasi Linux
+    waktu_instalasi=$(stat -c %Y /var/log/installer)
+
+    # Dapatkan waktu saat ini
+    waktu_sekarang=$(date +%s)
+
+    # Hitung selisih waktu antara waktu instalasi dan waktu saat ini dalam detik
+    selisih_waktu=$((waktu_sekarang - waktu_instalasi))
+
+    # Konversi 1 jam ke dalam detik
+    satu_jam=3600
+
+    # Periksa apakah selisih waktu kurang dari 1 jam (3600 detik)
+    if [ "$selisih_waktu" -lt "$satu_jam" ]; then
+        # Lakukan update sistem
+        apt update
+        apt upgrade -y
     fi
+    # Lanjutkan dengan kode selanjutnya
 }
 
 # Fungsi untuk memeriksa koneksi internet
@@ -46,7 +56,7 @@ cek_distro () {
     if ! cat /etc/*-release | grep -q "ID_LIKE=debian"; then
         clear
         echo -e "\nSistem operasi ini bukan basis Debian."
-        echo -e "\nScript ini hanya bekerja pada linux basis Debian ."
+        echo -e "\nScript ini hanya bekerja pada linux dengan basis Debian ."
         sleep 2
         clear
         exit 1

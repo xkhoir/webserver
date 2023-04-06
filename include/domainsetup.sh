@@ -1,4 +1,3 @@
-#!/bin/bash
 
 # fungsi untuk menampilkan submenu Apache
 domain_setup() {
