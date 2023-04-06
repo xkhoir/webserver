@@ -191,7 +191,10 @@ ssl_setup() {
     check_package "certbot" "install"
     check_package "ufw" "install"
 
-    ufw allow 80 443 22 9090
+    ufw allow 80
+    ufw allow 443
+    ufw allow 22
+    ufw allow 9090
 
     # Cek apakah argumen pertama adalah apache
     if [ "$1" == "apache" ]; then
