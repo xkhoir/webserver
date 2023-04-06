@@ -3,7 +3,7 @@
 
 function cek_php() {
   # Cek layanan PHP-FPM yang aktif
-  versi=$(systemctl list-units --type=service | grep 'php' | grep 'fpm' | grep 'active' | awk -F '[.-]' '{print $2 "." $3}')
+  versi=$(systemctl list-units --type=service | grep 'fpm' | grep 'active' | awk '{print $1}' | sed 's/\.service//g')
 
   # Tampilkan daftar versi PHP-FPM yang aktif
   if [[ -n "$versi" ]]; then
@@ -45,7 +45,7 @@ function cek_php() {
 # Fungsi untuk setup domain dengan Nginx atau Apache dan memperoleh sertifikat SSL dari Let's Encrypt
 domain_setup() {
     read -p "Masukkan nama domain kamu :" DOMAIN
-
+    cek_php
     DIRECTORY="/var/www/$DOMAIN/public_html"
     LOG="/var/log/apache/$DOMAIN"
 
@@ -187,13 +187,11 @@ EOF
 #   $1 - apache atau nginx
 #   $2 - domain yang akan disertifikasi
 ssl_setup() {
-    package = "certbot"
     # Cek apakah Certbot sudah terinstal
-    if ! command -v $package &> /dev/null; then
-        # Jika Certbot belum terinstal, jalankan perintah instalasi terlebih dahulu
-        echo -e "Cerbot belum terinstall. malakukan install certbot"
-        check_package "$package" "install"
-    fi
+    check_package "certbot" "install"
+    check_package "ufw" "install"
+
+    ufw allow 80 443 22 9090
 
     # Cek apakah argumen pertama adalah apache
     if [ "$1" == "apache" ]; then

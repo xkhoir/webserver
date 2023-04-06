@@ -35,6 +35,9 @@ manage_apache() {
   elif [ "$action" == "sslrenew" ]; then
     #call function ssl renew
     ssl_renew
+  elif [ "$action" == "a2enmod" ]; then
+    #call function ssl renew
+    a2enmod rewrite
   elif [ "$action" == "restart" ]; then
     #Proses restart/reload apache2 service
     echo -e "Restart/reload service apache2\n"

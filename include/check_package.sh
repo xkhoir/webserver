@@ -17,7 +17,7 @@ check_package() {
     else
       clear
       echo -e "\nMenginstall paket $1 ..\n"
-      sudo apt install "$1" -y
+      apt install "$1" -y
       clear
       echo -e "\nPaket $1 suskses terinstall\n"
       sleep 2

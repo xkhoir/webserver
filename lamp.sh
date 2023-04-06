@@ -59,6 +59,7 @@ while true; do
             ;;
           3) # Domain Setup
             manage_apache domainsetup
+            sleep 2
             # kembali ke submenu Apache
             clear
       	    show_header
@@ -66,6 +67,7 @@ while true; do
             ;;
           4) # SSL Setup
             manage_apache ssl
+            sleep 2
             # kembali ke submenu Apache
             clear
       	    show_header
@@ -73,6 +75,7 @@ while true; do
             ;;
           5) # SSL Renew
             manage_apache sslrenew
+            sleep 2
             # kembali ke submenu Apache
             clear
       	    show_header
