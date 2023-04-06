@@ -210,6 +210,3 @@ function ssl_setup() {
         echo "Usage: sslsetup [apache|nginx] [domain]"
     fi
 }
-
-# Panggil fungsi sslsetup dengan argumen yang diberikan
-sslsetup "$1" "$2"
