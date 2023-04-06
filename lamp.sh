@@ -13,17 +13,17 @@ source include/phpmyadmin.sh
 source include/composer.sh
 source include/server.sh
 
-#cek available update
-cek_con
-
 #cek root
 cek_root
+
+#cek available update
+cek_con
 
 #cek ditro
 cek_distro
 
-#cek available update
-#cek_new
+#cek available update on new server
+cek_new
 
 # terus tampilkan menu sampai pengguna memilih untuk keluar
 while true; do
@@ -93,7 +93,7 @@ while true; do
             show_apache_submenu
             ;;
           8) # Kembali ke menu utama
-	        clear
+	          clear
       	    show_header
             show_menu
             break
@@ -164,7 +164,7 @@ while true; do
             show_nginx_submenu
             ;;
           8) # Kembali ke menu utama
-	        clear
+	          clear
       	    show_header
             show_menu
             break
@@ -200,7 +200,7 @@ while true; do
             show_php_submenu
             ;;
           3) # Kembali ke menu utama
-	        clear
+	          clear
       	    show_header
             show_menu
             break
@@ -243,7 +243,7 @@ while true; do
             show_mariadb_submenu
             ;;
           4) # Kembali ke menu utama
-	        clear
+	          clear
       	    show_header
             show_menu
             break
@@ -286,7 +286,7 @@ while true; do
             show_phpmyadmin_submenu
             ;;
           4) # Kembali ke menu utama
-	        clear
+	          clear
       	    show_header
             show_menu
             break
@@ -322,7 +322,7 @@ while true; do
             show_composer_submenu
             ;;
           3) # Kembali ke menu utama
-	        clear
+	          clear
       	    show_header
             show_menu
             break
@@ -343,7 +343,7 @@ while true; do
         read -p "Masukkan pilihan Anda: " server_choice
 
         case $server_choice in
-          1) # Install Server
+          1) # APT Update &upgrade
             manage_server update
             # kembali ke submenu Server
             clear
@@ -357,7 +357,7 @@ while true; do
       	    show_header
             show_server_submenu
             ;;
-          3) #  Poweroff Server
+          3) # Poweroff Server
             manage_server poweroff
             # kembali ke submenu Server
             clear
@@ -365,7 +365,7 @@ while true; do
             show_server_submenu
             ;;
           4) # Kembali ke menu utama
-	        clear
+	          clear
       	    show_header
             show_menu
             break

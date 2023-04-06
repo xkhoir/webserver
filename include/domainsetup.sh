@@ -1,3 +1,4 @@
+sukses = echo -e "\033[92mSukses\033[0m"
 
 # fungsi untuk menampilkan submenu Apache
 domain_setup() {
@@ -5,15 +6,15 @@ domain_setup() {
 
     clear
     mkdir /var/www/$domain
-    echo -e "\nPembuatan direktori /var/www/$domain Sukses"
+    echo -e "\nPembuatan direktori /var/www/$domain" $sukses
     sleep 2
 
     mkdir /var/www/$domain/public_html
-    echo -e "\nPembuatan direktori /var/www/$domain/public_html Sukses"
+    echo -e "\nPembuatan direktori /var/www/$domain/public_html" $sukses
     sleep 2
     
     mkdir /var/log/apache2/$domain
-    echo -e "\nPembuatan direktori log /var/log/apache2/$domain Sukses"
+    echo -e "\nPembuatan direktori log /var/log/apache2/$domain" $sukses
     sleep 2
 
     echo "<!DOCTYPE html>
@@ -28,7 +29,7 @@ domain_setup() {
         </center>
     </body>
     </html>" | cat > /var/www/$domain/public_html/index.html
-    echo -e "\nPembuatan file index.php /var/www/$domain/public_html Sukses"
+    echo -e "\nPembuatan file index.php /var/www/$domain/public_html" $sukses
     sleep 2
 
     echo -e "\nProses perubahan permission ke 755 dan www-data"
@@ -56,7 +57,7 @@ domain_setup() {
     ErrorLog \${APACHE_LOG_DIR}/$domain/error.log
     CustomLog \${APACHE_LOG_DIR}/$domain/access.log combined
     </VirtualHost>" | cat > /etc/apache2/sites-available/$domain.conf
-    echo -e "\nPembuatan file konfigurasi VirtualHost Apache2 sukses"
+    echo -e "\nPembuatan file konfigurasi VirtualHost Apache2" $sukses
     
     clear
     a2ensite $domain.conf
