@@ -102,6 +102,9 @@ while true; do
             clear
             echo -e "\nPilihan tidak valid.\n"
             sleep 2
+            clear
+            show_header
+            show_apache_submenu
             ;;
         esac
       done
@@ -173,6 +176,9 @@ while true; do
             clear
             echo -e "\nPilihan tidak valid.\n"
             sleep 2
+            clear
+            show_header
+            show_nginx_submenu
             ;;
         esac
       done
@@ -209,6 +215,9 @@ while true; do
             clear
             echo -e "\nPilihan tidak valid.\n"
             sleep 2
+            clear
+            show_header
+            show_php_submenu
             ;;
         esac
       done
@@ -252,6 +261,9 @@ while true; do
             clear
             echo -e "\nPilihan tidak valid.\n"
             sleep 2
+            clear
+            show_header
+            show_mariadb_submenu
             ;;
         esac
       done
@@ -295,6 +307,9 @@ while true; do
             clear
             echo -e "\nPilihan tidak valid.\n"
             sleep 2
+            clear
+            show_header
+            show_phpmyadmin_submenu
             ;;
         esac
       done
@@ -331,6 +346,9 @@ while true; do
             clear
             echo -e "\nPilihan tidak valid.\n"
             sleep 2
+            clear
+      	    show_header
+            show_composer_submenu
             ;;
         esac
       done
@@ -374,6 +392,9 @@ while true; do
             clear
             echo -e "\nPilihan tidak valid.\n"
             sleep 2
+            clear
+            show_header
+            show_server_submenu
             ;;
         esac
       done
