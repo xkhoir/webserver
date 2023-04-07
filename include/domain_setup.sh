@@ -216,6 +216,7 @@ apachesetup(){
     # Buat direktori untuk website files
     mkdir -p $DIRECTORY
     mkdir -p $LOG
+    chown -R root:adm $LOG
     echo -e "\nPembuatan Direktori webiste files Sukses\n"
     sleep 1
 
