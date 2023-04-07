@@ -46,16 +46,3 @@ manage_php() {
     echo "Perintah tidak valid."
   fi
 }
-
-# fungsi untuk cek versi PHP yang digunakan
-cek_php() {
-  # Periksa apakah PHP terinstal dan dapat diakses dari PATH
-  if command -v php > /dev/null 2>&1; then
-      # Tampilkan versi PHP
-      version = php -v | head -n 1 | awk '/^PHP/ {print $2}'
-      echo "$version"
-  else
-      # Tampilkan pesan kesalahan
-      echo "PHP tidak terinstal atau tidak dapat diakses dari PATH."
-  fi
-}

@@ -1,6 +1,4 @@
 # Fungsi untuk mengecek apakah PHP-FPM telah terpasang dan mengembalikan versi yang terpasang
-#!/bin/bash
-
 function cek_php() {
   # Cek layanan PHP-FPM yang aktif
   versi=$(systemctl list-units --type=service | grep 'fpm' | grep 'active' | awk '{print $1}' | sed 's/\.service//g')
