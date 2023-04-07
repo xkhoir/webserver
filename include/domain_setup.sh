@@ -5,18 +5,18 @@ function cek_php() {
 
   # Tampilkan daftar versi PHP-FPM yang aktif
   if [[ -n "$versi" ]]; then
-    echo "Daftar Versi PHP-FPM yang aktif: $versi"
+    echo -e "\nDaftar Versi PHP-FPM yang aktif: $versi\n"
     sleep 2
     clear
   else
-    echo "Tidak ada layanan PHP-FPM yang tersedia, Install dulu"
+    echo -e"\nTidak ada layanan PHP-FPM yang tersedia, Install dulu\n"
     sleep 2
     clear
     exit 0
   fi
 
   # Tampilkan menu pilihan
-  echo "Pilih versi PHP-FPM yang akan digunakan:"
+  echo -e"\nPilih versi PHP-FPM yang akan digunakan:"
 
   # Pisahkan daftar versi PHP-FPM menjadi array
   IFS=' ' read -ra versi_arr <<< "$versi"
@@ -220,8 +220,12 @@ apachesetup(){
     sleep 1
 
     # Buat file access.log dan error.log untuk log apache2
-    cat > $LOG/access.log
-    cat > $LOG/error.log
+    cat > $LOG/access.log<< EOF
+
+EOF
+    cat > $LOG/error.log<< EOF
+
+EOF
     echo -e "\nPembuatan file log apache2 Sukses\n"
     sleep 1
 
@@ -315,7 +319,7 @@ EOF
     </Directory>
 
     <FilesMatch \.php$>
-        SetHandler 'proxy:unix:/run/php/$versi_terpilih.sock|fcgi://localhost/'
+        SetHandler "proxy:unix:/run/php/$versi_terpilih.sock|fcgi://localhost/"
     </FilesMatch>
 
     ErrorLog ${APACHE_LOG_DIR}/$DOMAIN/error.log
