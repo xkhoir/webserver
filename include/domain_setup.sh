@@ -78,6 +78,66 @@ nginxsetup () {
     echo -e "\nPembuatan Direktori webiste files Sukses\n"
     sleep 1
 
+     # Buat file php unuk test
+    cat > $DIRECTORY/index.php << EOF
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Verifikasi Domain Terinstall</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f7f7f7;
+			margin: 0;
+			padding: 0;
+		}
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+		h1 {
+			text-align: center;
+			color: #4CAF50;
+		}
+		p {
+			font-size: 18px;
+			line-height: 1.5;
+			color: #333;
+			margin-bottom: 20px;
+		}
+		.success {
+			color: #4CAF50;
+			font-weight: bold;
+		}
+		.failure {
+			color: #F44336;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+    <center>
+        <div class="container">
+            <h1>Verifikasi Domain Terinstall</h1>
+            <p>Selamat! Domain <span class="success">$DOMAIN</span> telah terinstall dengan sukses!</p>
+            <?php
+                if (function_exists('phpversion')) {
+                    echo '<p>Versi PHP yang terpasang adalah <span class="success">' . phpversion() . '</span>.</p>';
+                } else {
+                    echo '<p class="failure">PHP tidak terpasang pada server ini.</p>';
+                }
+            ?>
+            <p>Anda sekarang dapat memulai untuk mengembangkan website Anda.</p>
+            <p>Terima kasih telah memilih layanan autoinstaller kami.</p>
+        </div>
+    </center>
+</body>
+</html>
+EOF
+    echo -e "\nPembuatan Direktori webiste files Sukses\n"
+    sleep 1
+
     # Atur kepemilikan dan izin direktori
     chown -R www-data:www-data $DIRECTORY
     chmod -R 755 $DIRECTORY
@@ -146,6 +206,66 @@ apachesetup(){
     # Buat direktori untuk website files
     mkdir -p $DIRECTORY
     mkdir -p $LOG
+    echo -e "\nPembuatan Direktori webiste files Sukses\n"
+    sleep 1
+
+    # Buat file php unuk test
+    cat > $DIRECTORY/index.php << EOF
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Verifikasi Domain Terinstall</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f7f7f7;
+			margin: 0;
+			padding: 0;
+		}
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+		h1 {
+			text-align: center;
+			color: #4CAF50;
+		}
+		p {
+			font-size: 18px;
+			line-height: 1.5;
+			color: #333;
+			margin-bottom: 20px;
+		}
+		.success {
+			color: #4CAF50;
+			font-weight: bold;
+		}
+		.failure {
+			color: #F44336;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+    <center>
+        <div class="container">
+            <h1>Verifikasi Domain Terinstall</h1>
+            <p>Selamat! Domain <span class="success">$DOMAIN</span> telah terinstall dengan sukses!</p>
+            <?php
+                if (function_exists('phpversion')) {
+                    echo '<p>Versi PHP yang terpasang adalah <span class="success">' . phpversion() . '</span>.</p>';
+                } else {
+                    echo '<p class="failure">PHP tidak terpasang pada server ini.</p>';
+                }
+            ?>
+            <p>Anda sekarang dapat memulai untuk mengembangkan website Anda.</p>
+            <p>Terima kasih telah memilih layanan autoinstaller kami.</p>
+        </div>
+    </center>
+</body>
+</html>
+EOF
     echo -e "\nPembuatan Direktori webiste files Sukses\n"
     sleep 1
 
