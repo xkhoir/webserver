@@ -217,7 +217,7 @@ apachesetup(){
     mkdir -p $DIRECTORY
     mkdir -p $LOG
     chown -R root:adm $LOG
-    echo -e "\nPembuatan Direktori webiste files Sukses\n"
+    echo -e "\nPembuatan Direktori webiste files Sukses"
     sleep 1
 
     # Buat file access.log dan error.log untuk log apache2
@@ -227,7 +227,7 @@ EOF
     cat > $LOG/error.log<< EOF
 
 EOF
-    echo -e "\nPembuatan file log apache2 Sukses\n"
+    echo -e "\nPembuatan file log apache2 Sukses"
     sleep 1
 
     # Buat file php untuk info
@@ -297,13 +297,13 @@ EOF
 </html>
 
 EOF
-    echo -e "\nPembuatan Direktori webiste files Sukses\n"
+    echo -e "\nPembuatan Direktori webiste files Sukses"
     sleep 1
 
     # Atur kepemilikan dan izin direktori
     chown -R www-data:www-data $DIRECTORY
     chmod -R 755 $DIRECTORY
-    echo -e "\nMengatur kepemilikan dan izin direktori Sukses\n"
+    echo -e "\nMengatur kepemilikan dan izin direktori Sukses"
     sleep 1
 
     # Buat blok Virtual Host Apache
@@ -327,31 +327,31 @@ EOF
     CustomLog ${APACHE_LOG_DIR}/$DOMAIN/access.log combined
 </VirtualHost>
 EOF
-    echo -e "\nPembuatan $DOMAIN.conf Sukses\n"
+    echo -e "\nPembuatan $DOMAIN.conf Sukses"
     sleep 1
 
     # Aktifkan Virtual Host Apache
-    echo -e "\nMengaktifkan $DOMAIN.conf Apache\n"
+    echo -e "\nMengaktifkan $DOMAIN.conf Apache"
     sleep 1
     a2ensite $DOMAIN.conf
 
     # Disable default Virtual Host Apache
-    echo -e "\nDisable 000-default.conf\n"
+    echo -e "\nDisable 000-default.conf"
     sleep 1
     a2dissite 000-default.conf
     
     # Uji konfigurasi Apache
-    echo -e "\nUji konfigurasi Apache\n"
+    echo -e "\nUji konfigurasi Apache"
     sleep 1
     apache2ctl configtest
     
     # Restart Apache
-    echo -e "\nRestart Apache\n"
+    echo -e "\nRestart Apache"
     sleep 2
     systemctl restart apache2
     clear
 
-    echo "Apakah Anda ingin menginstal SSL untuk $DOMAIN? (y/n)"
+    echo -e"\nApakah Anda ingin menginstal SSL untuk $DOMAIN? (y/n)"
     read install_ssl
 
     if [ "$install_ssl" == "y" ]; then
@@ -369,10 +369,10 @@ EOF
 #   $2 - domain yang akan disertifikasi
 ssl_setup() {
     # Cek apakah Certbot sudah terinstal
-    echo -e "\ncek certbot\n"
+    echo -e "\ncek certbot"
     sleep 1
     check_package "certbot" "install"
-    echo -e "\ncek ufw\n"
+    echo -e "\ncek ufw"
     sleep 1
     check_package "ufw" "install"
     ufw enable
