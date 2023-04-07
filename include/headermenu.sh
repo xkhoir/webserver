@@ -22,8 +22,8 @@ show_menu() {
     echo "2. Nginx"
     echo "3. PHP"
     echo "4. Mariadb"
-    echo "5. PhpMyAdmin";
-    echo "6. Composer";
-    echo "7. Reboot Server";
+    echo "5. PhpMyAdmin"
+    echo "6. Composer"
+    echo "7. Manage Server"
     echo "8. Keluar"
 }

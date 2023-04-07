@@ -375,15 +375,11 @@ while true; do
             manage_server reboot
             # kembali ke submenu Server
             clear
-      	    show_header
-            show_server_submenu
             ;;
           3) # Poweroff Server
             manage_server poweroff
             # kembali ke submenu Server
             clear
-      	    show_header
-            show_server_submenu
             ;;
           4) # Kembali ke menu utama
 	          clear

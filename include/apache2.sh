@@ -20,7 +20,7 @@ manage_apache() {
     #parsing data ke fungsi check_package
     rm -rf /var/lib/apache*
     rm -rf /var/log/apache*
-    rm -rf /var/www
+    rm -rf /var/www/*
     rm -rf /etc/apache*
     check_package "$package" "uninstall"
   elif [ "$action" == "install" ]; then

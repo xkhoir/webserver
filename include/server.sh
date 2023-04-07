@@ -18,8 +18,8 @@ manage_server() {
     poweroff
   elif [ "$action" == "update" ]; then
     #perintah poweroff linux
-    apt -qq update
-    apt -qq upgrade -y
+    apt update
+    apt upgrade -y
   else
     echo "Perintah tidak valid."
   fi

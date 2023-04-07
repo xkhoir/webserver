@@ -6,8 +6,12 @@ function cek_php() {
   # Tampilkan daftar versi PHP-FPM yang aktif
   if [[ -n "$versi" ]]; then
     echo "Daftar Versi PHP-FPM yang aktif: $versi"
+    sleep 2
+    clear
   else
     echo "Tidak ada layanan PHP-FPM yang tersedia, Install dulu"
+    sleep 2
+    clear
     exit 0
   fi
 
@@ -33,39 +37,52 @@ function cek_php() {
           ;;
       *)
           echo "Pilihan tidak valid"
+          sleep 2
+          clear
           return 1
           ;;
   esac
-
   return 0
 }
 
 # Fungsi untuk setup domain dengan Nginx atau Apache dan memperoleh sertifikat SSL dari Let's Encrypt
 domain_setup() {
     read -p "Masukkan nama domain kamu :" DOMAIN
+    clear
     cek_php
+    clear
     DIRECTORY="/var/www/$DOMAIN/public_html"
     LOG="/var/log/apache/$DOMAIN"
 
     # Cek apakah Nginx sedang aktif
     if systemctl is-active --quiet nginx.service; then
+        echo -e "\nNginx sudah aktif\m"
+        sleep 2
         nginxsetup
     # Cek apakah Apache sedang aktif
     elif systemctl is-active --quiet apache2.service; then
+        echo -e "\nApache sudah aktif\n"
+        sleep 2
         apachesetup
     else
         # Jika tidak terdapat Nginx atau Apache yang aktif, keluarkan pesan kesalahan
-        echo "Nginx atau Apache tidak sedang aktif pada sistem ini."
+        echo -e"\nNginx atau Apache tidak sedang aktif pada sistem ini. diharap install atau enable service\n"
+        sleep 3
+        clear
     fi
 }
 
 nginxsetup () {
     # Buat direktori untuk website files
     mkdir -p $DIRECTORY
+    echo -e "\nPembuatan Direktori webiste files Sukses\n"
+    sleep 1
 
     # Atur kepemilikan dan izin direktori
     chown -R www-data:www-data $DIRECTORY
     chmod -R 755 $DIRECTORY
+    echo -e "\nMengatur kepemilikan dan izin direktori Sukses\n"
+    sleep 1
 
     # Buat blok server Nginx
     cat > /etc/nginx/sites-available/$DOMAIN << EOF
@@ -92,21 +109,24 @@ server {
     }
 }
 EOF
+    echo -e "\nPembuatan blok server $DOMAIN Sukses\n"
+    sleep 1
 
     # Aktifkan blok server Nginx
     ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/
+    echo -e "\nMengaktifkan blok server $DOMAIN\n"
+    sleep 1
 
     # Uji konfigurasi Nginx
     nginx -t
+    echo -e "\nUji konfigurasi Nginx\n"
+    sleep 1
 
     # Restart Nginx
     systemctl restart nginx
-
-    # Uji konfigurasi Nginx
-    nginx -t
-
-    # Restart Nginx
-    systemctl restart nginx
+    echo -e "\nRestart Nginx\n"
+    sleep 1
+    clear
 
     echo "Apakah Anda ingin menginstal SSL untuk $DOMAIN? (y/n)"
     read install_ssl
@@ -117,6 +137,8 @@ EOF
     else
         echo -e "\nOK, anda masih tetap dapat menginstall SSL secara manual,\n"
         echo -e "Atau anda dapat menuju submenu apache no.4\n"
+        sleep 2
+        clear
     fi
 }
 
@@ -124,10 +146,14 @@ apachesetup(){
     # Buat direktori untuk website files
     mkdir -p $DIRECTORY
     mkdir -p $LOG
+    echo -e "\nPembuatan Direktori webiste files Sukses\n"
+    sleep 1
 
     # Atur kepemilikan dan izin direktori
     chown -R www-data:www-data $DIRECTORY
     chmod -R 755 $DIRECTORY
+    echo -e "\nMengatur kepemilikan dan izin direktori Sukses\n"
+    sleep 1
 
     # Buat blok Virtual Host Apache
     cat > /etc/apache2/sites-available/$DOMAIN.conf << EOF
@@ -150,24 +176,29 @@ apachesetup(){
     CustomLog ${APACHE_LOG_DIR}/$DOMAIN/access.log combined
 </VirtualHost>
 EOF
+    echo -e "\nPembuatan $DOMAIN.conf Sukses\n"
+    sleep 1
 
     # Aktifkan Virtual Host Apache
+    echo -e "\nMengaktifkan $DOMAIN.conf Apache\n"
+    sleep 1
     a2ensite $DOMAIN.conf
 
     # Disable default Virtual Host Apache
+    echo -e "\nDisable 000-default.conf\n"
+    sleep 1
     a2dissite 000-default.conf
-
-    # Uji konfigurasi Apache
-    apache2ctl config
-    
-    # Restart Apache
-    systemctl restart apache2
     
     # Uji konfigurasi Apache
+    echo -e "\nUji konfigurasi Apache\n"
+    sleep 1
     apache2ctl configtest
     
     # Restart Apache
+    echo -e "\nRestart Apache\n"
+    sleep 2
     systemctl restart apache2
+    clear
 
     echo "Apakah Anda ingin menginstal SSL untuk $DOMAIN? (y/n)"
     read install_ssl
@@ -187,13 +218,20 @@ EOF
 #   $2 - domain yang akan disertifikasi
 ssl_setup() {
     # Cek apakah Certbot sudah terinstal
+    echo -e "\ncek certbot\n"
+    sleep 1
     check_package "certbot" "install"
+    echo -e "\ncek ufw\n"
+    sleep 1
     check_package "ufw" "install"
+    ufw enable
 
     ufw allow 80
     ufw allow 443
     ufw allow 22
     ufw allow 9090
+    echo -e "\nSukses membuka Port 80,443,22,9090\n"
+    sleep 1
 
     # Cek apakah argumen pertama adalah apache
     if [ "$1" == "apache" ]; then
