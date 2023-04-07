@@ -52,7 +52,7 @@ domain_setup() {
     cek_php
     clear
     DIRECTORY="/var/www/$DOMAIN/public_html"
-    LOG="/var/log/apache/$DOMAIN"
+    LOG="/var/log/apache2/$DOMAIN"
 
     # Cek apakah Nginx sedang aktif
     if systemctl is-active --quiet nginx.service; then
@@ -78,7 +78,12 @@ nginxsetup () {
     echo -e "\nPembuatan Direktori webiste files Sukses\n"
     sleep 1
 
-     # Buat file php unuk test
+    # Buat file php untuk info
+    cat > $DIRECTORY/info.php << EOF
+    <?php phpinfo() ?>
+EOF
+
+    # Buat file php unuk test
     cat > $DIRECTORY/index.php << EOF
 <!DOCTYPE html>
 <html>
@@ -117,21 +122,26 @@ nginxsetup () {
 	</style>
 </head>
 <body>
-    <center>
-        <div class="container">
-            <h1>Verifikasi Domain Terinstall</h1>
-            <p>Selamat! Domain <span class="success">$DOMAIN</span> telah terinstall dengan sukses!</p>
-            <?php
-                if (function_exists('phpversion')) {
-                    echo '<p>Versi PHP yang terpasang adalah <span class="success">' . phpversion() . '</span>.</p>';
-                } else {
-                    echo '<p class="failure">PHP tidak terpasang pada server ini.</p>';
-                }
-            ?>
-            <p>Anda sekarang dapat memulai untuk mengembangkan website Anda.</p>
-            <p>Terima kasih telah memilih layanan autoinstaller kami.</p>
-        </div>
-    </center>
+	<div class="container">
+		<h1>Verifikasi Domain Terinstall</h1>
+		<p>Selamat! Domain <span class="success">$DOMAIN</span> telah terinstall dengan sukses!</p>
+		<?php
+			if (function_exists('phpversion')) {
+				echo '<p>Versi PHP yang terpasang adalah <span class="success">' . phpversion() . '</span>.</p>';
+			} else {
+				echo '<p class="failure">PHP tidak terpasang pada server ini.</p>';
+			}
+
+			if (function_exists('php_sapi_name') && (substr(php_sapi_name(), 0, 3) == 'fpm')) {
+				echo '<p>Versi FPM yang aktif adalah <span class="success">' . php_sapi_name() . '</span>.</p>';
+			} else {
+				echo '<p class="failure">FPM tidak terpasang atau tidak aktif pada server ini.</p>';
+			}
+		?>
+		<p>Anda sekarang dapat memulai untuk mengembangkan website Anda.</p>
+		<p>Jangan ragu untuk menghubungi kami jika Anda memerlukan bantuan.</p>
+		<p>Terima kasih telah memilih layanan kami.</p>
+	</div>
 </body>
 </html>
 EOF
@@ -209,7 +219,11 @@ apachesetup(){
     echo -e "\nPembuatan Direktori webiste files Sukses\n"
     sleep 1
 
-    # Buat file php unuk test
+    # Buat file php untuk info
+    cat > $DIRECTORY/info.php << EOF
+<?php phpinfo() ?>
+EOF
+    # Buat file php untuk test
     cat > $DIRECTORY/index.php << EOF
 <!DOCTYPE html>
 <html>
@@ -248,23 +262,29 @@ apachesetup(){
 	</style>
 </head>
 <body>
-    <center>
-        <div class="container">
-            <h1>Verifikasi Domain Terinstall</h1>
-            <p>Selamat! Domain <span class="success">$DOMAIN</span> telah terinstall dengan sukses!</p>
-            <?php
-                if (function_exists('phpversion')) {
-                    echo '<p>Versi PHP yang terpasang adalah <span class="success">' . phpversion() . '</span>.</p>';
-                } else {
-                    echo '<p class="failure">PHP tidak terpasang pada server ini.</p>';
-                }
-            ?>
-            <p>Anda sekarang dapat memulai untuk mengembangkan website Anda.</p>
-            <p>Terima kasih telah memilih layanan autoinstaller kami.</p>
-        </div>
-    </center>
+	<div class="container">
+		<h1>Verifikasi Domain Terinstall</h1>
+		<p>Selamat! Domain <span class="success">$DOMAIN</span> telah terinstall dengan sukses!</p>
+		<?php
+			if (function_exists('phpversion')) {
+				echo '<p>Versi PHP yang terpasang adalah <span class="success">' . phpversion() . '</span>.</p>';
+			} else {
+				echo '<p class="failure">PHP tidak terpasang pada server ini.</p>';
+			}
+
+			if (function_exists('php_sapi_name') && (substr(php_sapi_name(), 0, 3) == 'fpm')) {
+				echo '<p>Versi FPM yang aktif adalah <span class="success">' . php_sapi_name() . '</span>.</p>';
+			} else {
+				echo '<p class="failure">FPM tidak terpasang atau tidak aktif pada server ini.</p>';
+			}
+		?>
+		<p>Anda sekarang dapat memulai untuk mengembangkan website Anda.</p>
+		<p>Jangan ragu untuk menghubungi kami jika Anda memerlukan bantuan.</p>
+		<p>Terima kasih telah memilih layanan kami.</p>
+	</div>
 </body>
 </html>
+
 EOF
     echo -e "\nPembuatan Direktori webiste files Sukses\n"
     sleep 1
