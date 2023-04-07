@@ -47,14 +47,15 @@ domain_setup() {
     DIRECTORY="/var/www/$DOMAIN/public_html"
     LOG="/var/log/apache/$DOMAIN"
 
-    # Cek apakah Apache atau Nginx terpasang pada sistem
-    if [[ $(dpkg -l | grep -w nginx | wc -l) -eq 1 ]]; then
+    # Cek apakah Nginx sedang aktif
+    if systemctl is-active --quiet nginx.service; then
         nginxsetup
-    elif [[ $(dpkg -l | grep -w apache2 | wc -l) -eq 1 ]]; then
+    # Cek apakah Apache sedang aktif
+    elif systemctl is-active --quiet apache2.service; then
         apachesetup
     else
-        # Jika tidak terdapat Nginx atau Apache, keluarkan pesan kesalahan
-        echo "Nginx atau Apache tidak terpasang pada sistem ini."
+        # Jika tidak terdapat Nginx atau Apache yang aktif, keluarkan pesan kesalahan
+        echo "Nginx atau Apache tidak sedang aktif pada sistem ini."
     fi
 }
 
