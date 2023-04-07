@@ -219,6 +219,12 @@ apachesetup(){
     echo -e "\nPembuatan Direktori webiste files Sukses\n"
     sleep 1
 
+    # Buat file access.log dan error.log untuk log apache2
+    cat > $LOG/access.log
+    cat > $LOG/error.log
+    echo -e "\nPembuatan file log apache2 Sukses\n"
+    sleep 1
+
     # Buat file php untuk info
     cat > $DIRECTORY/info.php << EOF
 <?php phpinfo() ?>
