@@ -232,15 +232,25 @@ cek_php() {
   esac
   return 0
 }
+
 # Fungsi untuk tambah file log
 addlog () {
-    # Buat file access.log dan error.log untuk log apache2
-    echo -n "" | cat > $LOG/access.log
-    echo -n "" | cat > $LOG/error.log
-    echo -e "\nPembuatan file log apache2 Sukses"
-    sleep 1
+    # Membuat direktori log untuk domain
+    sudo mkdir -p $LOG
+
+    # Membuat file access.log dan error/log
+    sudo touch $LOG/access.log
+    sudo touch $LOG/error.log
+
+    # Mengubah kepemilikan dan izin direktori log
+    sudo chown -R www-data:www-data $LOG
+    sudo chmod -R 775 $LOG
+
+    echo -e "\nDirektori file log apache2 untuk $DOMAIN telah berhasil dibuat.\n"
+    sleep 2
 }
 
+# Fungsi untuk tambah file index.php
 addfile () {
     # fungsi membuat file php unuk test
     echo -n "<!DOCTYPE html>
@@ -307,11 +317,13 @@ addfile () {
     sleep 1
 }
 
+# Fungsi untuk tambah file info.php
 addinfo () {
     # fungsi untuk membuat file php untuk info
     echo -n "<?php phpinfo() ?>" | cat > $DIRECTORY/info.php
 }
 
+# Fungsi untuk manage vhost webserver
 manage_vhost () {
   if [[ $1 == "nginx" ]]; then
     # Buat blok server Nginx
@@ -357,8 +369,9 @@ manage_vhost () {
 </VirtualHost>" | cat > /etc/apache2/sites-available/$DOMAIN.conf
     
     # Tambah untuk php fpm
-    isi="    <FilesMatch \\.php$>\n\tSetHandler \"proxy:unix:/run/php/$versi_terpilih.sock|fcgi://localhost/\"\n    </FilesMatch>"
-    sed -i '12s/.*/'"$isi"'/' /etc/apache2/sites-available/$DOMAIN.conf
+    #isi="    <FilesMatch \\.php$>\n\tSetHandler \"proxy:unix:/run/php/$versi_terpilih.sock|fcgi://localhost/\"\n    </FilesMatch>"
+    sudo sed -i '12s/.*/'"    <FilesMatch \\.php$>\n\tSetHandler \"proxy:unix:/run/php/$versi_terpilih.sock|fcgi://localhost/\"\n    </FilesMatch>"'/' /etc/apache2/sites-available/$DOMAIN.conf
+    sleep 4
   fi
 }
 
