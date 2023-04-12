@@ -45,8 +45,8 @@ nginxsetup () {
     sleep 1
 
     # call fungsi addvhost Nginx
-    addvhostnginx
-
+    manage_vhost "nginx"
+    
     # Aktifkan blok server Nginx
     ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/
     echo -e "\nMengaktifkan blok server $DOMAIN\n"
@@ -100,7 +100,7 @@ apachesetup(){
     sleep 1
 
     # call fungsi addfile
-    addvhostapache2
+    manage_vhost "apache2"
 
     # Aktifkan Virtual Host Apache
     echo -e "\nMengaktifkan $DOMAIN.conf Apache"
