@@ -1,50 +1,3 @@
-# Fungsi untuk mengecek apakah PHP-FPM telah terpasang dan mengembalikan versi yang terpasang
-function cek_php() {
-  # Cek layanan PHP-FPM yang aktif
-  versi=$(systemctl list-units --type=service | grep 'fpm' | grep 'active' | awk '{print $1}' | sed 's/\.service//g')
-
-  # Tampilkan daftar versi PHP-FPM yang aktif
-  if [[ -n "$versi" ]]; then
-    echo -e "\nDaftar Versi PHP-FPM yang aktif: $versi\n"
-    sleep 2
-    clear
-  else
-    echo -e"\nTidak ada layanan PHP-FPM yang tersedia, Install dulu\n"
-    sleep 2
-    clear
-    exit 0
-  fi
-
-  # Tampilkan menu pilihan
-  echo -e"\nPilih versi PHP-FPM yang akan digunakan:"
-
-  # Pisahkan daftar versi PHP-FPM menjadi array
-  IFS=' ' read -ra versi_arr <<< "$versi"
-
-  # Loop untuk menampilkan pilihan menu
-  for i in "${!versi_arr[@]}"; do
-      echo "$((i+1)). ${versi_arr[i]}"
-  done
-
-  # Ambil pilihan dari pengguna
-  read -p "Masukkan pilihan: " pilihan
-
-  # Validasi pilihan menggunakan pernyataan case
-  case "$pilihan" in
-      [1-9]|10)
-          versi_terpilih="${versi_arr[$pilihan-1]}"
-          echo "Versi PHP-FPM yang dipilih: $versi_terpilih"
-          ;;
-      *)
-          echo "Pilihan tidak valid"
-          sleep 2
-          clear
-          return 1
-          ;;
-  esac
-  return 0
-}
-
 # Fungsi untuk setup domain dengan Nginx atau Apache dan memperoleh sertifikat SSL dari Let's Encrypt
 domain_setup() {
     read -p "Masukkan nama domain kamu :" DOMAIN
@@ -72,81 +25,18 @@ domain_setup() {
     fi
 }
 
+# Fungsi untuk manajemen config Nginx
 nginxsetup () {
     # Buat direktori untuk website files
     mkdir -p $DIRECTORY
     echo -e "\nPembuatan Direktori webiste files Sukses\n"
     sleep 1
 
-    # Buat file php untuk info
-    cat > $DIRECTORY/info.php << EOF
-    <?php phpinfo() ?>
-EOF
+    #call fungsi addinfo
+    addinfo
 
-    # Buat file php unuk test
-    cat > $DIRECTORY/index.php << EOF
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Verifikasi Domain Terinstall</title>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			background-color: #f7f7f7;
-			margin: 0;
-			padding: 0;
-		}
-		.container {
-			max-width: 800px;
-			margin: 0 auto;
-			padding: 20px;
-		}
-		h1 {
-			text-align: center;
-			color: #4CAF50;
-		}
-		p {
-			font-size: 18px;
-			line-height: 1.5;
-			color: #333;
-			margin-bottom: 20px;
-		}
-		.success {
-			color: #4CAF50;
-			font-weight: bold;
-		}
-		.failure {
-			color: #F44336;
-			font-weight: bold;
-		}
-	</style>
-</head>
-<body>
-	<div class="container">
-		<h1>Verifikasi Domain Terinstall</h1>
-		<p>Selamat! Domain <span class="success">$DOMAIN</span> telah terinstall dengan sukses!</p>
-		<?php
-			if (function_exists('phpversion')) {
-				echo '<p>Versi PHP yang terpasang adalah <span class="success">' . phpversion() . '</span>.</p>';
-			} else {
-				echo '<p class="failure">PHP tidak terpasang pada server ini.</p>';
-			}
-
-			if (function_exists('php_sapi_name') && (substr(php_sapi_name(), 0, 3) == 'fpm')) {
-				echo '<p>Versi FPM yang aktif adalah <span class="success">' . php_sapi_name() . '</span>.</p>';
-			} else {
-				echo '<p class="failure">FPM tidak terpasang atau tidak aktif pada server ini.</p>';
-			}
-		?>
-		<p>Anda sekarang dapat memulai untuk mengembangkan website Anda.</p>
-		<p>Jangan ragu untuk menghubungi kami jika Anda memerlukan bantuan.</p>
-		<p>Terima kasih telah memilih layanan kami.</p>
-	</div>
-</body>
-</html>
-EOF
-    echo -e "\nPembuatan Direktori webiste files Sukses\n"
-    sleep 1
+    # call fungsi addfile
+    addfile
 
     # Atur kepemilikan dan izin direktori
     chown -R www-data:www-data $DIRECTORY
@@ -154,33 +44,8 @@ EOF
     echo -e "\nMengatur kepemilikan dan izin direktori Sukses\n"
     sleep 1
 
-    # Buat blok server Nginx
-    cat > /etc/nginx/sites-available/$DOMAIN << EOF
-server {
-    listen 80;
-    listen [::]:80;
-
-    root $DIRECTORY;
-    index index.php index.html index.htm;
-
-    server_name $DOMAIN www.$DOMAIN;
-
-    location / {
-        try_files \$uri \$uri/ /index.php?\$args;
-    }
-
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/run/php/$versi_terpilih.sock;
-    }
-
-    location ~ /\.ht {
-        deny all;
-    }
-}
-EOF
-    echo -e "\nPembuatan blok server $DOMAIN Sukses\n"
-    sleep 1
+    # call fungsi addvhost Nginx
+    addvhostnginx
 
     # Aktifkan blok server Nginx
     ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/
@@ -212,93 +77,21 @@ EOF
     fi
 }
 
+# Fungsi untuk manajemen config Apache2
 apachesetup(){
     # Buat direktori untuk website files
     mkdir -p $DIRECTORY
-    mkdir -p $LOG
-    chown -R root:adm $LOG
     echo -e "\nPembuatan Direktori webiste files Sukses"
     sleep 1
 
-    # Buat file access.log dan error.log untuk log apache2
-    cat > $LOG/access.log<< EOF
+    #call fungsi addlog
+    addlog
 
-EOF
-    cat > $LOG/error.log<< EOF
+    #call fungsi addinfo
+    addinfo
 
-EOF
-    echo -e "\nPembuatan file log apache2 Sukses"
-    sleep 1
-
-    # Buat file php untuk info
-    cat > $DIRECTORY/info.php << EOF
-<?php phpinfo() ?>
-EOF
-    # Buat file php untuk test
-    cat > $DIRECTORY/index.php << EOF
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Verifikasi Domain Terinstall</title>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			background-color: #f7f7f7;
-			margin: 0;
-			padding: 0;
-		}
-		.container {
-			max-width: 800px;
-			margin: 0 auto;
-			padding: 20px;
-		}
-		h1 {
-			text-align: center;
-			color: #4CAF50;
-		}
-		p {
-			font-size: 18px;
-			line-height: 1.5;
-			color: #333;
-			margin-bottom: 20px;
-		}
-		.success {
-			color: #4CAF50;
-			font-weight: bold;
-		}
-		.failure {
-			color: #F44336;
-			font-weight: bold;
-		}
-	</style>
-</head>
-<body>
-	<div class="container">
-		<h1>Verifikasi Domain Terinstall</h1>
-		<p>Selamat! Domain <span class="success">$DOMAIN</span> telah terinstall dengan sukses!</p>
-		<?php
-			if (function_exists('phpversion')) {
-				echo '<p>Versi PHP yang terpasang adalah <span class="success">' . phpversion() . '</span>.</p>';
-			} else {
-				echo '<p class="failure">PHP tidak terpasang pada server ini.</p>';
-			}
-
-			if (function_exists('php_sapi_name') && (substr(php_sapi_name(), 0, 3) == 'fpm')) {
-				echo '<p>Versi FPM yang aktif adalah <span class="success">' . php_sapi_name() . '</span>.</p>';
-			} else {
-				echo '<p class="failure">FPM tidak terpasang atau tidak aktif pada server ini.</p>';
-			}
-		?>
-		<p>Anda sekarang dapat memulai untuk mengembangkan website Anda.</p>
-		<p>Jangan ragu untuk menghubungi kami jika Anda memerlukan bantuan.</p>
-		<p>Terima kasih telah memilih layanan kami.</p>
-	</div>
-</body>
-</html>
-
-EOF
-    echo -e "\nPembuatan Direktori webiste files Sukses"
-    sleep 1
+    # call fungsi addfile
+    addfile
 
     # Atur kepemilikan dan izin direktori
     chown -R www-data:www-data $DIRECTORY
@@ -306,29 +99,8 @@ EOF
     echo -e "\nMengatur kepemilikan dan izin direktori Sukses"
     sleep 1
 
-    # Buat blok Virtual Host Apache
-    cat > /etc/apache2/sites-available/$DOMAIN.conf << EOF
-<VirtualHost *:80>
-    ServerName $DOMAIN
-    ServerAlias www.$DOMAIN
-    DocumentRoot $DIRECTORY
-
-    <Directory $DIRECTORY>
-        Options -Indexes +FollowSymLinks
-        AllowOverride All
-        Require all granted
-    </Directory>
-
-    <FilesMatch \.php$>
-        SetHandler "proxy:unix:/run/php/$versi_terpilih.sock|fcgi://localhost/"
-    </FilesMatch>
-
-    ErrorLog ${APACHE_LOG_DIR}/$DOMAIN/error.log
-    CustomLog ${APACHE_LOG_DIR}/$DOMAIN/access.log combined
-</VirtualHost>
-EOF
-    echo -e "\nPembuatan $DOMAIN.conf Sukses"
-    sleep 1
+    # call fungsi addfile
+    addvhostapache2
 
     # Aktifkan Virtual Host Apache
     echo -e "\nMengaktifkan $DOMAIN.conf Apache"
@@ -344,6 +116,11 @@ EOF
     echo -e "\nUji konfigurasi Apache"
     sleep 1
     apache2ctl configtest
+    
+    # Set fcgi FPM
+    echo -e "\nUji konfigurasi Apache"
+    sleep 1
+    a2enmod proxy_fcgi setenvif
     
     # Restart Apache
     echo -e "\nRestart Apache"
@@ -381,7 +158,8 @@ ssl_setup() {
     ufw allow 443
     ufw allow 22
     ufw allow 9090
-    echo -e "\nSukses membuka Port 80,443,22,9090\n"
+    ufw allow 3000
+    echo -e "\nSukses membuka Port 80,443,22,9090,3000\n"
     sleep 1
 
     # Cek apakah argumen pertama adalah apache
@@ -407,3 +185,183 @@ ssl_setup() {
         echo "Usage: sslsetup [apache|nginx] [domain]"
     fi
 }
+
+# Fungsi untuk mengecek apakah PHP-FPM telah terpasang dan mengembalikan versi yang terpasang
+cek_php() {
+  # Cek layanan PHP-FPM yang aktif
+  versi=$(systemctl list-units --type=service | grep 'fpm' | grep 'active' | awk '{print $1}' | sed 's/\.service//g')
+
+  # Tampilkan daftar versi PHP-FPM yang aktif
+  if [[ -n "$versi" ]]; then
+    echo -e "\nLayanan PHP-FPM tersedia\n"
+    sleep 2
+    clear
+  else
+    echo -e"\nTidak ada layanan PHP-FPM yang tersedia, Install dahulu\n"
+    sleep 2
+    clear
+    exit 0
+  fi
+
+  # Tampilkan menu pilihan
+  echo -e"\nPilih versi PHP-FPM yang akan digunakan:"
+
+  # Pisahkan daftar versi PHP-FPM menjadi array
+  IFS=' ' read -ra versi_arr <<< "$versi"
+
+  # Loop untuk menampilkan pilihan menu
+  for i in "${!versi_arr[@]}"; do
+      echo "$((i+1)). ${versi_arr[i]}"
+  done
+
+  # Ambil pilihan dari pengguna
+  read -p "Masukkan pilihan: " pilihan
+
+  # Validasi pilihan menggunakan pernyataan case
+  case "$pilihan" in
+      [1-9]|10)
+          versi_terpilih="${versi_arr[$pilihan-1]}"
+          echo "Versi PHP-FPM yang dipilih: $versi_terpilih"
+          ;;
+      *)
+          echo "Pilihan tidak valid"
+          sleep 2
+          clear
+          return 1
+          ;;
+  esac
+  return 0
+}
+# Fungsi untuk tambah file log
+addlog () {
+    # Buat file access.log dan error.log untuk log apache2
+    echo -n "" | cat > $LOG/access.log
+    echo -n "" | cat > $LOG/error.log
+    echo -e "\nPembuatan file log apache2 Sukses"
+    sleep 1
+}
+
+addfile () {
+    # fungsi membuat file php unuk test
+    echo -n "<!DOCTYPE html>
+<html>
+<head>
+	<title>Verifikasi Domain Terinstall</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f7f7f7;
+			margin: 0;
+			padding: 0;
+		}
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+		h1 {
+			text-align: center;
+			color: #4CAF50;
+		}
+		p {
+			font-size: 18px;
+			line-height: 1.5;
+			color: #333;
+			margin-bottom: 20px;
+		}
+		.success {
+			color: #4CAF50;
+			font-weight: bold;
+		}
+		.failure {
+			color: #F44336;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Verifikasi Domain Terinstall</h1>
+		<p>Selamat! Domain <span class="success">$DOMAIN</span> telah terinstall dengan sukses!</p>
+		<?php
+			if (function_exists('phpversion')) {
+				echo '<p>Versi PHP yang terpasang adalah <span class="success">' . phpversion() . '</span>.</p>';
+			} else {
+				echo '<p class="failure">PHP tidak terpasang pada server ini.</p>';
+			}
+
+			if (function_exists('php_sapi_name') && (substr(php_sapi_name(), 0, 3) == 'fpm')) {
+				echo '<p>Versi FPM yang aktif adalah <span class="success">' . php_sapi_name() . '</span>.</p>';
+			} else {
+				echo '<p class="failure">FPM tidak terpasang atau tidak aktif pada server ini.</p>';
+			}
+		?>
+		<p>Anda sekarang dapat memulai untuk mengembangkan website Anda.</p>
+		<p>Jangan ragu untuk menghubungi kami jika Anda memerlukan bantuan.</p>
+		<p>Terima kasih telah memilih layanan kami.</p>
+	</div>
+</body>
+</html>" | cat > $DIRECTORY/index.php
+
+    echo -e "\nPembuatan Direktori webiste files Sukses"
+    sleep 1
+}
+
+addinfo () {
+    # fungsi untuk membuat file php untuk info
+    echo -n "<?php phpinfo() ?>" | cat > $DIRECTORY/info.php
+}
+
+manage_vhost () {
+  if [[ $1 == "nginx" ]]; then
+    # Buat blok server Nginx
+    echo -n "server {
+    listen 80;
+    listen [::]:80;
+
+    root $DIRECTORY;
+    index index.php index.html index.htm;
+
+    server_name $DOMAIN www.$DOMAIN;
+
+    location / {
+        try_files \$uri \$uri/ /index.php?\$args;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/$versi_terpilih.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}" | cat > /etc/nginx/sites-available/$DOMAIN
+  elif [[ $1 == "apache2" ]]; then
+    # Buat Virtual Host Apache
+    echo -n "<VirtualHost *:80>
+    ServerName $DOMAIN
+    ServerAlias www.$DOMAIN
+    DocumentRoot $DIRECTORY
+
+    <Directory $DIRECTORY>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+
+
+    ErrorLog ${APACHE_LOG_DIR}/$DOMAIN._error.log
+    CustomLog ${APACHE_LOG_DIR}/$DOMAIN._access.log combined
+</VirtualHost>" | cat > /etc/apache2/sites-available/$DOMAIN.conf
+    
+    # Tambah untuk php fpm
+    isi="    <FilesMatch \\.php$>\n\tSetHandler \"proxy:unix:/run/php/$versi_terpilih.sock|fcgi://localhost/\"\n    </FilesMatch>"
+    sed -i '12s/.*/'"$isi"'/' /etc/apache2/sites-available/$DOMAIN.conf
+  fi
+}
+
+# Contoh penggunaan
+# manage_vhost "apache2"  # Menambahkan virtual host Apache
+# manage_vhost "nginx"   # Menambahkan virtual host Nginx
