@@ -203,7 +203,7 @@ cek_php() {
   fi
 
   # Tampilkan menu pilihan
-  echo -e"\nPilih versi PHP-FPM yang akan digunakan:"
+  echo -e "\n\nPilih versi PHP-FPM yang akan digunakan:"
 
   # Pisahkan daftar versi PHP-FPM menjadi array
   IFS=' ' read -ra versi_arr <<< "$versi"
