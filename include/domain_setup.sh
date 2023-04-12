@@ -46,7 +46,7 @@ nginxsetup () {
 
     # call fungsi addvhost Nginx
     manage_vhost "nginx"
-    
+
     # Aktifkan blok server Nginx
     ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/
     echo -e "\nMengaktifkan blok server $DOMAIN\n"
@@ -191,7 +191,6 @@ cek_php() {
   # Cek layanan PHP-FPM yang aktif
   versi=$(systemctl list-units --type=service | grep 'fpm' | grep 'active' | awk '{print $1}' | sed 's/\.service//g')
 
-  # Tampilkan daftar versi PHP-FPM yang aktif
   if [[ -n "$versi" ]]; then
     echo -e "\nLayanan PHP-FPM tersedia\n"
     sleep 2
@@ -221,10 +220,11 @@ cek_php() {
   case "$pilihan" in
       [1-9]|10)
           versi_terpilih="${versi_arr[$pilihan-1]}"
-          echo "Versi PHP-FPM yang dipilih: $versi_terpilih"
+          echo -e "\nVersi PHP-FPM yang dipilih: $versi_terpilih"
           ;;
       *)
-          echo "Pilihan tidak valid"
+          clear
+          echo -e "\nPilihan tidak valid"
           sleep 2
           clear
           return 1
