@@ -367,6 +367,10 @@ manage_vhost () {
     ErrorLog ${APACHE_LOG_DIR}/$DOMAIN._error.log
     CustomLog ${APACHE_LOG_DIR}/$DOMAIN._access.log combined
 </VirtualHost>" | cat > /etc/apache2/sites-available/$DOMAIN.conf
+
+    echo -e "\nFile vhost $DOMAIN.conf sukses dibuat"
+    echo -e "\n$versi_terpilih"
+    sleep 4
     
     # Tambah untuk php fpm
     #isi="    <FilesMatch \\.php$>\n\tSetHandler \"proxy:unix:/run/php/$versi_terpilih.sock|fcgi://localhost/\"\n    </FilesMatch>"
