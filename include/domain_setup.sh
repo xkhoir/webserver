@@ -303,7 +303,7 @@ addfile () {
 </body>
 </html>" | cat > $DIRECTORY/index.php
 
-    echo -e "\nPembuatan Direktori webiste files Sukses"
+    echo -e "\nPembuatan Direktori website files Sukses"
     sleep 1
 }
 
