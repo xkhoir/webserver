@@ -313,16 +313,21 @@ manage_vhost () {
 
 
 
-    ErrorLog ${APACHE_LOG_DIR}/$DOMAIN/error.log
-    CustomLog ${APACHE_LOG_DIR}/$DOMAIN/access.log combined
+
+
+
 </VirtualHost>" | cat > /etc/apache2/sites-available/$DOMAIN.conf
 
     echo -e "\nFile vhost $DOMAIN.conf sukses dibuat"
     sleep 4
     
-    # Tambah untuk php fpm
+    # Tambah untuk conf fpm apache
     sudo sed -i '13s/.*/    <FilesMatch \\.php$>\n\tSetHandler "proxy:unix:\/run\/php\/'$versi_terpilih'.sock|fcgi:\/\/localhost\/"\n    <\/FilesMatch>/' /etc/apache2/sites-available/$DOMAIN.conf
-    sleep 4
+    # Tambah untuk conf log apache
+    sudo sed -i "/^<\/VirtualHost>/i \
+    \tErrorLog \${APACHE_LOG_DIR}\\/$DOMAIN\\/error.log\n\
+    \tCustomLog \${APACHE_LOG_DIR}\\/$DOMAIN\\/access.log combined" /etc/apache2/sites-available/$DOMAIN.conf
+
   fi
 }
 
