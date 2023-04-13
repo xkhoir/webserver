@@ -74,10 +74,10 @@
                 <td><?php echo $_SERVER['DOCUMENT_ROOT']; ?></td>
             </tr>
             <tr>
-                <td><strong>Document Log</strong></td>
                 <?php
                 if (strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
                     // Jika web server adalah Apache, tampilkan kode yang diinginkan di sini
+                    echo "<td><strong>Document Log</strong></td>";
                     echo "<td>RLOG/(access.log & error.log)</td>";
                 }
                 ?>
