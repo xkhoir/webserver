@@ -2,15 +2,19 @@
 <html>
 
 <head>
-    <title>Result vhost autoinstaller page</title>
+    <title>Result autoinstaller page</title>
     <style>
+    .background {
+        background-color: blue;
+    }
+
     .container {
         margin: auto;
         width: 60%;
         border: 1px solid #ccc;
         padding: 20px;
         border-radius: 10px;
-        box-shadow: 2px 2px 5px #ccc;
+        box-shadow: 6px 6px 10px #ccc;
     }
 
     .table {
@@ -44,19 +48,20 @@
         background-color: #e6e6e6;
     }
 
-    .warning {
+    .danger {
         color: red;
     }
 
     .success {
-        color: green;
+        color: #47d147;
     }
     </style>
 </head>
 
 <body>
     <div class="container rounded">
-        <h2 style="text-align: center;">Selamat! Domain <span class="success">RDOMAIN</span> sukses terinstall</h2>
+        <h2 style="text-align: center;">Result autoinstaller page</h2>
+        <h3 style="text-align: center;">Domain <span class="success">RDOMAIN</span> telah terinstall</h3>
         <table class="table">
             <tr>
                 <th colspan="2">Web Server</th>
@@ -100,7 +105,7 @@
                     echo "<td class='success'>" . $version . "</td>";
                 } else {
                     // Jika string 'PHP' tidak ditemukan dalam output, tampilkan pesan bahwa PHP tidak terinstall di dalam tag HTML <td> dengan atribut colspan="2"
-                    echo "<td class='warning'>Tidak/Belum Terinstall.</td>";
+                    echo "<td class='danger'>Tidak/Belum Terinstall.</td>";
                 }
                 ?>
             </tr>
@@ -116,15 +121,16 @@
                         $class = 'success';
                       } else {
                         $status = 'Tidak/Belum Aktif';
-                        $class = 'warning';
+                        $class = 'danger';
                       }
                       
                       echo '<td class="' . $class . '">' . $status . '</td>';
                 ?>
             </tr>
         </table>
-        <p style="text-align: center;">Kembangkan website Anda di Document Root</p>
-        <p style="text-align: center;">Terima kasih telah memilih layanan Auto Domain Installer xkhoirtech.</p>
+        <p style="text-align: center;">Kembangkan website Anda di path Document Root</p>
+        <p style="text-align: center;">Terima kasih telah memakai layanan Domain to vhost AutoInstaller.</p>
+        <p style="text-align: center;">xkhoirtech.</p>
     </div>
 </body>
 
