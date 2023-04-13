@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Result vhost installer page</title>
+    <title>Result vhost autoinstaller page</title>
     <style>
     .container {
         margin: auto;
@@ -123,7 +123,7 @@
                 ?>
             </tr>
         </table>
-        <p style="text-align: center;">Kengembangkan website Anda di Document Root</p>
+        <p style="text-align: center;">Kembangkan website Anda di Document Root</p>
         <p style="text-align: center;">Terima kasih telah memilih layanan Auto Domain Installer xkhoirtech.</p>
     </div>
 </body>

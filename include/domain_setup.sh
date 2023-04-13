@@ -162,7 +162,7 @@ ssl_setup() {
     # Cek apakah Certbot sudah terinstal
     echo -e "\ncek certbot"
     sleep 1
-    check_package "certbot" "install"
+    check_package "certbot python3-certbot-apache" "install"
     echo -e "\ncek ufw"
     sleep 1
     check_package "ufw" "install"
