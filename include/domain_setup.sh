@@ -105,7 +105,7 @@ apachesetup(){
     #mengganti kata "RLOG" pada baris ke-78 dari file "index.php" dengan nilai dari variabel $LOG.
     sed -i "s#RLOG#$LOG#g" $DIRECTORY/index.php
     #mengganti kata "php-fpm7.4" pada baris ke-106 dari file "index.php" dengan nilai dari variabel $versi_terpilih.
-    sed -i "s#-fpm#$versi_terpilih-fpm#g" $DIRECTORY/index.php
+    sed -i "s#php-fpm#$versi_terpilih#g" $DIRECTORY/index.php
 
     # Atur kepemilikan dan izin direktori
     chown -R www-data:www-data $DIRECTORY
