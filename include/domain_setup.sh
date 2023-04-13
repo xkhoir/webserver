@@ -110,9 +110,9 @@ apachesetup(){
     #mengganti kata "RDOMAIN" pada baris ke-56 dari file "index.php" dengan nilai dari variabel $DOMAIN.
     sed -i "s/RDOMAIN/$new/g" $DIRECTORY/index.php
     #mengganti kata "RLOG" pada baris ke-78 dari file "index.php" dengan nilai dari variabel $LOG.
-    sed -i "s/RDOMAIN/$new1/g" $DIRECTORY/index.php
+    sed -i "s/RLOG/$new1/g" $DIRECTORY/index.php
     #mengganti kata "php-fpm7.4" pada baris ke-106 dari file "index.php" dengan nilai dari variabel $versi_terpilih.
-    sed -i "s/RDOMAIN/$new2/g" $DIRECTORY/index.php
+    sed -i "s/php-fpm7.4/$new2/g" $DIRECTORY/index.php
 
 
     # Atur kepemilikan dan izin direktori
