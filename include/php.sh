@@ -19,7 +19,7 @@ manage_php() {
 
   if [ "$action" == "uninstall" ]; then
     a2dismod proxy_fcgi setenvif
-    a2disconf $package-fpm //ganti sesuai versi php yang diinstall
+    a2disconf $package-fpm
     # Uninstall PHP & ekstensi
     for ext in "${extensions[@]}"; do
       ext_package="$package-$ext"
@@ -41,7 +41,7 @@ manage_php() {
       check_package "$ext_package" "install"
     done
     a2enmod proxy_fcgi setenvif
-    a2enconf $package-fpm //ganti sesuai versi php yang diinstall
+    a2enconf $package-fpm
   else
     echo "Perintah tidak valid."
   fi

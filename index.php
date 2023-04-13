@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>PHP Info</title>
+    <title>Result vhost installer page</title>
     <style>
     .container {
         margin: auto;

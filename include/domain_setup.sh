@@ -103,16 +103,16 @@ apachesetup(){
     cp index.php $DIRECTORY
 
     #variabel to string
-    new="$DOMAIN"
-    new1="$LOG"
-    new2="$versi_terpilih"
+    # new="$DOMAIN"
+    # new1="$LOG"
+    # new2="$versi_terpilih"
 
     #mengganti kata "RDOMAIN" pada baris ke-56 dari file "index.php" dengan nilai dari variabel $DOMAIN.
-    sed -i "s/RDOMAIN/$new/g" $DIRECTORY/index.php
+    sed -i "s#RDOMAIN#$DOMAIN#g" $DIRECTORY/index.php
     #mengganti kata "RLOG" pada baris ke-78 dari file "index.php" dengan nilai dari variabel $LOG.
-    sed -i "s/RLOG/$new1/g" $DIRECTORY/index.php
+    sed -i "s#RLOG#$LOG#g" $DIRECTORY/index.php
     #mengganti kata "php-fpm7.4" pada baris ke-106 dari file "index.php" dengan nilai dari variabel $versi_terpilih.
-    sed -i "s/php-fpm7.4/$new2/g" $DIRECTORY/index.php
+    sed -i "s#php-fpm7.4#$versi_terpilih#g" $DIRECTORY/index.php
 
 
     # Atur kepemilikan dan izin direktori
@@ -272,74 +272,6 @@ addlog () {
     sleep 2
 }
 
-# Fungsi untuk tambah file index.php
-addfile () {
-    # fungsi membuat file php unuk test
-    echo -n "<!DOCTYPE html>
-<html>
-<head>
-	<title>Domain Auto Installer</title>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			background-color: #f7f7f7;
-			margin: 0;
-			padding: 0;
-		}
-		.container {
-			max-width: 800px;
-			margin: 0 auto;
-			padding: 20px;
-		}
-		h1 {
-			text-align: center;
-			color: #4CAF50;
-		}
-		p {
-			font-size: 18px;
-			line-height: 1.5;
-			color: #333;
-			margin-bottom: 20px;
-		}
-		.success {
-			color: #4CAF50;
-			font-weight: bold;
-		}
-		.failure {
-			color: #F44336;
-			font-weight: bold;
-		}
-	</style>
-</head>
-<body>
-    <center>
-        <div class="container">
-            <h1>Selamat! Domain <span class="success">$DOMAIN</span> sukses terinstall</h1>
-            <?php
-                if (function_exists('phpversion')) {
-                    echo '<p>Versi PHP yang terpasang adalah <span class="success">' . phpversion() . '</span>.</p>';
-                } else {
-                    echo '<p class="failure">PHP tidak terpasang pada server ini.</p>';
-                }
-
-                if (function_exists('php_sapi_name') && (substr(php_sapi_name(), 0, 3) == 'fpm')) {
-                    echo '<p>Modul <span class="success">' . php_sapi_name() . '</span> telah aktif.</p>';
-                } else {
-                    echo '<p class="failure">Modul FPM tidak terpasang atau tidak aktif.</p>';
-                }
-            ?>
-            <p>Anda sekarang dapat memulai untuk mengembangkan website Anda.</p>
-            <p>Jangan ragu untuk menghubungi kami jika Anda memerlukan bantuan.</p>
-            <p>Terima kasih telah memilih layanan kami.</p>
-        </div>
-    </center>
-</body>
-</html>" | cat > $DIRECTORY/index.php
-
-    echo -e "\nPembuatan Direktori website files Sukses"
-    sleep 1
-}
-
 # Fungsi untuk tambah file info.php
 addinfo () {
     # fungsi untuk membuat file php untuk info
@@ -388,16 +320,15 @@ manage_vhost () {
 
 
 
-    ErrorLog ${APACHE_LOG_DIR}/$DOMAIN._error.log
-    CustomLog ${APACHE_LOG_DIR}/$DOMAIN._access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/$DOMAIN/error.log
+    CustomLog ${APACHE_LOG_DIR}/$DOMAIN/access.log combined
 </VirtualHost>" | cat > /etc/apache2/sites-available/$DOMAIN.conf
 
     echo -e "\nFile vhost $DOMAIN.conf sukses dibuat"
-    echo -e "\n$versi_terpilih"
     sleep 4
     
     # Tambah untuk php fpm
-    sudo sed -i '12s/.*/    <FilesMatch \\.php$>\n\tSetHandler "proxy:unix:\/run\/php\/'$versi_terpilih'.sock|fcgi:\/\/localhost\/"\n    <\/FilesMatch>/' /etc/apache2/sites-available/$DOMAIN.conf
+    sudo sed -i '13s/.*/    <FilesMatch \\.php$>\n\tSetHandler "proxy:unix:\/run\/php\/'$versi_terpilih'.sock|fcgi:\/\/localhost\/"\n    <\/FilesMatch>/' /etc/apache2/sites-available/$DOMAIN.conf
     sleep 4
   fi
 }
