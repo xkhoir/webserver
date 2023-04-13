@@ -324,7 +324,9 @@ manage_vhost () {
     # Tambah untuk conf fpm apache
     sudo sed -i '13s/.*/    <FilesMatch \\.php$>\n\tSetHandler "proxy:unix:\/run\/php\/'$versi_terpilih'.sock|fcgi:\/\/localhost\/"\n    <\/FilesMatch>/' /etc/apache2/sites-available/$DOMAIN.conf
     # Tambah untuk conf log apache
-    sudo sed -i "/^<\/VirtualHost>/i \ \ErrorLog \${APACHE_LOG_DIR}\ \/$DOMAIN\ \/error.log\n\ \tCustomLog \${APACHE_LOG_DIR}\\/$DOMAIN\\/access.log combined" /etc/apache2/sites-available/$DOMAIN.conf
+    sudo sed -i "/^<\/VirtualHost>/i \
+    \    ErrorLog \${APACHE_LOG_DIR}\\/$DOMAIN\\/error.log\n\
+    CustomLog \${APACHE_LOG_DIR}\\/$DOMAIN\\/access.log combined" /etc/apache2/sites-available/$DOMAIN.conf
 
   fi
 }
