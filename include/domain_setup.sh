@@ -373,8 +373,7 @@ manage_vhost () {
     sleep 4
     
     # Tambah untuk php fpm
-    #isi="    <FilesMatch \\.php$>\n\tSetHandler \"proxy:unix:/run/php/$versi_terpilih.sock|fcgi://localhost/\"\n    </FilesMatch>"
-    sudo sed -i '12s/.*/'"    <FilesMatch \\.php$>\n\tSetHandler \"proxy:unix:/run/php/$versi_terpilih.sock|fcgi://localhost/\"\n    </FilesMatch>"'/' /etc/apache2/sites-available/$DOMAIN.conf
+    sudo sed -i '12s/.*/    <FilesMatch \\.php$>\n\tSetHandler "proxy:unix:\/run\/php\/'$versi_terpilih'.sock|fcgi:\/\/localhost\/"\n    <\/FilesMatch>/' tes.conf
     sleep 4
   fi
 }
