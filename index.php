@@ -90,28 +90,36 @@
             <tr>
                 <td><strong>Version</strong></td>
                 <?php
-                if (function_exists('phpversion')) {
-                    $php_version = phpversion();
-                    if ($php_version) {
-                        $php_version = strstr($php_version, '-', true); // Mengambil versi PHP sebelum karakter "-"
-                        echo "<td class='success'>" . $php_version . "</td>";
-                    } else {
-                        echo "<td class='warning'>Tidak dapat menentukan versi</td>";
-                    }
+                // Menjalankan perintah "php -v" di shell dan menyimpan outputnya ke dalam variabel $output
+                $output = shell_exec('php -v');
+
+                if (strpos($output, 'PHP') !== false) {
+                    // Jika string 'PHP' ditemukan dalam output, maka ambil versi PHP dengan fungsi phpversion() dan simpan ke dalam variabel $version
+                    $version = explode('-', phpversion())[0];
+                    // Tampilkan versi PHP di dalam tag HTML <td>
+                    echo "<td class='success'>" . $version . "</td>";
                 } else {
-                    echo "<td class='warning'>Tidak aktif/terinstall</td>";
+                    // Jika string 'PHP' tidak ditemukan dalam output, tampilkan pesan bahwa PHP tidak terinstall di dalam tag HTML <td> dengan atribut colspan="2"
+                    echo "<td class='warning'>Tidak/Belum Terinstall.</td>";
                 }
                 ?>
             </tr>
             <tr>
                 <td><strong>FPM Services</strong></td>
                 <?php
-                $fpm_modules = shell_exec("php-fpm7.4 -m"); // Ganti sesuai dengan versi PHP-FPM yang terinstall di sistem
-                if (!empty($fpm_modules)) {
-                    echo "<td class='success'>" . $fpm_modules . "</td>";
-                } else {
-                    echo "<td class='warning'>Tidak aktif/terinstall</td>";
-                }
+                    // nama service PHP FPM
+                    $service = 'php-fpm';
+                    // menjalankan perintah "systemctl status" untuk mengecek status service
+                    $output = shell_exec('systemctl status ' . $service);
+                    if (strpos($output, 'Active: active (running)') !== false) {
+                        $status = 'Aktif';
+                        $class = 'success';
+                      } else {
+                        $status = 'Tidak/Belum Aktif';
+                        $class = 'warning';
+                      }
+                      
+                      echo '<td class="' . $class . '">' . $status . '</td>';
                 ?>
             </tr>
         </table>
