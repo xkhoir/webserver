@@ -102,12 +102,17 @@ apachesetup(){
     #Menyalin file "index.php" ke direktori yang ditentukan dalam variabel $DIRECTORY.
     cp index.php $DIRECTORY
 
+    #variabel to string
+    new="$DOMAIN"
+    new1="$LOG"
+    new2="$versi_terpilih"
+
     #mengganti kata "RDOMAIN" pada baris ke-56 dari file "index.php" dengan nilai dari variabel $DOMAIN.
-    sed -i "56s/RDOMAIN/$DOMAIN/" $DIRECTORY/index.php
+    sed -i "s/RDOMAIN/$new/g" $DIRECTORY/index.php
     #mengganti kata "RLOG" pada baris ke-78 dari file "index.php" dengan nilai dari variabel $LOG.
-    sed -i "78s/RLOG/$LOG/" $DIRECTORY/index.php
+    sed -i "s/RDOMAIN/$new1/g" $DIRECTORY/index.php
     #mengganti kata "php-fpm7.4" pada baris ke-106 dari file "index.php" dengan nilai dari variabel $versi_terpilih.
-    sed -i "106s/php-fpm7.4/$versi_terpilih/" $DIRECTORY/index.php
+    sed -i "s/RDOMAIN/$new2/g" $DIRECTORY/index.php
 
 
     # Atur kepemilikan dan izin direktori
@@ -209,7 +214,7 @@ cek_php() {
   versi=$(systemctl list-units --type=service | grep 'fpm' | grep 'active' | awk '{print $1}' | sed 's/\.service//g')
 
   if [[ -n "$versi" ]]; then
-    echo -e "\nLayanan PHP-FPM tersedia\n"
+    echo -e "\nLayanan PHP-FPM tersedia"
     sleep 2
     clear
   else

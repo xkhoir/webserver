@@ -4,53 +4,53 @@
 <head>
     <title>PHP Info</title>
     <style>
-        .container {
-            margin: auto;
-            width: 60%;
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 2px 2px 5px #ccc;
-        }
+    .container {
+        margin: auto;
+        width: 60%;
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 2px 2px 5px #ccc;
+    }
 
-        .table {
-            border-collapse: collapse;
-            margin-top: 20px;
-            width: 100%;
-        }
+    .table {
+        border-collapse: collapse;
+        margin-top: 20px;
+        width: 100%;
+    }
 
-        .table th,
-        .table td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: center;
-            background-color: #f7f7f7;
-        }
+    .table th,
+    .table td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+        background-color: #f7f7f7;
+    }
 
-        .table th {
-            background-color: #6c757d;
-            color: #fff;
-            text-transform: uppercase;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
+    .table th {
+        background-color: #6c757d;
+        color: #fff;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
 
-        .table tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
+    .table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
 
-        .table tr:hover {
-            background-color: #e6e6e6;
-        }
+    .table tr:hover {
+        background-color: #e6e6e6;
+    }
 
-        .warning {
-            color: red;
-        }
+    .warning {
+        color: red;
+    }
 
-        .success {
-            color: green;
-        }
+    .success {
+        color: green;
+    }
     </style>
 </head>
 
