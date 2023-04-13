@@ -9,12 +9,12 @@ domain_setup() {
 
     # Cek apakah Nginx sedang aktif
     if systemctl is-active --quiet nginx.service; then
-        echo -e "\nNginx sudah aktif\m"
+        echo -e "\nNginx sudah aktif"
         sleep 2
         nginxsetup
     # Cek apakah Apache sedang aktif
     elif systemctl is-active --quiet apache2.service; then
-        echo -e "\nApache sudah aktif\n"
+        echo -e "\nApache sudah aktif"
         sleep 2
         apachesetup
     else
