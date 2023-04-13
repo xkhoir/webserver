@@ -100,11 +100,6 @@ apachesetup(){
     #Menyalin file "index.php" ke direktori yang ditentukan dalam variabel $DIRECTORY.
     cp index.php $DIRECTORY
 
-    #variabel to string
-    # new="$DOMAIN"
-    # new1="$LOG"
-    # new2="$versi_terpilih"
-
     #mengganti kata "RDOMAIN" pada baris ke-56 dari file "index.php" dengan nilai dari variabel $DOMAIN.
     sed -i "s#RDOMAIN#$DOMAIN#g" $DIRECTORY/index.php
     #mengganti kata "RLOG" pada baris ke-78 dari file "index.php" dengan nilai dari variabel $LOG.
