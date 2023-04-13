@@ -2,6 +2,8 @@
 domain_setup() {
     read -p "Masukkan nama domain kamu :" DOMAIN
     clear
+    read -p "Masukkan email untuk domain kamu :" EMAIL
+    clear
     cek_php
     clear
     DIRECTORY="/var/www/$DOMAIN/public_html"
@@ -35,8 +37,15 @@ nginxsetup () {
     #call fungsi addinfo
     addinfo
 
-    # call fungsi addfile
-    addfile
+    #Menyalin file "index.php" ke direktori yang ditentukan dalam variabel $DIRECTORY.
+    cp index.php $DIRECTORY
+
+    #mengganti kata "RDOMAIN" pada baris ke-56 dari file "index.php" dengan nilai dari variabel $DOMAIN.
+    sed -i "56s/RDOMAIN/$DOMAIN/" $DIRECTORY/index.php
+    #mengganti kata "RLOG" pada baris ke-78 dari file "index.php" dengan nilai dari variabel $LOG.
+    sed -i "78s/RLOG/$LOG/" $DIRECTORY/index.php
+    #mengganti kata "php-fpm7.4" pada baris ke-106 dari file "index.php" dengan nilai dari variabel $versi_terpilih.
+    sed -i "106s/php-fpm7.4/$versi_terpilih/" $DIRECTORY/index.php
 
     # Atur kepemilikan dan izin direktori
     chown -R www-data:www-data $DIRECTORY
@@ -90,8 +99,16 @@ apachesetup(){
     #call fungsi addinfo
     addinfo
 
-    # call fungsi addfile
-    addfile
+    #Menyalin file "index.php" ke direktori yang ditentukan dalam variabel $DIRECTORY.
+    cp index.php $DIRECTORY
+
+    #mengganti kata "RDOMAIN" pada baris ke-56 dari file "index.php" dengan nilai dari variabel $DOMAIN.
+    sed -i "56s/RDOMAIN/$DOMAIN/" $DIRECTORY/index.php
+    #mengganti kata "RLOG" pada baris ke-78 dari file "index.php" dengan nilai dari variabel $LOG.
+    sed -i "78s/RLOG/$LOG/" $DIRECTORY/index.php
+    #mengganti kata "php-fpm7.4" pada baris ke-106 dari file "index.php" dengan nilai dari variabel $versi_terpilih.
+    sed -i "106s/php-fpm7.4/$versi_terpilih/" $DIRECTORY/index.php
+
 
     # Atur kepemilikan dan izin direktori
     chown -R www-data:www-data $DIRECTORY
@@ -256,7 +273,7 @@ addfile () {
     echo -n "<!DOCTYPE html>
 <html>
 <head>
-	<title>Verifikasi Domain Terinstall</title>
+	<title>Domain Auto Installer</title>
 	<style>
 		body {
 			font-family: Arial, sans-serif;
@@ -290,26 +307,27 @@ addfile () {
 	</style>
 </head>
 <body>
-	<div class="container">
-		<h1>Verifikasi Domain Terinstall</h1>
-		<p>Selamat! Domain <span class="success">$DOMAIN</span> telah terinstall dengan sukses!</p>
-		<?php
-			if (function_exists('phpversion')) {
-				echo '<p>Versi PHP yang terpasang adalah <span class="success">' . phpversion() . '</span>.</p>';
-			} else {
-				echo '<p class="failure">PHP tidak terpasang pada server ini.</p>';
-			}
+    <center>
+        <div class="container">
+            <h1>Selamat! Domain <span class="success">$DOMAIN</span> sukses terinstall</h1>
+            <?php
+                if (function_exists('phpversion')) {
+                    echo '<p>Versi PHP yang terpasang adalah <span class="success">' . phpversion() . '</span>.</p>';
+                } else {
+                    echo '<p class="failure">PHP tidak terpasang pada server ini.</p>';
+                }
 
-			if (function_exists('php_sapi_name') && (substr(php_sapi_name(), 0, 3) == 'fpm')) {
-				echo '<p>Versi FPM yang aktif adalah <span class="success">' . php_sapi_name() . '</span>.</p>';
-			} else {
-				echo '<p class="failure">FPM tidak terpasang atau tidak aktif pada server ini.</p>';
-			}
-		?>
-		<p>Anda sekarang dapat memulai untuk mengembangkan website Anda.</p>
-		<p>Jangan ragu untuk menghubungi kami jika Anda memerlukan bantuan.</p>
-		<p>Terima kasih telah memilih layanan kami.</p>
-	</div>
+                if (function_exists('php_sapi_name') && (substr(php_sapi_name(), 0, 3) == 'fpm')) {
+                    echo '<p>Modul <span class="success">' . php_sapi_name() . '</span> telah aktif.</p>';
+                } else {
+                    echo '<p class="failure">Modul FPM tidak terpasang atau tidak aktif.</p>';
+                }
+            ?>
+            <p>Anda sekarang dapat memulai untuk mengembangkan website Anda.</p>
+            <p>Jangan ragu untuk menghubungi kami jika Anda memerlukan bantuan.</p>
+            <p>Terima kasih telah memilih layanan kami.</p>
+        </div>
+    </center>
 </body>
 </html>" | cat > $DIRECTORY/index.php
 
@@ -354,6 +372,7 @@ manage_vhost () {
     echo -n "<VirtualHost *:80>
     ServerName $DOMAIN
     ServerAlias www.$DOMAIN
+    ServerAdmin webmaster@$DOMAIN
     DocumentRoot $DIRECTORY
 
     <Directory $DIRECTORY>
