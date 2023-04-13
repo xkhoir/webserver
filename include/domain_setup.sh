@@ -2,8 +2,6 @@
 domain_setup() {
     read -p "Masukkan nama domain kamu :" DOMAIN
     clear
-    read -p "Masukkan email untuk domain kamu :" EMAIL
-    clear
     cek_php
     clear
     DIRECTORY="/var/www/$DOMAIN/public_html"
