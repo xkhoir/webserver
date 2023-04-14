@@ -11,6 +11,7 @@ source include/php.sh
 source include/mariadb.sh
 source include/phpmyadmin.sh
 source include/composer.sh
+source include/wordpress.sh
 source include/server.sh
 
 #cek root
@@ -356,7 +357,46 @@ while true; do
         esac
       done
       ;;
-    7) # Manage Server
+    7) # Wordpress
+      clear
+      show_header
+      show_wordpress_submenu
+      while true; do
+        read -p "Masukkan pilihan Anda: " wordpress_choice
+
+        case $wordpress_choice in
+          1) # Install Wordpress
+            manage_wordpress install
+            # kembali ke submenu Wordpress
+            clear
+      	    show_header
+            show_wordpress_submenu
+            ;;
+          2) # Uninstall Wordpress
+            manage_wordpress uninstall
+            # kembali ke submenu Wordpress
+            clear
+      	    show_header
+            show_wordpress_submenu
+            ;;
+          3) # Kembali ke menu utama
+	          clear
+      	    show_header
+            show_menu
+            break
+            ;;
+          *) # Input salah
+            clear
+            echo -e "\nPilihan tidak valid.\n"
+            sleep 2
+            clear
+      	    show_header
+            show_wordpress_submenu
+            ;;
+        esac
+      done
+      ;;
+    8) # Manage Server
       clear
       show_header
       show_server_submenu
@@ -398,7 +438,7 @@ while true; do
         esac
       done
       ;;
-    8) # Keluar
+    9) # Keluar
       clear
       echo -e "\nTerima kasih telah menggunakan program ini.\n"
       sleep 2

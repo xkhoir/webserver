@@ -24,6 +24,7 @@ show_menu() {
     echo "4. Mariadb"
     echo "5. PhpMyAdmin"
     echo "6. Composer"
-    echo "7. Manage Server"
-    echo "8. Keluar"
+    echo "7. Wordpress"
+    echo "8. Manage Server"
+    echo "9. Keluar"
 }
