@@ -149,8 +149,8 @@ apachesetup(){
         # Peroleh sertifikat SSL
         ssl_setup "apache" "$DOMAIN"
     else
-        echo -e "\nOK, anda masih tetap dapat menginstall SSL secara manual,\n"
-        echo -e "Atau anda dapat menuju submenu apache no.4\n"
+        echo -e "\nOK, anda masih tetap dapat menginstall SSL secara manual,"
+        echo -e "\nAtau anda dapat menuju submenu apache no.4"
     fi
 }
 
@@ -162,7 +162,8 @@ ssl_setup() {
     # Cek apakah Certbot sudah terinstal
     echo -e "\ncek certbot"
     sleep 1
-    check_package "certbot python3-certbot-apache" "install"
+    check_package "certbot" "install"
+    check_package "python3-certbot-apache" "install"
     echo -e "\ncek ufw"
     sleep 1
     check_package "ufw" "install"
@@ -206,11 +207,11 @@ cek_php() {
   versi=$(systemctl list-units --type=service | grep 'fpm' | grep 'active' | awk '{print $1}' | sed 's/\.service//g')
 
   if [[ -n "$versi" ]]; then
-    echo -e "\nLayanan PHP-FPM tersedia"
+    echo -e "\nLayanan PHP-FPM tersedia."
     sleep 2
     clear
   else
-    echo -e"\nTidak ada layanan PHP-FPM yang tersedia, Install dahulu\n"
+    echo -e"\nTidak ada layanan PHP-FPM yang tersedia, Install dahulu."
     sleep 2
     clear
     exit 0
@@ -260,7 +261,7 @@ addlog () {
     sudo chown -R www-data:www-data $LOG
     sudo chmod -R 775 $LOG
 
-    echo -e "\nDirektori file log apache2 untuk $DOMAIN telah berhasil dibuat.\n"
+    echo -e "\nDirektori file log apache2 untuk $DOMAIN telah berhasil dibuat."
     sleep 2
 }
 
