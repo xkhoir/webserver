@@ -23,6 +23,7 @@ manage_apache() {
     rm -rf /var/log/apache*
     rm -rf /var/www/*
     rm -rf /etc/apache*
+    rm -rf /etc/letsencry*
   elif [ "$action" == "install" ]; then
     #parsing data ke fungsi check_package
     check_package "$package" "install"
