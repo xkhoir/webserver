@@ -44,15 +44,15 @@ domain_setup() {
         sleep 1
         apache2ctl configtest
 
+        sed -i '$ a [WebService]\nOrigins = https://cockpit.your-domain.com http://localhost:9090\nProtocolHeader = X-Forwarded-Proto\nAllowUnencrypted = true' /etc/cockpit/cockpit.conf
+        systemctl restart cockpit.service
+        a2enmod proxy proxy_wstunnel proxy_http ssl rewrite
+        
         # Restart Apache
         echo -e "\nRestart Apache"
         sleep 2
         systemctl restart apache2
         clear
-
-        sed -i '$ a [WebService]\nOrigins = https://cockpit.your-domain.com http://127.0.0.1:9090\nProtocolHeader = X-Forwarded-Proto\nAllowUnencrypted = true' /etc/cockpit/cockpit.conf
-        systemctl restart cockpit.service
-        a2enmod proxy proxy_wstunnel proxy_http ssl rewrite
         
     elif [[ "$1" == "webserver" ]]; then
         # tambahkan kode di sini untuk setup domain dengan webserver
