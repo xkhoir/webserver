@@ -24,8 +24,8 @@ domain_setup() {
     
     if [[ "$1" == "cockpit" ]]; then
         # tambahkan kode di sini untuk setup domain dengan cockpit
-        #call fungsi cek_webserver
-        cek_webserver
+        #call fungsi check_webserver
+        check_webserver
 
         #mengahapus dir
         rm -rf /var/www/$DOMAIN*
@@ -60,7 +60,7 @@ domain_setup() {
         cek_php
         clear
         #call fungsi cek_webserver
-        cek_webserver
+        check_webserver
     else
         echo "Variabel yang dimasukkan tidak dikenali."
     fi
