@@ -1,4 +1,5 @@
 # Install adm-linuxserver-webgui
+apache proxy https://github.com/cockpit-project/cockpit/wiki/Proxying-Cockpit-over-Apache-with-LetsEncrypt
 Ada banyak beredar webgui untuk administarsi server linux. tapi yang bisa digunakan ada 2 yang sangat populer yakni : 
 
  1. Cockpit
