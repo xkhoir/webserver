@@ -34,6 +34,8 @@ manage_cockpit() {
   elif [ "$action" == "uninstall" ]; then
     #uninstall cockpit
     check_package "$package" "uninstall"
+    echo "" > /etc/cockpit/cockpit.conf
+    systemctl restart cockpit.service
   else
     echo "Perintah tidak valid."
   fi
