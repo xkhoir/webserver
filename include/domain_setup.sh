@@ -72,10 +72,10 @@ domain_setup() {
 
 check_webserver () {
     # cek status layanan Apache
-    apache_status=$(systemctl is-active --quiet apache2)
+    apache_status=$(systemctl is-active apache2)
 
     # cek status layanan Nginx
-    nginx_status=$(systemctl is-active --quiet nginx)
+    nginx_status=$(systemctl is-active nginx)
 
     #apache vhost dir
     apache_vhost_dir="/etc/apache2/sites-available"
