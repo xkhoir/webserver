@@ -12,8 +12,8 @@ manage_cockpit() {
     action=$1
   if [ "$action" == "install" ]; then
     #Add repo
-    curl -sSL https://repo.45drives.com/setup -o setup-repo.sh
-    sudo bash setup-repo.sh
+    # curl -sSL https://repo.45drives.com/setup -o setup-repo.sh
+    # sudo bash setup-repo.sh
     #install cockpit
     check_package "apache2" "install"
     check_package "$package-storaged" "install"
