@@ -25,6 +25,7 @@ show_menu() {
     echo "5. PhpMyAdmin"
     echo "6. Composer"
     echo "7. Wordpress"
-    echo "8. Manage Server"
-    echo "9. Keluar"
+    echo "8. Cockpit"
+    echo "9. Manage Server"
+    echo "10. Keluar"
 }

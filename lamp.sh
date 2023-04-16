@@ -3,6 +3,7 @@
 # Memanggil banyak file bash dari folder include
 source include/manage_script.sh
 source include/headermenu.sh
+source include/cockpit.sh
 source include/check_package.sh
 source include/apache2.sh
 source include/nginx.sh
@@ -396,7 +397,46 @@ while true; do
         esac
       done
       ;;
-    8) # Manage Server
+    8) # Cockpit
+      clear
+      show_header
+      show_cockpit_submenu
+      while true; do
+        read -p "Masukkan pilihan Anda: " cockpit_choice
+
+        case $cockpit_choice in
+          1) # Install Cockpit
+            manage_cockpit install
+            # kembali ke submenu Cockpit
+            clear
+      	    show_header
+            show_cockpit_submenu
+            ;;
+          2) # Uninstall Cockpit
+            manage_cockpit uninstall
+            # kembali ke submenu Cockpit
+            clear
+      	    show_header
+            show_cockpit_submenu
+            ;;
+          3) # Kembali ke menu utama
+	          clear
+      	    show_header
+            show_menu
+            break
+            ;;
+          *) # Input salah
+            clear
+            echo -e "\nPilihan tidak valid.\n"
+            sleep 2
+            clear
+      	    show_header
+            show_cockpit_submenu
+            ;;
+        esac
+      done
+      ;;
+    9) # Manage Server
       clear
       show_header
       show_server_submenu
@@ -438,7 +478,7 @@ while true; do
         esac
       done
       ;;
-    9) # Keluar
+    10) # Keluar
       clear
       echo -e "\nTerima kasih telah menggunakan program ini.\n"
       sleep 2

@@ -24,7 +24,7 @@ manage_nginx() {
     check_package "$package" "install"
   elif [ "$action" == "domainsetup" ]; then
     #code
-    domain_setup
+    domain_setup "webserver"
   elif [ "$action" == "ssl" ]; then
     #code
     ssl_setup "nginx"

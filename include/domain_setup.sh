@@ -1,28 +1,117 @@
 # Fungsi untuk setup domain dengan Nginx atau Apache dan memperoleh sertifikat SSL dari Let's Encrypt
+# domain_setup() {
+#     read -p "Masukkan nama domain kamu :" DOMAIN
+#     clear
+#     #call fungsi cek_php
+#     cek_php
+
+#     clear
+#     DIRECTORY="/var/www/$DOMAIN/public_html"
+#     LOG="/var/log/apache2/$DOMAIN"
+
+#     clear
+#     #call fungsi cek_webserver
+#     cek_webserver
+# }
+
+# fungsi domain_setup dengan pengecekan variabel "cockpit" dan "webserver"
 domain_setup() {
     read -p "Masukkan nama domain kamu :" DOMAIN
     clear
-    cek_php
-    clear
+
     DIRECTORY="/var/www/$DOMAIN/public_html"
     LOG="/var/log/apache2/$DOMAIN"
+    
+    if [[ "$1" == "cockpit" ]]; then
+        # tambahkan kode di sini untuk setup domain dengan cockpit
+        #call fungsi cek_webserver
+        cek_webserver
 
-    # Cek apakah Nginx sedang aktif
-    if systemctl is-active --quiet nginx.service; then
-        echo -e "\nNginx sudah aktif"
+        #mengahapus dir
+        rm -rf /var/www/$DOMAIN*
+
+        #edit vhost 
+        sed -i '3,19d' /etc/apache2/sites-available/$DOMAIN.conf
+        sed -i '/ServerName/a\\nProxyPreserveHost On\nProxyRequests Off\n\n# allow for upgrading to websockets\nRewriteEngine On\nRewriteCond %{HTTP:Upgrade} =websocket [NC]\nRewriteRule /(.*)           ws://localhost:9090/$1 [P,L]\nRewriteCond %{HTTP:Upgrade} !=websocket [NC]\nRewriteRule /(.*)           http://localhost:9090/$1 [P,L]\n\n# Proxy to your local cockpit instance\nProxyPass / http://localhost:9090/\nProxyPassReverse / http://localhost:9090/\n' /etc/apache2/sites-available/$DOMAIN.conf
+
+        # Aktifkan Virtual Host Apache
+        echo -e "\nMengaktifkan $DOMAIN.conf Apache"
+        sleep 1
+        a2ensite $DOMAIN.conf
+
+        # Uji konfigurasi Apache
+        echo -e "\nUji konfigurasi Apache"
+        sleep 1
+        apache2ctl configtest
+
+        # Restart Apache
+        echo -e "\nRestart Apache"
         sleep 2
-        nginxsetup
-    # Cek apakah Apache sedang aktif
-    elif systemctl is-active --quiet apache2.service; then
-        echo -e "\nApache sudah aktif"
+        systemctl restart apache2
+        clear
+
+        sed -i '$ a [WebService]\nOrigins = https://cockpit.your-domain.com http://127.0.0.1:9090\nProtocolHeader = X-Forwarded-Proto\nAllowUnencrypted = true' /etc/cockpit/cockpit.conf
+        systemctl restart cockpit.service
+        a2enmod proxy proxy_wstunnel proxy_http ssl rewrite
+        
+    elif [[ "$1" == "webserver" ]]; then
+        # tambahkan kode di sini untuk setup domain dengan webserver
+        #call fungsi cek_php
+        cek_php
+        clear
+        #call fungsi cek_webserver
+        cek_webserver
+    else
+        echo "Variabel yang dimasukkan tidak dikenali."
+    fi
+}
+
+# # contoh penggunaan fungsi
+# domain_setup "cockpit"
+
+
+check_webserver () {
+    # cek status layanan Apache
+    apache_status=$(systemctl is-active --quiet apache2)
+
+    # cek status layanan Nginx
+    nginx_status=$(systemctl is-active --quiet nginx)
+
+    #apache vhost dir
+    apache_vhost_dir="/etc/apache2/sites-available"
+
+    #nginx vhost dir
+    nginx_vhost_dir="/etc/nginx/sites-available"
+
+    # cek apakah layanan Apache aktif
+    if [ "$apache_status" = "active" ]; then
+        echo -e "\nApache sedang aktif"
         sleep 2
-        apachesetup
+
+        if [ -f "$apache_vhost_dir/$DOMAIN.conf" ]; then
+            echo -e "\nDomain $DOMAIN sudah terinstal di vhost Apache"
+        else
+            clear
+            apachesetup
+        fi
+    elif [ "$nginx_status" = "active" ]; then
+    # cek apakah layanan Nginx aktif
+        echo -e "\nNginx sedang aktif"
+        sleep 2
+
+        if [ -f "$nginx_vhost_dir/$DOMAIN" ]; then
+            echo -e "\nDomain $DOMAIN sudah terinstal di vhost Nginx"
+        else
+            clear
+            nginxsetup
+        fi
     else
         # Jika tidak terdapat Nginx atau Apache yang aktif, keluarkan pesan kesalahan
-        echo -e"\nNginx atau Apache tidak sedang aktif pada sistem ini. diharap install atau enable service\n"
+        echo -e"\nWebserver Nginx atau Apache tidak sedang aktif pada sistem ini. \ndiharap install atau enable service\n"
         sleep 3
         clear
     fi
+
 }
 
 # Fungsi untuk manajemen config Nginx
@@ -75,7 +164,7 @@ nginxsetup () {
 
     if [ "$install_ssl" == "y" ]; then
         # Peroleh sertifikat SSL
-        ssl_setup "apache" "$DOMAIN"
+        ssl_setup "nginx" "$DOMAIN"
     else
         echo -e "\nOK, anda masih tetap dapat menginstall SSL secara manual,\n"
         echo -e "Atau anda dapat menuju submenu apache no.4\n"
@@ -145,6 +234,7 @@ apachesetup(){
     echo -e"\nApakah Anda ingin menginstal SSL untuk $DOMAIN? (y/n)"
     read install_ssl
 
+    #ssl installer
     if [ "$install_ssl" == "y" ]; then
         # Peroleh sertifikat SSL
         ssl_setup "apache" "$DOMAIN"

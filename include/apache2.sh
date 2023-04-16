@@ -28,7 +28,7 @@ manage_apache() {
     check_package "$package" "install"
   elif [ "$action" == "domainsetup" ]; then
     #call function domain setup
-    domain_setup
+    domain_setup "webserver"
   elif [ "$action" == "ssl" ]; then
     #call function ssl setup
     ssl_setup "apache"
