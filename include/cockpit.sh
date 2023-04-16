@@ -22,8 +22,8 @@ manage_cockpit() {
     check_package "$package-navigator" "install"
     systemctl enable cockpit
 
-    echo -e"\nMemasang cockpit di domain? (y/n)"
-    read $CEK
+    echo -e "\nMemasang cockpit di domain? (y/n)"
+    read CEK
 
     if [ "$CEK" == "y" ]; then
         # call domain_setup
