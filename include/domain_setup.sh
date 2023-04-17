@@ -222,13 +222,7 @@ domain_setup () {
 # Fungsi sslsetup untuk mengatur SSL pada server menggunakan Certbot
 ssl_setup() {
     # Cek apakah Certbot sudah terinstal
-    echo -e "\ncek certbot"
-    sleep 1
     check_package "certbot" "install"
-    check_package "python3-certbot-apache" "install"
-    check_package "python3-certbot-nginx" "install"
-    echo -e "\ncek ufw"
-    sleep 1
     check_package "ufw" "install"
     ufw enable
 
@@ -242,6 +236,8 @@ ssl_setup() {
 
     # Cek apakah argumen pertama adalah apache
     if [ "$1" == "apache" ]; then
+        # Cek apakah python3-certbot-apache sudah terinstal
+        check_package "python3-certbot-apache" "install"
         # Jika argumen kedua tidak kosong, jalankan Certbot dengan opsi --apache dan -d $2
         if [ -n "$2" ]; then
             sudo certbot --apache -d "$2"
@@ -251,6 +247,8 @@ ssl_setup() {
         fi
     # Cek apakah argumen pertama adalah nginx
     elif [ "$1" == "nginx" ]; then
+        # Cek apakah python3-certbot-nginx sudah terinstal
+        check_package "python3-certbot-nginx" "install"
         # Jika argumen kedua tidak kosong, jalankan Certbot dengan opsi --nginx dan -d $2
         if [ -n "$2" ]; then
             sudo certbot --nginx -d "$2"
@@ -398,9 +396,6 @@ APACHE_VHOST_COCKPIT () {
 # Buat Virtual Host Apache COCKPIT
 echo -n "<VirtualHost *:80>
     ServerName $DOMAIN
-    
-
-
 </VirtualHost>" | cat > $APACHE2_VHOST_DIR
 
     #edit vhost 
