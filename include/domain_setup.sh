@@ -44,7 +44,7 @@ domain_setup() {
         sleep 1
         apache2ctl configtest
 
-        sed -i '$ a [WebService]\nOrigins = https://cockpit.your-domain.com http://localhost:9090\nProtocolHeader = X-Forwarded-Proto\nAllowUnencrypted = true' /etc/cockpit/cockpit.conf
+        sed -i '$ a [WebService]\nOrigins = https://$DOMAIN http://localhost:9090\nProtocolHeader = X-Forwarded-Proto\nAllowUnencrypted = true' /etc/cockpit/cockpit.conf
         systemctl restart cockpit.service
         a2enmod proxy proxy_wstunnel proxy_http ssl rewrite
         
