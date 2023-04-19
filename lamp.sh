@@ -38,78 +38,78 @@ while true; do
 
   case $choice in
     1) # Apache
+      while true; do
       clear
       show_header
       show_apache_submenu
-      while true; do
         read -p "Masukkan pilihan Anda: " apache_choice
 
         case $apache_choice in
           1) # Install Apache
             manage_apache install
             # kembali ke submenu Apache
-            clear
-      	    show_header
-            show_apache_submenu
+            # clear
+      	    # show_header
+            # show_apache_submenu
             ;;
           2) # Uninstall Apache
             manage_apache uninstall
             # kembali ke submenu Apache
-            clear
-      	    show_header
-            show_apache_submenu
+            # clear
+      	    # show_header
+            # show_apache_submenu
             ;;
           3) # Domain Setup
             manage_apache domainsetup
             sleep 2
             # kembali ke submenu Apache
-            clear
-      	    show_header
-            show_apache_submenu
+            # clear
+      	    # show_header
+            # show_apache_submenu
             ;;
           4) # SSL Setup
             manage_apache ssl
             sleep 2
             # kembali ke submenu Apache
-            clear
-      	    show_header
-            show_apache_submenu
+            # clear
+      	    # show_header
+            # show_apache_submenu
             ;;
           5) # SSL Renew
             manage_apache sslrenew
             sleep 2
             # kembali ke submenu Apache
-            clear
-      	    show_header
-            show_apache_submenu
+            # clear
+      	    # show_header
+            # show_apache_submenu
             ;;
           6) # a2enmod Rewrite
             manage_apache a2enmod
             # kembali ke submenu Apache
-            clear
-      	    show_header
-            show_apache_submenu
+            # clear
+      	    # show_header
+            # show_apache_submenu
             ;;
           7) # Restart Apache Services
             manage_apache restart
             # kembali ke submenu Apache
-            clear
-      	    show_header
-            show_apache_submenu
+            # clear
+      	    # show_header
+            # show_apache_submenu
             ;;
           8) # Kembali ke menu utama
-	          clear
-      	    show_header
-            show_menu
+	          # clear
+      	    # show_header
+            # show_menu
             break
             ;;
           *) # Input salah
             clear
             echo -e "\nPilihan tidak valid.\n"
             sleep 2
-            clear
-            show_header
-            show_apache_submenu
+            # clear
+            # show_header
+            # show_apache_submenu
             ;;
         esac
       done
