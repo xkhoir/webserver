@@ -10,7 +10,7 @@ domain_setup () {
     #Document root
     DIRECTORY="/var/www/$DOMAIN/public_html/"
     #apache log dir
-    LOG="/var/log/apache2/$DOMAIN/"
+    LOG="/var/log/apache2/$DOMAIN"
 
     read -p "Masukkan nama domain kamu :" DOMAIN
     clear
@@ -19,7 +19,7 @@ domain_setup () {
     if [ "$APACHE2_STATUS" = "active" ]; then
         echo -e "\nApache sedang aktif"
         sleep 2
-        # cek apakah domain di layanan Apache sudah ada
+        # cek apakah domain di layanan Apache sudah adagi
         if [ -f "$APACHE2_VHOST_DIR" ]; then
             echo -e "\nDomain $DOMAIN sudah ada di vhost Apache. \ntidak perlu ditambahkan lagi.."
         else
