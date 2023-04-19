@@ -1,3 +1,7 @@
+domain_setup () {
+    read -p "Masukkan nama domain kamu :" DOMAIN
+    clear
+    
     # cek status layanan Apache
     APACHE2_STATUS="$(systemctl is-active apache2)"
     # cek status layanan Nginx
@@ -10,11 +14,7 @@
     DIRECTORY="/var/www/$DOMAIN/public_html/"
     #apache log dir
     LOG="/var/log/apache2/$DOMAIN"
-    
-domain_setup () {
 
-    read -p "Masukkan nama domain kamu :" DOMAIN
-    clear
 
     # cek apakah layanan Apache aktif
     if [ "$APACHE2_STATUS" = "active" ]; then
@@ -374,7 +374,6 @@ echo -n "<VirtualHost *:80>
         AllowOverride All
         Require all granted
     </Directory>
-
 
 
 
