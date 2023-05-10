@@ -13,7 +13,7 @@ manage_wordpress() {
     read -p "Masukkan nama domain wordpress kamu :" DOMAIN
     clear
     DIRECTORY="/var/www/$DOMAIN/public_html"
-    rm -rf $DIRECTORY/
+    rm -rf $DIRECTORY/*
     mv /var/www/$DOMAIN/* $DIRECTORY/
     echo -e "\nWordpress pada $DIRECTORY telah dihapus"
     sleep 5
