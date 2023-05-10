@@ -36,7 +36,7 @@ manage_php() {
             [yY])
                 echo "Menghapus repo ondrej/php..."
                 sleep 3
-                sudo add-apt-repository --remove ppa:ondrej/php
+                sudo add-apt-repository -y --remove ppa:ondrej/php
                 ;;
             [nN])
                 echo "Melewati penghapusan repo ondrej/php."
@@ -58,7 +58,7 @@ manage_php() {
     #install repo php
     if ! grep -q "^deb .*ondrej/php" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
       #echo "Repo ondrej/php tidak terinstal. Menambahkan repo..."
-      add-apt-repository ppa:ondrej/php
+      add-apt-repository -y ppa:ondrej/php
     fi
 
     check_package "$package-fpm" "install"
