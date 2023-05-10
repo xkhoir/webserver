@@ -13,12 +13,15 @@ manage_speedtest() {
   if [ "$action" == "install" ]; then
     #install speedtest
     read -p "Masukkan domain yang telah anda pasang di webserver: " DOMAIN
+
     DIRECTORY = /var/www/$DOMAIN/public_html
     BAC = /var/www/$DOMAIN/backup
+    
     read -p "Masukkan nama provider vps : " PROVIDER
     title="Speedtest $DOMAIN $PROVIDER Server"
     mkdir $BAC
     mv $DIRECTORY/* $BAC
+    
     wget https://github.com/librespeed/speedtest/archive/refs/heads/master.zip
     unzip master.zip
     cp speedtest-master/* $DIRECTORY/
