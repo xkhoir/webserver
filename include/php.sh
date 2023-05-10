@@ -20,7 +20,7 @@ manage_php() {
   if [ "$action" == "uninstall" ]; then
     a2dismod proxy_fcgi setenvif
     a2disconf $package-fpm
-    check_package "$package-fpm" "uninstall"
+    check_package "$package" "uninstall"
     # Uninstall PHP & ekstensi
     # for ext in "${extensions[@]}"; do
     #   ext_package="$package-$ext"
