@@ -34,6 +34,7 @@ domain_setup () {
                 manage_vhost "apache" "cockpit"
 
                 #set /etc/cockpit/cockpit.conf
+                touch /etc/cockpit/cockpit.conf
                 sed -i "$ a [WebService]\nOrigins = https://${DOMAIN} http://localhost:9090\nProtocolHeader = X-Forwarded-Proto\nAllowUnencrypted = true" /etc/cockpit/cockpit.conf
 
                 # Aktifkan Virtual Host Apache
@@ -396,8 +397,8 @@ echo -n "<VirtualHost *:80>
     ServerName $DOMAIN
 </VirtualHost>" | cat > $APACHE2_VHOST_DIR
 
-    #edit vhost 
-    #sed -i '/ServerName/a\\nProxyPreserveHost On\nProxyRequests Off\n\n# allow for upgrading to websockets\nRewriteEngine On\nRewriteCond %{HTTP:Upgrade} =websocket [NC]\nRewriteRule /(.*)           ws://localhost:9090/$1 [P,L]\nRewriteCond %{HTTP:Upgrade} !=websocket [NC]\nRewriteRule /(.*)           http://localhost:9090/$1 [P,L]\n\n# Proxy to your local cockpit instance\nProxyPass / http://localhost:9090/\nProxyPassReverse / http://localhost:9090/\n' $APACHE2_VHOST_DIR
+    # edit vhost 
+    sed -i '/ServerName/a\\nProxyPreserveHost On\nProxyRequests Off\n\n# allow for upgrading to websockets\nRewriteEngine On\nRewriteCond %{HTTP:Upgrade} =websocket [NC]\nRewriteRule /(.*)           ws://localhost:9090/$1 [P,L]\nRewriteCond %{HTTP:Upgrade} !=websocket [NC]\nRewriteRule /(.*)           http://localhost:9090/$1 [P,L]\n\n# Proxy to your local cockpit instance\nProxyPass / http://localhost:9090/\nProxyPassReverse / http://localhost:9090/\n' $APACHE2_VHOST_DIR
 
     # Tambah untuk conf log apache
     sudo sed -i "/^<\/VirtualHost>/i \
