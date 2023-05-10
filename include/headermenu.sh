@@ -26,6 +26,7 @@ show_menu() {
     echo "6. Composer"
     echo "7. Wordpress"
     echo "8. Cockpit"
-    echo "9. Manage Server"
-    echo "10. Keluar"
+    echo "9. Speedtest"
+    echo "10. Manage Server"
+    echo "11. Keluar"
 }

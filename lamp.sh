@@ -14,6 +14,7 @@ source include/phpmyadmin.sh
 source include/composer.sh
 source include/wordpress.sh
 source include/server.sh
+source include/speedtest.sh
 
 #cek root
 cek_root
@@ -300,7 +301,35 @@ while true; do
         esac
       done
       ;;
-    9) # Manage Server
+    9) # Speedtest
+      while true; do
+      clear
+      show_header
+      show_speedtest_submenu
+        read -p "Masukkan pilihan Anda: " speedtest_choice
+
+        case $speedtest_choice in
+          1) # Install Speedtest
+            manage_speedtest install
+            ;;
+          2) # Uninstall Speedtest
+            manage_speedtest uninstall
+            ;;
+          3) # Kembali ke menu utama
+	          clear
+      	    show_header
+            show_menu
+            break
+            ;;
+          *) # Input salah
+            clear
+            echo -e "\nPilihan tidak valid.\n"
+            sleep 2
+            ;;
+        esac
+      done
+      ;;
+    10) # Manage Server
       while true; do
       clear
       show_header
@@ -331,7 +360,7 @@ while true; do
         esac
       done
       ;;
-    10) # Keluar
+    11) # Keluar
       clear
       echo -e "\nTerima kasih telah menggunakan program ini.\n"
       sleep 2
