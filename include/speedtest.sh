@@ -13,16 +13,16 @@ manage_speedtest() {
   if [ "$action" == "install" ]; then
     #install speedtest
     read -p "Masukkan domain yang telah anda pasang di webserver: " DOMAIN
-    dir = /var/www/$DOMAIN/public_html
+    DIRECTORY = /var/www/$DOMAIN/public_html
     read -p "Masukkan nama provider vps : " PROVIDER
     title="Speedtest $DOMAIN $PROVIDER Server"
   
-    mv $dir/* /var/www/$DOMAIN
+    mv $DIRECTORY/* /var/www/$DOMAIN
     wget https://github.com/librespeed/speedtest/archive/refs/heads/master.zip
     unzip master.zip
-    cp speedtest-master/* $dir/
+    cp speedtest-master/* $DIRECTORY/
     rm -rf master.zip speedtest-master
-    mv $dir/example-singleServer-full.html $dir/index.html
+    mv $DIRECTORY/example-singleServer-full.html $DIRECTORY/index.html
 
     sed -i "276s/LibreSpeed Example/$title/" index.html
     sed -i "279s/LibreSpeed Example/$title/" index.html
@@ -35,8 +35,8 @@ manage_speedtest() {
     clear
     echo -e "\nMengapus web speedtest"
     sleep 2
-    rm -rf $dir/*
-    mv /var/www/$DOMAIN/* $dir/
+    rm -rf $DIRECTORY/*
+    mv /var/www/$DOMAIN/* $DIRECTORY/
     echo -e "\nPengapusan web speedtest telah selesai"
   else
     echo "Perintah tidak valid."

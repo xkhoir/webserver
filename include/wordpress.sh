@@ -14,12 +14,16 @@ manage_wordpress() {
     clear
     DIRECTORY="/var/www/$DOMAIN/public_html"
     rm -rf $DIRECTORY/*
+    mv /var/www/$DOMAIN/* $DIRECTORY/
     echo -e "\nWordpress pada $DIRECTORY telah dihapus"
     sleep 5
+    
   elif [ "$action" == "install" ]; then
     read -p "Masukkan nama domain kamu :" DOMAIN
     clear
     DIRECTORY="/var/www/$DOMAIN/public_html"
+  
+    mv $DIRECTORY/* /var/www/$DOMAIN
     check_package "zip" "install"
     clear
     wget https://id.wordpress.org/latest-id_ID.zip
