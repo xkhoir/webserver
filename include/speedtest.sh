@@ -9,10 +9,11 @@ show_speedtest_submenu() {
 manage_speedtest() {
     clear
     action=$1
-    read -p "Masukkan domain yang telah anda pasang di webserver: " DOMAIN
-    dir = /var/www/$DOMAIN/public_html
+
   if [ "$action" == "install" ]; then
     #install speedtest
+    read -p "Masukkan domain yang telah anda pasang di webserver: " DOMAIN
+    dir = /var/www/$DOMAIN/public_html
     read -p "Masukkan nama provider vps : " PROVIDER
     title="Speedtest $DOMAIN $PROVIDER Server"
   
@@ -29,6 +30,8 @@ manage_speedtest() {
 
   elif [ "$action" == "uninstall" ]; then
     #uninstall speedtest
+    read -p "Masukkan domain yang telah anda pasang di webserver: " DOMAIN
+    dir = /var/www/$DOMAIN/public_html
     clear
     echo -e "\nMengapus web speedtest"
     sleep 2
