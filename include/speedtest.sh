@@ -14,10 +14,11 @@ manage_speedtest() {
     #install speedtest
     read -p "Masukkan domain yang telah anda pasang di webserver: " DOMAIN
     DIRECTORY = /var/www/$DOMAIN/public_html
+    BAC = /var/www/$DOMAIN/backup
     read -p "Masukkan nama provider vps : " PROVIDER
     title="Speedtest $DOMAIN $PROVIDER Server"
-  
-    mv $DIRECTORY/* /var/www/$DOMAIN
+    mkdir $BAC
+    mv $DIRECTORY/* $BAC
     wget https://github.com/librespeed/speedtest/archive/refs/heads/master.zip
     unzip master.zip
     cp speedtest-master/* $DIRECTORY/
@@ -31,12 +32,12 @@ manage_speedtest() {
   elif [ "$action" == "uninstall" ]; then
     #uninstall speedtest
     read -p "Masukkan domain yang telah anda pasang di webserver: " DOMAIN
-    dir = /var/www/$DOMAIN/public_html
+    DIRECTORY = /var/www/$DOMAIN/public_html
     clear
     echo -e "\nMengapus web speedtest"
     sleep 2
     rm -rf $DIRECTORY/*
-    mv /var/www/$DOMAIN/* $DIRECTORY/
+    mv $BAC/* $DIRECTORY/
     echo -e "\nPengapusan web speedtest telah selesai"
   else
     echo "Perintah tidak valid."

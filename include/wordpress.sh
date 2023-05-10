@@ -13,8 +13,9 @@ manage_wordpress() {
     read -p "Masukkan nama domain wordpress kamu :" DOMAIN
     clear
     DIRECTORY="/var/www/$DOMAIN/public_html"
+    BAC="/var/www/$DOMAIN/backup"
     rm -rf $DIRECTORY/*
-    mv /var/www/$DOMAIN/* $DIRECTORY/
+    mv $BAC/* $DIRECTORY/
     echo -e "\nWordpress pada $DIRECTORY telah dihapus"
     sleep 5
 
@@ -23,7 +24,7 @@ manage_wordpress() {
     clear
     DIRECTORY="/var/www/$DOMAIN/public_html"
   
-    mv $DIRECTORY/* /var/www/$DOMAIN
+    mv $DIRECTORY/* $BAC
     check_package "zip" "install"
     clear
     wget https://id.wordpress.org/latest-id_ID.zip
