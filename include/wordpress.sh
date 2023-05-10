@@ -13,11 +13,11 @@ manage_wordpress() {
     read -p "Masukkan nama domain wordpress kamu :" DOMAIN
     clear
     DIRECTORY="/var/www/$DOMAIN/public_html"
-    rm -rf $DIRECTORY/*
+    rm -rf $DIRECTORY/
     mv /var/www/$DOMAIN/* $DIRECTORY/
     echo -e "\nWordpress pada $DIRECTORY telah dihapus"
     sleep 5
-    
+
   elif [ "$action" == "install" ]; then
     read -p "Masukkan nama domain kamu :" DOMAIN
     clear
@@ -30,7 +30,7 @@ manage_wordpress() {
     clear
     unzip latest-id_ID.zip
     clear
-    cp wordpress/* $DIRECTORY
+    cp -r wordpress/* $DIRECTORY
     rm -rf wordpress
     echo -e "\nWordpress telah terinstall di $DIRECTORY"
     echo -e "\nSilahkan akses $DOMAIN"
