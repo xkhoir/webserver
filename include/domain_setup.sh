@@ -33,9 +33,14 @@ domain_setup () {
                 #call fungsi manage_vhost
                 manage_vhost "apache" "cockpit"
 
-                #set /etc/cockpit/cockpit.conf
+                # konfigurasi yang akan dimasukkan ke dalam file
+                config="[WebService]\nOrigins = https://$DOMAIN http://$DOMAIN http://localhost:9090\nProtocolHeader = X-Forwarded-Proto\nAllowUnencrypted = true"
+
+                # Buat file cockpit.conf
                 touch /etc/cockpit/cockpit.conf
-                sed -i "$ a [WebService]\nOrigins = https://${DOMAIN} http://localhost:9090\nProtocolHeader = X-Forwarded-Proto\nAllowUnencrypted = true" /etc/cockpit/cockpit.conf
+
+                # jalankan perintah echo untuk menambahkan konfigurasi ke dalam file
+                echo -e "$config" >> /etc/cockpit/cockpit.conf
 
                 # Aktifkan Virtual Host Apache
                 echo -e "\nMengaktifkan $DOMAIN.conf Apache"
