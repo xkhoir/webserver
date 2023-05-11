@@ -30,6 +30,11 @@ manage_speedtest() {
     #Terima input domain
     read -p "Masukkan nama domain speedtest kamu :" DOMAIN
     clear
+    #Terima input provider
+    read -p "Masukkan nama provider vps : " PROVIDER
+    clear
+    #Deklarasi string isi index.html
+    title="Speedtest $DOMAIN $PROVIDER Server"
     #cek paket zip
     check_package "zip" "install"
     #Deklarasi direktori docroot web
