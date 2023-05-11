@@ -31,10 +31,10 @@ manage_speedtest() {
     read -p "Masukkan nama domain speedtest kamu :" DOMAIN
     clear
     #Terima input provider
-    read -p "Masukkan nama provider vps : " PROVIDER
+    read -p "Masukkan nama provider vps kamu : " PROVIDER
     clear
     #Deklarasi string isi index.html
-    title="Speedtest $DOMAIN $PROVIDER Server"
+    TITLE="$PROVIDER Speedtest Server"
     #cek paket zip
     check_package "zip" "install"
     #Deklarasi direktori docroot web
@@ -59,8 +59,8 @@ manage_speedtest() {
     #rename example-singleServer-full.html ke index.html
     mv $DIRECTORY/example-singleServer-full.html $DIRECTORY/index.html
     #mengubah isi index.html
-    sed -i "276s/LibreSpeed Example/$title/" $DIRECTORY/index.html
-    sed -i "279s/LibreSpeed Example/$title/" $DIRECTORY/index.html
+    sed -i "276s/LibreSpeed Example/$TITLE/" $DIRECTORY/index.html
+    sed -i "279s/LibreSpeed Example/$TITLE/" $DIRECTORY/index.html
     sed -e '320d' $DIRECTORY/index.html
 
     echo -e "\nApp Speedtest telah terinstall di $DIRECTORY"
