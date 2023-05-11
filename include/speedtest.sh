@@ -9,40 +9,59 @@ show_speedtest_submenu() {
 manage_speedtest() {
     clear
     action=$1
-
-  if [ "$action" == "install" ]; then
-    #install speedtest
-    read -p "Masukkan domain yang telah anda pasang di webserver: " DOMAIN
-
-    DIRECTORY = /var/www/$DOMAIN/public_html
-    BAC = /var/www/$DOMAIN/backup
-    
-    read -p "Masukkan nama provider vps : " PROVIDER
-    title="Speedtest $DOMAIN $PROVIDER Server"
-    mkdir $BAC
-    mv $DIRECTORY/* $BAC
-    
-    wget https://github.com/librespeed/speedtest/archive/refs/heads/master.zip
-    unzip master.zip
-    cp speedtest-master/* $DIRECTORY/
-    rm -rf master.zip speedtest-master
-    mv $DIRECTORY/example-singleServer-full.html $DIRECTORY/index.html
-
-    sed -i "276s/LibreSpeed Example/$title/" index.html
-    sed -i "279s/LibreSpeed Example/$title/" index.html
-    sed -e '320d' index.html
-
-  elif [ "$action" == "uninstall" ]; then
-    #uninstall speedtest
-    read -p "Masukkan domain yang telah anda pasang di webserver: " DOMAIN
-    DIRECTORY = /var/www/$DOMAIN/public_html
+    if [ "$action" == "uninstall" ]; then
+    #Terima input domain
+    read -p "Masukkan nama domain speedtest kamu :" DOMAIN
     clear
-    echo -e "\nMengapus web speedtest"
-    sleep 2
+    #Deklarasi direktori docroot web
+    DIRECTORY="/var/www/$DOMAIN/public_html"
+    #Deklarasi direktori backup
+    BAC="/var/www/$DOMAIN/backup"
+    #Menghapus semua file yang ada di dalam docroot web
     rm -rf $DIRECTORY/*
-    mv $BAC/* $DIRECTORY/
-    echo -e "\nPengapusan web speedtest telah selesai"
+    #Memindah kan semua isi di folder backup ke docroot web
+    mv $BAC/* $DIRECTORY
+    #Menghapus folder backup
+    rm -rf $BAC
+    echo -e "\nApp Speedtest pada $DIRECTORY telah dihapus"
+    sleep 3
+
+  elif [ "$action" == "install" ]; then
+    #Terima input domain
+    read -p "Masukkan nama domain speedtest kamu :" DOMAIN
+    clear
+    #cek paket zip
+    check_package "zip" "install"
+    #Deklarasi direktori docroot web
+    DIRECTORY="/var/www/$DOMAIN/public_html"
+    #Deklarasi direktori backup
+    BAC="/var/www/$DOMAIN/backup"
+    #Membuat folder backup
+    mkdir $BAC
+    #Memindah kan semua isi di folder dockroot web ke folder backup
+    mv $DIRECTORY/* $BAC
+    clear
+    #Download librespeed speedtest app
+    wget https://github.com/librespeed/speedtest/archive/refs/heads/master.zip
+    clear
+    #Decompres master.zip
+    unzip master.zip
+    clear
+    #copy semua file yang ada di folder speedtest-master ke docroot web
+    cp -r speedtest-master/* $DIRECTORY
+    #hapus folder installer speedtest app
+    rm -rf master.zip speedtest-master
+    #rename example-singleServer-full.html ke index.html
+    mv $DIRECTORY/example-singleServer-full.html $DIRECTORY/index.html
+    #mengubah isi index.html
+    sed -i "276s/LibreSpeed Example/$title/" $DIRECTORY/index.html
+    sed -i "279s/LibreSpeed Example/$title/" $DIRECTORY/index.html
+    sed -e '320d' $DIRECTORY/index.html
+
+    echo -e "\nApp Speedtest telah terinstall di $DIRECTORY"
+    echo -e "\nSilahkan akses $DOMAIN"
+    sleep 5
   else
-    echo "Perintah tidak valid."
+    echo "Usage: manage_wordpress [install|uninstall]"
   fi
 }

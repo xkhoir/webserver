@@ -13,8 +13,8 @@ source include/mariadb.sh
 source include/phpmyadmin.sh
 source include/composer.sh
 source include/wordpress.sh
-source include/server.sh
 source include/speedtest.sh
+source include/server.sh
 
 #cek root
 cek_root
