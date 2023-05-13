@@ -12,7 +12,7 @@ check_package() {
     fi
   elif [ "$2" == "install" ]; then
     if dpkg -s "$1" >/dev/null 2>&1; then
-      echo -e "\nPaket $1 telah terinstall, tidak perlu diinstall lagi."
+      echo -e "\nPaket $1 telah terinstall."
       sleep 2
     else
       clear
@@ -35,10 +35,7 @@ check_package() {
       sleep 2
     else
       echo -e "\nPaket $1 belum terpasang, silahkan install dulu melalui opsi install.\n"
-      sleep 3
+      sleep 2
     fi
-  else
-    echo "Argumen kedua tidak valid. Harus menggunakan 'install' atau 'uninstall'."
-    sleep 2
   fi
 }

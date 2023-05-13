@@ -231,15 +231,23 @@ ssl_setup() {
     # Cek apakah Certbot sudah terinstal
     check_package "certbot" "install"
     check_package "ufw" "install"
-    ufw enable
 
-    ufw allow 80
-    ufw allow 443
-    ufw allow 22
-    ufw allow 9090
-    ufw allow 3000
-    echo -e "\nSukses membuka Port 80,443,22,9090,3000\n"
-    sleep 1
+    # Cek apakah UFW sudah diaktifkan atau belum
+    ufw_status="$(sudo ufw status | awk '{print $2}')"
+    if [[ "${ufw_status}" == "inactive" ]]; then
+    echo "UFW belum diaktifkan, mengaktifkan UFW..."
+    sudo ufw enable
+    fi
+
+    # Cek apakah port 22, 80, dan 443 sudah diizinkan atau belum
+    allowed_ports="$(sudo ufw status | grep '22.*ALLOW\|9090.*ALLOW\|80.*ALLOW\|443.*ALLOW')"
+    if [[ -z "${allowed_ports}" ]]; then
+    echo "Port 22, 80, dan/atau 443 belum diizinkan, mengizinkan port..."
+    sudo ufw allow 22
+    sudo ufw allow 9090
+    sudo ufw allow 80
+    sudo ufw allow 443
+    fi
 
     # Cek apakah argumen pertama adalah apache
     if [ "$1" == "apache" ]; then
@@ -271,49 +279,46 @@ ssl_setup() {
 
 # Fungsi untuk mengecek apakah PHP-FPM telah terpasang dan mengembalikan versi yang terpasang
 check_php() {
-  # Cek layanan PHP-FPM yang aktif
-  versi=$(systemctl list-units --type=service | grep 'fpm' | grep 'active' | awk '{print $1}' | sed 's/\.service//g')
+    # Dapatkan daftar service PHP-FPM yang aktif
+    active_services=$(systemctl list-units --type=service | grep "php.*-fpm.service" | grep "running" | awk '{print $1}')
 
-  if [[ -n "$versi" ]]; then
-    echo -e "\nLayanan PHP-FPM tersedia."
-    sleep 2
-    clear
-  else
-    echo -e"\nTidak ada layanan PHP-FPM yang tersedia, Install dahulu."
-    sleep 2
-    clear
-    exit 0
-  fi
+    # Cek apakah tidak ada service PHP-FPM yang aktif
+    if [ -z "$active_services" ]; then
+    echo -e "\nTidak ada PHP-FPM yang aktif."
+    exit 1
+    fi
 
-  # Tampilkan menu pilihan
-  echo -e "\n\nPilih versi PHP-FPM yang akan digunakan:"
+    # Buat array dari versi PHP-FPM yang aktif
+    php_versions=()
+    for service_name in $active_services; do
+    version=$(echo $service_name | sed -e 's/php\(.*\)-fpm.service/\1/')
+    php_versions+=("$version")
+    done
 
-  # Pisahkan daftar versi PHP-FPM menjadi array
-  IFS=' ' read -ra versi_arr <<< "$versi"
+    # Tampilkan menu
+    echo -e "\nPilih versi PHP-FPM yang aktif:"
 
-  # Loop untuk menampilkan pilihan menu
-  for i in "${!versi_arr[@]}"; do
-      echo "$((i+1)). ${versi_arr[i]}"
-  done
+    # Loop melalui versi yang aktif dan tampilkan dengan nomor urutan
+    for i in "${!php_versions[@]}"; do
+        number=$((i+1))
+        echo "$number. ${php_versions[$i]}"
+    done
 
-  # Ambil pilihan dari pengguna
-  read -p "Masukkan pilihan: " pilihan
+    # Prompt user untuk memilih versi
+    read -p "Masukkan nomor versi PHP-FPM yang diinginkan: " version_number
 
-  # Validasi pilihan menggunakan pernyataan case
-  case "$pilihan" in
-      [1-9]|10)
-          versi_terpilih="${versi_arr[$pilihan-1]}"
-          echo -e "\nVersi PHP-FPM yang dipilih: $versi_terpilih"
-          ;;
-      *)
-          clear
-          echo -e "\nPilihan tidak valid"
-          sleep 2
-          clear
-          return 1
-          ;;
-  esac
-  return 0
+    # Validasi input
+    if ! [[ $version_number =~ ^[1-9][0-9]*$ ]] || (( version_number > ${#php_versions[@]} )); then
+        clear
+        echo "Input tidak valid."
+        exit 1
+    fi
+
+    # Dapatkan versi yang dipilih
+    versi_terpilih=${php_versions[$((version_number-1))]}
+
+    # Gunakan versi PHP-FPM yang dipilih
+    echo -e "\nMenggunakan PHP-FPM versi $versi_terpilih."
 }
 
 # Fungsi untuk tambah file log
