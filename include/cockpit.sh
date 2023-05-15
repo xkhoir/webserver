@@ -23,12 +23,25 @@ manage_cockpit() {
     check_package "$package-navigator" "install"
     systemctl enable cockpit
 
+    # konfigurasi yang akan dimasukkan ke dalam file
+    isi="[keyfile]\nunmanaged-devices=none"
+    # Buat file 10-globally-managed-devices.conf
+    touch /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
+    # jalankan perintah echo untuk menambahkan konfigurasi ke dalam file
+    echo -e "$isi" >> /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
+    nmcli con add type dummy con-name fake ifname fake0 ip4 1.2.3.4/24 gw4 1.2.3.1
+    systemctl restart NetworkManager
+
     echo -e "\nMemasang cockpit di domain? (y/n)"
     read CEK
 
     if [ "$CEK" == "y" ]; then
         # call domain_setup
         domain_setup "cockpit"
+        clear
+        echo -e "\nServer Akan reboot dalam 3 detik\n"
+        sleep 3
+        reboot
     else
         echo -e "\nOK, akses cockpit di localhost anda pada port 9090,"
     fi
@@ -36,7 +49,14 @@ manage_cockpit() {
     #uninstall cockpit
     check_package "$package" "uninstall"
     echo "" > /etc/cockpit/cockpit.conf
+    echo "" > /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
+    nmcli con delete con-name fake
     systemctl restart cockpit.service
+    systemctl restart NetworkManager
+    clear
+    echo -e "\nServer Akan reboot dalam 3 detik\n"
+    sleep 3
+    reboot
   else
     echo "Perintah tidak valid."
   fi
