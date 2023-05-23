@@ -391,7 +391,7 @@ echo -n "<VirtualHost *:80>
 </VirtualHost>" | cat > /etc/apache2/sites-available/$DOMAIN.conf
 
     # Tambah untuk conf fpm apache
-    sudo sed -i '13s/.*/    <FilesMatch \\.php$>\n\tSetHandler "proxy:unix:\/run\/php\/'$versi_terpilih'.sock|fcgi:\/\/localhost\/"\n    <\/FilesMatch>/' /etc/apache2/sites-available/$DOMAIN.conf
+    sudo sed -i '13s/.*/    <FilesMatch \\.php$>\n\tSetHandler "proxy:unix:\/run\/php\/php'$versi_terpilih'-fpm.sock|fcgi:\/\/localhost\/"\n    <\/FilesMatch>/' /etc/apache2/sites-available/$DOMAIN.conf
     # Tambah untuk conf log apache
     sudo sed -i "/^<\/VirtualHost>/i \
     \    ErrorLog \${APACHE_LOG_DIR}\\/$DOMAIN\\/error.log\n\
