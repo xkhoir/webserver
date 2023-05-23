@@ -12,7 +12,7 @@ berikut adalah baris perintah untuk menjalankan lamp.sh :
 
     sudo git clone https://github.com/xkhoir/webserver.git
     cd webserver
-    chmod -R 755 *
+    sudo chmod -R 755 *
     sudo ./lamp.sh
 
 ## Berikut command install penting untuk linux web server
