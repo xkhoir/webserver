@@ -10,7 +10,7 @@ Script ini masih dalam tahap pengembangan. dan hanya support untuk linux dengan 
 ## Menjalankan autoinstaller lamp.sh
 berikut adalah baris perintah untuk menjalankan lamp.sh : 
 
-    git clone https://github.com/xkhoir/webserver.git
+    sudo git clone https://github.com/xkhoir/webserver.git
     cd webserver
     chmod -R 755 *
     sudo ./lamp.sh
