@@ -280,7 +280,7 @@ ssl_setup() {
 # Fungsi untuk mengecek apakah PHP-FPM telah terpasang dan mengembalikan versi yang terpasang
 check_php() {
     # Dapatkan daftar service PHP-FPM yang aktif
-    active_services=$(systemctl list-units --type=service | grep "php.*-fpm.service" | grep "running" | awk '{print $1}')
+    active_services=$(systemctl list-units --type=service | grep "php.*-fpm.service" | grep "running" | awk '{print $1}' | sed 's/\.service$//')
 
     # Cek apakah tidak ada service PHP-FPM yang aktif
     if [ -z "$active_services" ]; then
@@ -291,7 +291,7 @@ check_php() {
     # Buat array dari versi PHP-FPM yang aktif
     php_versions=()
     for service_name in $active_services; do
-    version=$(echo $service_name | sed -e 's/php\(.*\)-fpm.service/\1/')
+    version=$(echo $service_name )
     php_versions+=("$version")
     done
 
@@ -391,7 +391,7 @@ echo -n "<VirtualHost *:80>
 </VirtualHost>" | cat > /etc/apache2/sites-available/$DOMAIN.conf
 
     # Tambah untuk conf fpm apache
-    sudo sed -i '13s/.*/    <FilesMatch \\.php$>\n\tSetHandler "proxy:unix:\/run\/php\/php'$versi_terpilih'-fpm.sock|fcgi:\/\/localhost\/"\n    <\/FilesMatch>/' /etc/apache2/sites-available/$DOMAIN.conf
+    sudo sed -i '13s/.*/    <FilesMatch \\.php$>\n\tSetHandler "proxy:unix:\/run\/php\/'$versi_terpilih'.sock|fcgi:\/\/localhost\/"\n    <\/FilesMatch>/' /etc/apache2/sites-available/$DOMAIN.conf
     # Tambah untuk conf log apache
     sudo sed -i "/^<\/VirtualHost>/i \
     \    ErrorLog \${APACHE_LOG_DIR}\\/$DOMAIN\\/error.log\n\
