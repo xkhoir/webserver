@@ -46,6 +46,11 @@ manage_mariadb() {
 manage_user() {
     clear
     show_header
+    # Meminta password root MariaDB
+    read -sp "Masukkan password root MariaDB: " root_password
+
+    clear
+    show_header
     echo "1. Tambah Pengguna"
     echo "2. Ubah Password Pengguna"
     echo "3. Hapus Pengguna"
@@ -87,7 +92,7 @@ manage_user() {
     esac
     echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
     # Menjalankan query SQL
-    mysql -u root -p -e "$query"
+    mysql -u root -p"$root_password" -e "$query"
 
     echo "Pengguna '$username' berhasil $action!"
 
@@ -98,6 +103,11 @@ manage_user() {
 
 # Fungsi untuk mengelola database dan binding
 manage_database() {
+    clear
+    show_header
+    # Meminta password root MariaDB
+    read -sp "Masukkan password root MariaDB: " root_password
+
     clear
     show_header
     echo "1. Tambah Database"
@@ -120,7 +130,7 @@ manage_database() {
 
             echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
             # Menjalankan query SQL untuk menambahkan database
-            mysql -u root -p -e "$query"
+            mysql -u root -p"$root_password" -e "$query"
 
             echo "Database '$database_with_prefix' berhasil ditambahkan!"
 
@@ -129,7 +139,7 @@ manage_database() {
 
             echo -e "\nMasukkan kembali password root Database (jika tidak ada silahkan tekan enter)"
             # Menjalankan query SQL untuk menghubungkan pengguna dengan database
-            mysql -u root -p -e "$binding_query"
+            mysql -u root -p"$root_password" -e "$binding_query"
 
             echo "Pengguna '$username' berhasil dihubungkan dengan database '$database_with_prefix'!"
             ;;
@@ -145,7 +155,7 @@ manage_database() {
             
             echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
             # Menjalankan query SQL untuk memisahkan pengguna dari database
-            mysql -u root -p -e "$binding_query"
+            mysql -u root -p"$root_password" -e "$binding_query"
 
             echo -e "\nPengguna '$username' berhasil dipisahkan dari database '$database_with_prefix'!"
 
@@ -154,7 +164,7 @@ manage_database() {
 
             echo -e "\nMasukkan kembali password root Database (jika tidak ada silahkan tekan enter)"
             # Menjalankan query SQL untuk menghapus database
-            mysql -u root -p -e "$query"
+            mysql -u root -p"$root_password" -e "$query"
 
             echo -e "\nDatabase '$database_with_prefix' berhasil dihapus!"
             ;;
