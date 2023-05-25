@@ -47,7 +47,6 @@ manage_mariadb() {
 manage_user() {
     clear
     show_header
-    echo "=== KELOLA PENGGUNA ==="
     echo "1. Tambah Pengguna"
     echo "2. Ubah Password Pengguna"
     echo "3. Hapus Pengguna"
@@ -102,7 +101,6 @@ manage_user() {
 manage_database() {
     clear
     show_header
-    echo "=== KELOLA DATABASE ==="
     echo "1. Tambah Database"
     echo "2. Hapus Database"
     echo "3. Kembali"
@@ -145,7 +143,6 @@ manage_database() {
 manage_binding() {
     clear
     show_header
-    echo "=== KELOLA BINDING PENGGUNA-DATABASE ==="
     echo "1. Binding Pengguna dengan Database"
     echo "2. Hapus Binding Pengguna dengan Database"
     echo "3. Kembali"
