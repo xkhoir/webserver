@@ -6,7 +6,7 @@ architecture=$(uname -m)
 show_header() {
    clear
    echo "       Lamp Stack Server Auto Installer by       ";
-   echo "                   xkhoitech                     ";
+   echo "                   xkhoirtech                     ";
    echo "=================================================";
    echo "Nama prosesor    :$processor";
    echo "Arsitektur       : $architecture";
