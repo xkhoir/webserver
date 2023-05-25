@@ -46,7 +46,8 @@ manage_mariadb() {
 manage_user() {
     clear
     show_header
-    # Meminta password root MariaDB
+    # Meminta password root 
+    echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
     read -sp "Masukkan password root MariaDB: " root_password
 
     clear
@@ -90,7 +91,6 @@ manage_user() {
         4) return ;;
         *) echo "Opsi tidak valid, silakan coba lagi." ;;
     esac
-    echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
     # Menjalankan query SQL
     mysql -u root -p"$root_password" -e "$query"
 
@@ -106,6 +106,7 @@ manage_database() {
     clear
     show_header
     # Meminta password root MariaDB
+    echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
     read -sp "Masukkan password root MariaDB: " root_password
 
     clear
@@ -128,7 +129,6 @@ manage_database() {
             # Membuat query SQL untuk menambahkan database
             query="CREATE DATABASE $database_with_prefix;"
 
-            echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
             # Menjalankan query SQL untuk menambahkan database
             mysql -u root -p"$root_password" -e "$query"
 
@@ -137,7 +137,6 @@ manage_database() {
             # Membuat query SQL untuk menghubungkan pengguna dengan database
             binding_query="GRANT ALL PRIVILEGES ON $database_with_prefix.* TO '$username'@'localhost';"
 
-            echo -e "\nMasukkan kembali password root Database (jika tidak ada silahkan tekan enter)"
             # Menjalankan query SQL untuk menghubungkan pengguna dengan database
             mysql -u root -p"$root_password" -e "$binding_query"
 
@@ -153,7 +152,6 @@ manage_database() {
             # Membuat query SQL untuk memisahkan pengguna dari database
             binding_query="REVOKE ALL PRIVILEGES ON $database_with_prefix.* FROM '$username'@'localhost';"
             
-            echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
             # Menjalankan query SQL untuk memisahkan pengguna dari database
             mysql -u root -p"$root_password" -e "$binding_query"
 
@@ -162,7 +160,6 @@ manage_database() {
             # Membuat query SQL untuk menghapus database
             query="DROP DATABASE $database_with_prefix;"
 
-            echo -e "\nMasukkan kembali password root Database (jika tidak ada silahkan tekan enter)"
             # Menjalankan query SQL untuk menghapus database
             mysql -u root -p"$root_password" -e "$query"
 
