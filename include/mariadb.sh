@@ -45,6 +45,8 @@ manage_mariadb() {
 
 # Fungsi untuk mengelola pengguna
 manage_user() {
+    clear
+    show_header
     echo "=== KELOLA PENGGUNA ==="
     echo "1. Tambah Pengguna"
     echo "2. Ubah Password Pengguna"
@@ -54,6 +56,8 @@ manage_user() {
     echo -n "Pilih opsi [1-4]: "
     read choice
 
+    clear
+    show_header
     case $choice in
         1)
             read -p "Masukkan nama pengguna baru: " username
@@ -96,6 +100,8 @@ manage_user() {
 
 # Fungsi untuk mengelola database
 manage_database() {
+    clear
+    show_header
     echo "=== KELOLA DATABASE ==="
     echo "1. Tambah Database"
     echo "2. Hapus Database"
@@ -104,6 +110,8 @@ manage_database() {
     echo -n "Pilih opsi [1-3]: "
     read choice
 
+    clear
+    show_header
     case $choice in
         1)
             read -p "Masukkan nama database baru: " database
@@ -135,6 +143,8 @@ manage_database() {
 
 # Fungsi untuk mengelola binding pengguna-database
 manage_binding() {
+    clear
+    show_header
     echo "=== KELOLA BINDING PENGGUNA-DATABASE ==="
     echo "1. Binding Pengguna dengan Database"
     echo "2. Hapus Binding Pengguna dengan Database"
@@ -143,6 +153,8 @@ manage_binding() {
     echo -n "Pilih opsi [1-3]: "
     read choice
 
+    clear
+    show_header
     case $choice in
         1)
             read -p "Masukkan nama pengguna: " username
