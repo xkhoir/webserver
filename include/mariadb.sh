@@ -173,21 +173,3 @@ manage_binding() {
     systemctl restart mariadb
     sleep 2
 }
-
-# Loop utama program
-while true; do
-    clear
-    show_menu
-    read choice
-
-    case $choice in
-        1) manage_user ;;
-        2) manage_database ;;
-        3) manage_binding ;;
-        4) exit ;;
-        *) echo "Opsi tidak valid, silakan coba lagi." ;;
-    esac
-
-    echo -e "\nTekan Enter untuk melanjutkan..."
-    read
-done
