@@ -3,8 +3,10 @@
 show_mariadb_submenu() {
     echo "1. Install"
     echo "2. Uninstall"
-    echo "3. Kelola User Database"
-    echo "4. Kembali ke menu utama"
+    echo "3. Kelola Pengguna"
+    echo "4. Kelola Database"
+    echo "5. Kelola Binding Pengguna-Database"
+    echo "6. Kembali ke menu utama"
 }
 
 # fungsi untuk proses Mariadb
@@ -41,57 +43,151 @@ manage_mariadb() {
   fi
 }
 
-# fungsi untuk menambah, mengubah, atau menghapus user di MariaDB
+# Fungsi untuk mengelola pengguna
 manage_user() {
-    # Minta nama user dan tindakan yang diinginkan (add, modify, atau delete)
-    clear
-    show_header
-    echo "Masukkan nama user yang ingin dikelola:"
-    read USER
-    clear
-    show_header
-    echo "Masukkan tindakan yang ingin dilakukan (add, modify, atau delete):"
-    read ACTION
+    echo "=== KELOLA PENGGUNA ==="
+    echo "1. Tambah Pengguna"
+    echo "2. Ubah Password Pengguna"
+    echo "3. Hapus Pengguna"
+    echo "4. Kembali"
+    echo "======================="
+    echo -n "Pilih opsi [1-4]: "
+    read choice
 
-    # Minta password jika tindakan adalah menambah atau mengubah user
-    if [[ "$ACTION" == "add" || "$ACTION" == "modify" ]]; then
-        clear
-        show_header
-        echo "Masukkan password baru:"
-        read -s PASSWORD
-    fi
+    case $choice in
+        1)
+            read -p "Masukkan nama pengguna baru: " username
+            read -sp "Masukkan kata sandi pengguna baru: " password
+            echo
 
-    # Jalankan perintah sesuai dengan tindakan yang diminta
-    clear
-    show_header
-    case "$ACTION" in
-        "add")
-            echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
-            echo "CREATE USER '$USER'@'localhost' IDENTIFIED BY '$PASSWORD';" | mysql -u root -p
-            echo -e "\nMasukkan kembali password root Database (jika tidak ada silahkan tekan enter)"
-            echo "GRANT ALL PRIVILEGES ON *.* TO '$USER'@'localhost' WITH GRANT OPTION;" | mysql -u root -p
-            echo -e "\nUser $USER telah di tambahkan ke Database"
-            sleep 2
+            # Membuat query SQL untuk menambahkan pengguna
+            query="CREATE USER '$username'@'localhost' IDENTIFIED BY '$password';"
+            action="ditambahkan"
             ;;
-        "modify")
-            echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
-            echo "FLUSH PRIVILEGES;" | mysql -u root -p
-            echo -e "\nMasukkan kembali password root Database (jika tidak ada silahkan tekan enter)"
-            echo "ALTER USER '$USER'@'localhost' IDENTIFIED BY '$PASSWORD';" | mysql -u root -p
-            echo -e "\nPassword $USER telah teganti"
-            sleep 2
+        2)
+            read -p "Masukkan nama pengguna yang akan diubah password: " username
+            read -sp "Masukkan kata sandi baru: " password
+            echo
+
+            # Membuat query SQL untuk mengubah password pengguna
+            query="ALTER USER '$username'@'localhost' IDENTIFIED BY '$password';"
+            action="diubah"
             ;;
-        "delete")
-            echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
-            echo "DROP USER '$USER'@'localhost';" | mysql -u root -p
-            echo -e "\nUser $USER telah dihapus"
-            sleep 2
+        3)
+            read -p "Masukkan nama pengguna yang akan dihapus: " username
+
+            # Membuat query SQL untuk menghapus pengguna
+            query="DROP USER '$username'@'localhost';"
+            action="dihapus"
             ;;
-        *)  
-            echo "Tindakan tidak valid."
-            ;;
+        4) return ;;
+        *) echo "Opsi tidak valid, silakan coba lagi." ;;
     esac
+
+    # Menjalankan query SQL
+    mysql -u root -p -e "$query"
+
+    echo "Pengguna '$username' berhasil $action!"
+
     echo -e "\nRestart Mariadb service\n"
     systemctl restart mariadb
     sleep 2
 }
+
+# Fungsi untuk mengelola database
+manage_database() {
+    echo "=== KELOLA DATABASE ==="
+    echo "1. Tambah Database"
+    echo "2. Hapus Database"
+    echo "3. Kembali"
+    echo "======================"
+    echo -n "Pilih opsi [1-3]: "
+    read choice
+
+    case $choice in
+        1)
+            read -p "Masukkan nama database baru: " database
+
+            # Membuat query SQL untuk menambahkan database
+            query="CREATE DATABASE $database;"
+            action="ditambahkan"
+            ;;
+        2)
+            read -p "Masukkan nama database yang akan dihapus: " database
+
+            # Membuat query SQL untuk menghapus database
+            query="DROP DATABASE $database;"
+            action="dihapus"
+            ;;
+        3) return ;;
+        *) echo "Opsi tidak valid, silakan coba lagi." ;;
+    esac
+
+    # Menjalankan query SQL
+    mysql -u root -p -e "$query"
+
+    echo "Database '$database' berhasil $action!"
+
+    echo -e "\nRestart Mariadb service\n"
+    systemctl restart mariadb
+    sleep 2
+}
+
+# Fungsi untuk mengelola binding pengguna-database
+manage_binding() {
+    echo "=== KELOLA BINDING PENGGUNA-DATABASE ==="
+    echo "1. Binding Pengguna dengan Database"
+    echo "2. Hapus Binding Pengguna dengan Database"
+    echo "3. Kembali"
+    echo "========================================"
+    echo -n "Pilih opsi [1-3]: "
+    read choice
+
+    case $choice in
+        1)
+            read -p "Masukkan nama pengguna: " username
+            read -p "Masukkan nama database: " database
+
+            # Membuat query SQL untuk menghubungkan pengguna dengan database
+            query="GRANT ALL PRIVILEGES ON $database.* TO '$username'@'localhost';"
+            action="dihubungkan"
+            ;;
+        2)
+            read -p "Masukkan nama pengguna: " username
+            read -p "Masukkan nama database: " database
+
+            # Membuat query SQL untuk memisahkan pengguna dari database
+            query="REVOKE ALL PRIVILEGES ON $database.* FROM '$username'@'localhost';"
+            action="dipisahkan"
+            ;;
+        3) return ;;
+        *) echo "Opsi tidak valid, silakan coba lagi." ;;
+    esac
+
+    # Menjalankan query SQL
+    mysql -u root -p -e "$query"
+
+    echo "Pengguna '$username' berhasil $action dari database '$database'!"
+
+    echo -e "\nRestart Mariadb service\n"
+    systemctl restart mariadb
+    sleep 2
+}
+
+# Loop utama program
+while true; do
+    clear
+    show_menu
+    read choice
+
+    case $choice in
+        1) manage_user ;;
+        2) manage_database ;;
+        3) manage_binding ;;
+        4) exit ;;
+        *) echo "Opsi tidak valid, silakan coba lagi." ;;
+    esac
+
+    echo -e "\nTekan Enter untuk melanjutkan..."
+    read
+done

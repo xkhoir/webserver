@@ -172,7 +172,13 @@ while true; do
           3) # Manage User Mariadb
             manage_user
             ;;
-          4) # Kembali ke menu utama
+          4) # Manage Database Mariadb
+            manage_database
+            ;;
+          5) # Manage Binding Mariadb
+            manage_binding
+            ;;
+          6) # Kembali ke menu utama
 	          clear
       	    show_header
             show_menu
