@@ -112,17 +112,24 @@ manage_database() {
     show_header
     case $choice in
         1)
+            read -p "Masukkan nama pengguna: " username
             read -p "Masukkan nama database baru: " database
 
+            # Menambahkan prefix nama pengguna pada nama database
+            database_with_prefix="$username"_"$database"
+
             # Membuat query SQL untuk menambahkan database
-            query="CREATE DATABASE $database;"
+            query="CREATE DATABASE $database_with_prefix;"
             action="ditambahkan"
             ;;
         2)
             read -p "Masukkan nama database yang akan dihapus: " database
 
+            # Menambahkan prefix nama pengguna pada nama database
+            database_with_prefix="$database"
+
             # Membuat query SQL untuk menghapus database
-            query="DROP DATABASE $database;"
+            query="DROP DATABASE $database_with_prefix;"
             action="dihapus"
             ;;
         3) return ;;
@@ -132,7 +139,7 @@ manage_database() {
     # Menjalankan query SQL
     mysql -u root -p -e "$query"
 
-    echo "Database '$database' berhasil $action!"
+    echo "Database '$database_with_prefix' berhasil $action!"
 
     echo -e "\nRestart Mariadb service\n"
     systemctl restart mariadb
