@@ -5,8 +5,7 @@ show_mariadb_submenu() {
     echo "2. Uninstall"
     echo "3. Kelola Pengguna"
     echo "4. Kelola Database"
-    echo "5. Kelola Binding Pengguna-Database"
-    echo "6. Kembali ke menu utama"
+    echo "5. Kembali ke menu utama"
 }
 
 # fungsi untuk proses Mariadb
@@ -97,10 +96,9 @@ manage_user() {
     sleep 2
 }
 
-# Fungsi untuk mengelola database
+# Fungsi untuk mengelola database dan binding
 manage_database() {
-    clear
-    show_header
+    echo "=== KELOLA DATABASE ==="
     echo "1. Tambah Database"
     echo "2. Hapus Database"
     echo "3. Kembali"
@@ -108,8 +106,6 @@ manage_database() {
     echo -n "Pilih opsi [1-3]: "
     read choice
 
-    clear
-    show_header
     case $choice in
         1)
             read -p "Masukkan nama pengguna: " username
@@ -120,71 +116,46 @@ manage_database() {
 
             # Membuat query SQL untuk menambahkan database
             query="CREATE DATABASE $database_with_prefix;"
-            action="ditambahkan"
+
+            # Menjalankan query SQL untuk menambahkan database
+            mysql -u root -p -e "$query"
+
+            echo "Database '$database_with_prefix' berhasil ditambahkan!"
+
+            # Membuat query SQL untuk menghubungkan pengguna dengan database
+            binding_query="GRANT ALL PRIVILEGES ON $database_with_prefix.* TO '$username'@'localhost';"
+
+            # Menjalankan query SQL untuk menghubungkan pengguna dengan database
+            mysql -u root -p -e "$binding_query"
+
+            echo "Pengguna '$username' berhasil dihubungkan dengan database '$database_with_prefix'!"
             ;;
         2)
+            read -p "Masukkan nama pengguna: " username
             read -p "Masukkan nama database yang akan dihapus: " database
 
             # Menambahkan prefix nama pengguna pada nama database
-            database_with_prefix="$database"
+            database_with_prefix="$username"_"$database"
+
+            # Membuat query SQL untuk memisahkan pengguna dari database
+            binding_query="REVOKE ALL PRIVILEGES ON $database_with_prefix.* FROM '$username'@'localhost';"
+
+            # Menjalankan query SQL untuk memisahkan pengguna dari database
+            mysql -u root -p -e "$binding_query"
+
+            echo -e "\nPengguna '$username' berhasil dipisahkan dari database '$database_with_prefix'!"
 
             # Membuat query SQL untuk menghapus database
             query="DROP DATABASE $database_with_prefix;"
-            action="dihapus"
+
+            # Menjalankan query SQL untuk menghapus database
+            mysql -u root -p -e "$query"
+
+            echo -e "\nDatabase '$database_with_prefix' berhasil dihapus!"
             ;;
         3) return ;;
         *) echo "Opsi tidak valid, silakan coba lagi." ;;
     esac
-
-    # Menjalankan query SQL
-    mysql -u root -p -e "$query"
-
-    echo "Database '$database_with_prefix' berhasil $action!"
-
-    echo -e "\nRestart Mariadb service\n"
-    systemctl restart mariadb
-    sleep 2
-}
-
-# Fungsi untuk mengelola binding pengguna-database
-manage_binding() {
-    clear
-    show_header
-    echo "1. Binding Pengguna dengan Database"
-    echo "2. Hapus Binding Pengguna dengan Database"
-    echo "3. Kembali"
-    echo "========================================"
-    echo -n "Pilih opsi [1-3]: "
-    read choice
-
-    clear
-    show_header
-    case $choice in
-        1)
-            read -p "Masukkan nama pengguna: " username
-            read -p "Masukkan nama database: " database
-
-            # Membuat query SQL untuk menghubungkan pengguna dengan database
-            query="GRANT ALL PRIVILEGES ON $database.* TO '$username'@'localhost';"
-            action="dihubungkan"
-            ;;
-        2)
-            read -p "Masukkan nama pengguna: " username
-            read -p "Masukkan nama database: " database
-
-            # Membuat query SQL untuk memisahkan pengguna dari database
-            query="REVOKE ALL PRIVILEGES ON $database.* FROM '$username'@'localhost';"
-            action="dipisahkan"
-            ;;
-        3) return ;;
-        *) echo "Opsi tidak valid, silakan coba lagi." ;;
-    esac
-
-    # Menjalankan query SQL
-    mysql -u root -p -e "$query"
-
-    echo "Pengguna '$username' berhasil $action dari database '$database'!"
-
     echo -e "\nRestart Mariadb service\n"
     systemctl restart mariadb
     sleep 2
