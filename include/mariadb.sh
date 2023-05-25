@@ -47,7 +47,7 @@ manage_user() {
     clear
     show_header
     # Meminta password root 
-    echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
+    echo -e "\n(jika tidak ada silahkan tekan enter)"
     read -sp "Masukkan password root MariaDB: " root_password
 
     clear
@@ -106,7 +106,7 @@ manage_database() {
     clear
     show_header
     # Meminta password root MariaDB
-    echo -e "\nMasukkan password root Database (jika tidak ada silahkan tekan enter)"
+    echo -e "\n(jika tidak ada silahkan tekan enter)"
     read -sp "Masukkan password root MariaDB: " root_password
 
     clear
