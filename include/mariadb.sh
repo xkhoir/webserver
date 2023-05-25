@@ -98,7 +98,8 @@ manage_user() {
 
 # Fungsi untuk mengelola database dan binding
 manage_database() {
-    echo "=== KELOLA DATABASE ==="
+    clear
+    show_header
     echo "1. Tambah Database"
     echo "2. Hapus Database"
     echo "3. Kembali"
