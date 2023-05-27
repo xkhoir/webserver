@@ -36,7 +36,7 @@ manage_speedtest() {
     #Deklarasi string isi index.html
     TITLE="$PROVIDER Speedtest Server"
     #cek paket zip
-    check_package "zip" "install"
+    check_package "zip" "$action"
     #Deklarasi direktori docroot web
     DIRECTORY="/var/www/$DOMAIN/public_html"
     #Deklarasi direktori backup

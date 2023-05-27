@@ -20,7 +20,7 @@ manage_php() {
   if [ "$action" == "uninstall" ]; then
     a2dismod proxy_fcgi setenvif
     a2disconf $package-fpm
-    check_package "$package-fpm" "uninstall"
+    check_package "$package-fpm" "$action"
     # Uninstall PHP & ekstensi
     # for ext in "${extensions[@]}"; do
     #   ext_package="$package-$ext"
@@ -61,7 +61,7 @@ manage_php() {
       add-apt-repository -y ppa:ondrej/php
     fi
 
-    check_package "$package-fpm" "install"
+    check_package "$package-fpm" "$action"
     apt install $package-{bz2,cli,intl,common,mysql,zip,curl,gd,mbstring,xml,bcmath,phpdbg,cgi} -y
     # Instalasi PHP & ekstensi
     # for ext in "${extensions[@]}"; do

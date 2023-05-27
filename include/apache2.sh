@@ -18,7 +18,7 @@ manage_apache() {
     action=$1
   if [ "$action" == "uninstall" ]; then
     #parsing data ke fungsi check_package
-    check_package "$package" "uninstall"
+    check_package "$package" "$action"
     rm -rf /var/lib/apache*
     rm -rf /var/log/apache*
     rm -rf /var/www/*
@@ -26,7 +26,7 @@ manage_apache() {
     rm -rf /etc/letsencry*
   elif [ "$action" == "install" ]; then
     #parsing data ke fungsi check_package
-    check_package "$package" "install"
+    check_package "$package" "$action"
   elif [ "$action" == "domainsetup" ]; then
     #call function domain setup
     domain_setup "webserver"

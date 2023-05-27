@@ -31,7 +31,7 @@ manage_wordpress() {
     read -p "Masukkan nama domain wordpress kamu :" DOMAIN
     clear
     #cek paket zip
-    check_package "zip" "install"
+    check_package "zip" "$action"
     #Deklarasi direktori docroot web
     DIRECTORY="/var/www/$DOMAIN/public_html"
     #Deklarasi direktori backup

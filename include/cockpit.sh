@@ -15,12 +15,12 @@ manage_cockpit() {
     curl -sSL https://repo.45drives.com/setup -o setup-repo.sh
     sudo bash setup-repo.sh
     #install cockpit
-    check_package "apache2" "install"
-    check_package "$package" "install"
-    check_package "$package-storaged" "install"
-    check_package "$package-packagekit" "install"
-    check_package "$package-file-sharing" "install"
-    check_package "$package-navigator" "install"
+    check_package "apache2" "$action"
+    check_package "$package" "$actionl"
+    check_package "$package-storaged" "$action"
+    check_package "$package-packagekit" "$action"
+    check_package "$package-file-sharing" "$action"
+    check_package "$package-navigator" "$action"
     systemctl enable cockpit
 
     # konfigurasi yang akan dimasukkan ke dalam file
@@ -47,7 +47,7 @@ manage_cockpit() {
     fi
   elif [ "$action" == "uninstall" ]; then
     #uninstall cockpit
-    check_package "$package" "uninstall"
+    check_package "$package" "$action"
     echo "" > /etc/cockpit/cockpit.conf
     echo "" > /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
     nmcli con delete con-name fake

@@ -19,27 +19,53 @@ manage_mariadb() {
   elif [ "$action" == "install" ]; then
     #parsing data ke fungsi check_package
     check_package "$package-server" "install"
-    
-    #Setup install mariadb
-    # echo -e "\nSetup mariadb ...\n"
-    # # Minta password root MySQL dari pengguna
-    # echo "Masukkan password root MySQL:"
-    # read -s MYSQL_ROOT_PASSWORD
-    
-    # # Set password root MySQL ke dalam variabel lingkungan
-    # export MYSQL_PWD=$MYSQL_ROOT_PASSWORD
-    
-    # Jalankan script mysql_secure_installation dengan opsi --no-root-password
-    # echo "Menjalankan pengamanan instalasi MySQL..."
-    # echo -e "n\ny\ny\ny\ny" | mysql_secure_installation
-    # sleep 20
-    # Hapus variabel lingkungan password root MySQL
-    # unset MYSQL_PWD
-    
-    # echo "Instalasi MySQL telah diamankan."
+    secure_install
   else
     echo "Perintah tidak valid."
   fi
+}
+
+secure_install(){
+    clear
+    # Meminta pengguna untuk memasukkan password root
+    echo -e -n "\nMasukkan password root baru: "
+    read -s ROOT_PASSWORD
+    echo
+
+    # Menjalankan mysql_secure_installation secara otomatis
+    SECURE_MYSQL=$(expect -c "
+    set timeout 10
+    spawn mysql_secure_installation
+
+    expect \"Enter current password for root (enter for none):\"
+    send \"\r\"
+
+    expect \"Set root password?\"
+    send \"Y\r\"
+
+    expect \"New password:\"
+    send \"$ROOT_PASSWORD\r\"
+
+    expect \"Re-enter new password:\"
+    send \"$ROOT_PASSWORD\r\"
+
+    expect \"Remove anonymous users?\"
+    send \"Y\r\"
+
+    expect \"Disallow root login remotely?\"
+    send \"Y\r\"
+
+    expect \"Remove test database and access to it?\"
+    send \"Y\r\"
+
+    expect \"Reload privilege tables now?\"
+    send \"Y\r\"
+
+    expect eof
+    ")
+
+    # Menjalankan skrip expect
+    echo "$SECURE_MYSQL"
 }
 
 # Fungsi untuk mengelola pengguna

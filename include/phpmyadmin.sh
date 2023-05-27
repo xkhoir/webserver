@@ -14,10 +14,10 @@ manage_phpmyadmin() {
     action=$1
   if [ "$action" == "uninstall" ]; then
     #parsing data ke fungsi check_package
-    check_package "$package" "uninstall"
+    check_package "$package" "$action"
   elif [ "$action" == "install" ]; then
     #parsing data ke fungsi check_package
-    check_package "$package" "install"
+    check_package "$package" "$action"
   elif [ "$action" == "update" ]; then
     #download via https://www.phpmyadmin.net/
     echo -e "\nDownloading latest PhpMyAdmin...\n"
