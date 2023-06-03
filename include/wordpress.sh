@@ -33,6 +33,8 @@ manage_wordpress() {
 
     input_config
 
+    set_db
+
     set_config
 
     # Menjalankan instalasi WordPress melalui WP-CLI
@@ -42,10 +44,9 @@ manage_wordpress() {
     rm -rf latest.tar.gz
 
     show_result
-
-    echo -e "\nApp Wordpress telah terinstall di $DIRECTORY"
-    echo -e "\nSilahkan akses $DOMAIN"
-    sleep 5
+    
+    echo -e "\n\nPress any key to continue..."
+    read -n 1 -s -r key
   else
     echo "Usage: manage_wordpress [install|uninstall]"
   fi
@@ -135,7 +136,36 @@ input_config () {
     WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL:-$DEFAULT_WP_ADMIN_EMAIL}
 
     # Meminta input dari pengguna untuk opsi Ketampakan di Mesin Pencari
-    read -p "Apakah Anda ingin menghalangi mesin pencari untuk mengindeks situs ini? (y/n) " ROBOTS_OPTION
+    # read -p "Apakah Anda ingin menghalangi mesin pencari untuk mengindeks situs ini? (y/n) " ROBOTS_OPTION
+}
+
+set_db () {
+    # Pengecekan pengguna root pada database
+    ROOT_ACCESS=$(mysql -u root -e "SELECT user FROM mysql.user WHERE user='root' AND host='localhost';" 2>&1)
+    while [[ $ROOT_ACCESS == *"Access denied for user 'root'@'localhost'"* ]]; do
+        echo "User root pada database terdapat kata sandi !!" 
+        read -sp "Masukkan kata sandi root:"  ROOT_PASSWORD	
+        echo
+        ROOT_ACCESS=$(mysql -u root -p$ROOT_PASSWORD -e "SELECT user FROM mysql.user WHERE user='root' AND host='localhost';" 2>&1)
+    done
+
+    # Mengecek apakah database sudah ada
+    EXISTING_DB=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DB_NAME';")
+    if [ "$EXISTING_DB" -eq 0 ]; then
+        # Membuat database
+        mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DB_NAME;"
+    fi
+
+    # Mengecek apakah pengguna sudah ada di database
+    EXISTING_USER=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM mysql.user WHERE user = '$DB_USER';")
+    if [ "$EXISTING_USER" -eq 0 ]; then
+        # Membuat pengguna
+        mysql -u root -p$ROOT_PASSWORD -e "CREATE USER '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
+    fi
+
+    # Memberikan hak akses ke database untuk pengguna
+    mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'localhost';"
+    mysql -u root -p$ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
 }
 
 set_config () {
@@ -151,43 +181,51 @@ set_config () {
     sudo sed -i "s/http:\/\/example.com/$WP_URL/" $DIRECTORY/wp-config.php
     sudo sed -i "s/My Blog/$WP_TITLE/" $DIRECTORY/wp-config.php
 
-    # Mengenerate kunci rahasia WordPress
-    AUTH_KEY=$(curl -s https://api.wordpress.org/secret-key/1.1/salt/)
-    AUTH_KEY=${AUTH_KEY//\'/\\\'}
-    AUTH_KEY=${AUTH_KEY//$'\n'/}
+    # Mendapatkan output dari curl command
+    output=$(curl -s https://api.wordpress.org/secret-key/1.1/salt/)
 
-    # Menambahkan kunci rahasia WordPress
-    sudo sed -i "/#@-/a define( 'AUTH_KEY',         '$AUTH_KEY' );" $DIRECTORY/wp-config.php
-    sudo sed -i "/#@-/a define( 'SECURE_AUTH_KEY',  '$AUTH_KEY' );" $DIRECTORY/wp-config.php
-    sudo sed -i "/#@-/a define( 'LOGGED_IN_KEY',    '$AUTH_KEY' );" $DIRECTORY/wp-config.php
-    sudo sed -i "/#@-/a define( 'NONCE_KEY',        '$AUTH_KEY' );" $DIRECTORY/wp-config.php
-    sudo sed -i "/#@-/a define( 'AUTH_SALT',        '$AUTH_KEY' );" $DIRECTORY/wp-config.php
-    sudo sed -i "/#@-/a define( 'SECURE_AUTH_SALT', '$AUTH_KEY' );" $DIRECTORY/wp-config.php
-    sudo sed -i "/#@-/a define( 'LOGGED_IN_SALT',   '$AUTH_KEY' );" $DIRECTORY/wp-config.php
-    sudo sed -i "/#@-/a define( 'NONCE_SALT',       '$AUTH_KEY' );" $DIRECTORY/wp-config.php
+    # Memisahkan baris-baris output
+    IFS=$'\n' read -rd '' -a lines <<< "$output"
+
+    # Menentukan baris yang akan dihapus
+    start_line=51
+    end_line=58
+
+    # Menghapus baris 51-58 di wp-config.php
+    sed -i "${start_line},${end_line}d" $DIRECTORY/wp-config.php
+
+    # Mengganti baris yang dihapus dengan output perulangan
+    for ((i=0; i<${#lines[@]}; i++)); do
+        line_number=$((start_line+i))
+        sed -i "${line_number}i${lines[i]}" $DIRECTORY/wp-config.php
+    done
 
     # Menambahkan opsi Ketampakan di Mesin Pencari
-    if [ "$ROBOTS_OPTION" == "y" ]; then
-        echo "User-agent: *" | sudo tee -a $DIRECTORY/robots.txt
-        echo "Disallow: /" | sudo tee -a $DIRECTORY/robots.txt
-    fi
+    # if [ "$ROBOTS_OPTION" == "y" ]; then
+    #     echo "User-agent: *" | sudo tee -a $DIRECTORY/robots.txt
+    #     echo "Disallow: /" | sudo tee -a $DIRECTORY/robots.txt
+    # fi
 }
 
 show_result () {
     # Tampilan hasil setiap inputan
     clear
-    echo "======================================="
-    echo "   Hasil Konfigurasi Instalasi WordPress"
-    echo "======================================="
-    echo "Nama Database: $DB_NAME"
-    echo "Nama Pengguna Database: $DB_USER"
-    echo "Kata Sandi Database: $DB_PASSWORD"
-    echo "Host Database: $DB_HOST"
-    echo "Domain: $DOMAIN"
-    echo "Judul Situs WordPress: $WP_TITLE"
-    echo "Nama Pengguna Admin WordPress: $WP_ADMIN_USER"
-    echo "Kata Sandi Admin WordPress: $WP_ADMIN_PASSWORD"
-    echo "Email Admin WordPress: $WP_ADMIN_EMAIL"
-    echo "Opsi Ketampakan di Mesin Pencari: $ROBOTS_OPTION"
-    echo "======================================="
+    echo "========================================="
+    echo "  Hasil Konfigurasi Instalasi WordPress  "
+    echo "      Silahkan dicopy untuk Disimpan     "
+    echo "========================================="
+    echo -e "WP Admin Silahkan akses\t: $WP_URL/wp-admin"
+    echo -e "Database Silahkan akses\t: $WP_URL/phpmyadmin"
+    echo -e "Wordpress Directory \t: $DIRECTORY"
+    echo "========================================="
+    echo -e "Nama Database\t\t: $DB_NAME"
+    echo -e "Nama Pengguna Database\t: $DB_USER"
+    echo -e "Kata Sandi Database\t: $DB_PASSWORD"
+    echo "========================================="
+    echo -e "Nama Pengguna Admin WordPress\t: $WP_ADMIN_USER"
+    echo -e "Kata Sandi Admin WordPress\t: $WP_ADMIN_PASSWORD"
+    echo -e "Email Admin WordPress\t\t: $WP_ADMIN_EMAIL"
+    echo -e "Opsi Ketampakan di Mesin Pencari: $ROBOTS_OPTION"
+    echo "========================================="
+    sleep 5
 }
