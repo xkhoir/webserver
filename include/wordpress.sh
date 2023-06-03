@@ -65,8 +65,14 @@ db_wp-config () {
     DATABASE_PREFIX=${DATABASE_PREFIX:-wp_}
     clear
     sudo wp core download --path="$DIRECTORY" --skip-content
+    echo -e "\nPress any key to continue..."
+    read -n 1 -s -r key
     sudo wp core config --path="$DIRECTORY" --dbname="$DATABASE_NAME" --dbuser="$DATABASE_USER" --dbpass="$DATABASE_PASSWORD" --dbhost="$DATABASE_HOST" --dbprefix="$DATABASE_PREFIX"
+    echo -e "\nPress any key to continue..."
+    read -n 1 -s -r key
     sudo wp db create --path="$DIRECTORY"
+    echo -e "\nPress any key to continue..."
+    read -n 1 -s -r key
 }
 
 core_wp-install () {
@@ -91,6 +97,8 @@ core_wp-install () {
     fi
 
     sudo wp core install --path="$WORDPRESS_PATH" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --skip-email --skip-plugins --skip-themes --skip-content --skip-check --skip-cdn --search-engine-indexing="$SEARCH_ENGINE_INDEXING"
+    echo -e "\nPress any key to continue..."
+    read -n 1 -s -r key
 }
 
 core_wp-uninstall () {
@@ -123,6 +131,8 @@ create_backup_docroot () {
     mkdir $BAC
     #Memindah kan semua isi di folder dockroot web ke folder backup
     mv $DIRECTORY/* $BAC
+    echo "Default Page Berhasil di backup"
+    sleep 2
 }
 
 restore_backup_docroot () {
@@ -134,6 +144,7 @@ restore_backup_docroot () {
     mv $BAC/* $DIRECTORY
     #Menghapus folder backup
     rm -rf $BAC
+    echo "Default Page Berhasil di restore"
 }
 
 set_db () {
