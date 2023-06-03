@@ -11,6 +11,8 @@ manage_wordpress() {
     action=$1
   if [ "$action" == "uninstall" ]; then
     domain_input
+    check_package "sendmail" "uninstall"
+    check_package "ssmtp" "uninstall"
     core_wp-uninstall
     restore_backup_docroot
         # WP-CLI sudah terinstal, lakukan proses uninstall
@@ -25,6 +27,8 @@ manage_wordpress() {
 
   elif [ "$action" == "install" ]; then
     domain_input
+    check_package "sendmail" "install"
+    check_package "ssmtp" "install"
     create_backup_docroot
         # WP-CLI belum terinstal, lakukan proses instalasi
         echo "Menginstal WP-CLI..."
@@ -81,16 +85,9 @@ core_wp-install () {
     echo
     read -p "Masukkan alamat email administrator: " ADMIN_EMAIL
     ADMIN_EMAIL=${ADMIN_EMAIL:-webmin@$DOMAIN}
-    # Input untuk pengindeksan mesin pencari
-    read -p "Apakah Anda ingin mengizinkan pengindeksan mesin pencari? (y/n): " SEARCH_ENGINE_INDEXING
-
-    if [[ "$SEARCH_ENGINE_INDEXING" == "y" || "$SEARCH_ENGINE_INDEXING" == "Y" ]]; then
-        SEARCH_ENGINE_INDEXING="1"
-    else
-        SEARCH_ENGINE_INDEXING="0"
-    fi
-
-    wp core install --path="$DIRECTORY" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --skip-email --skip-plugins --skip-themes --skip-content --skip-check --skip-cdn --search-engine-indexing="$SEARCH_ENGINE_INDEXING" --allow-root
+    chmod -R 755 $DIRECTORY
+    chown -R www-data:www-data $DIRECTORY
+    wp core install --path="$DIRECTORY" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --allow-root
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
 }
