@@ -104,10 +104,10 @@ core_wp-uninstall () {
     # Jika user memilih untuk menghapus basis data
     if [[ $DELETE_DATABASE == "y" ]]; then
         # Jalankan perintah untuk menghapus situs WordPress dan basis data
-        wp site empty --yes --url=$WEBSITE_URL --allow-root && wp site delete --path="$DIRECTORY" --yes --url=$WEBSITE_URL --allow-root
+        wp site empty --path="$DIRECTORY" --yes --url=$WEBSITE_URL --allow-root && wp site delete --path="$DIRECTORY" --yes --url=$WEBSITE_URL --allow-root
     else
         # Jalankan perintah untuk hanya menghapus situs WordPress tanpa menghapus basis data
-        wp site empty --yes --url=$WEBSITE_URL --allow-root && wp site delete --path="$DIRECTORY" --yes --skip-delete-db --url=$WEBSITE_URL --allow-root
+        wp site empty --path="$DIRECTORY" --yes --url=$WEBSITE_URL --allow-root && wp site delete --path="$DIRECTORY" --yes --skip-delete-db --url=$WEBSITE_URL --allow-root
     fi
 }
 
