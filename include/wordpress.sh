@@ -62,8 +62,8 @@ db_wp-config () {
     read -p "Masukkan awalan tabel database (default: wp_): " DATABASE_PREFIX
     DATABASE_PREFIX=${DATABASE_PREFIX:-wp_}
     clear
-    set_db
-    clear
+    # set_db
+    # clear
     wp core download --path="$DIRECTORY" --skip-content --allow-root
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
