@@ -165,8 +165,8 @@ set_db () {
     fi
 
     # Memberikan hak akses ke database untuk pengguna
-    # mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost';"
-    # mysql -u root -p$ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
+    mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost';"
+    mysql -u root -p$ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
 }
 
 show_result () {
