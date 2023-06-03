@@ -10,51 +10,107 @@ manage_wordpress() {
     clear
     action=$1
   if [ "$action" == "uninstall" ]; then
-    
     domain_input
-
+    core_wp-uninstall
     restore_backup_docroot
-    
+    manage_wp-cli
     echo -e "\nApps Wordpress pada $DIRECTORY telah dihapus"
-    sleep 3
+    echo -e "\nPress any key to continue..."
+    read -n 1 -s -r key
 
   elif [ "$action" == "install" ]; then
-
     domain_input
-
     create_backup_docroot
-
-    var_collect
-
-    #cek paket zip
-    check_package "zip" "$action"
-
-    download_wp
-
-    input_config
-
-    set_db
-
-    set_config
-
-    # Menjalankan instalasi WordPress melalui WP-CLI
-    wp core install --path=$DIRECTORY --url=$WP_URL --title="$WP_TITLE" --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PASSWORD --admin_email=$WP_ADMIN_EMAIL --allow-root
-
-    # Membersihkan file sementara
-    rm -rf latest.tar.gz
-
+    manage_wp-cli
+    db_wp-config
+    core_wp-install
     show_result
-    
-    echo -e "\n\nPress any key to continue..."
+    echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
   else
     echo "Usage: manage_wordpress [install|uninstall]"
   fi
 }
 
+manage_wp-cli () {
+    WP_CLI_PATH="/usr/local/bin/wp"
+
+    if [ -e "$WP_CLI_PATH" ]; then
+        # WP-CLI sudah terinstal, lakukan proses uninstall
+        echo "Menghapus WP-CLI..."
+        sudo rm "$WP_CLI_PATH"
+        echo "WP-CLI berhasil dihapus."
+    else
+        # WP-CLI belum terinstal, lakukan proses instalasi
+        echo "Menginstal WP-CLI..."
+        sudo curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        sudo chmod +x wp-cli.phar
+        sudo mv wp-cli.phar "$WP_CLI_PATH"
+        echo "WP-CLI berhasil diinstal."
+    fi
+}
+
+db_wp-config () {
+    clear
+    # Input untuk wp core config
+    read -p "Masukkan nama database (default: wordpress): " DATABASE_NAME
+    DATABASE_NAME=${DATABASE_NAME:-wordpress}
+    read -p "Masukkan nama pengguna database (default: dbadmin): " DATABASE_USER
+    DATABASE_USER=${DATABASE_USER:-dbadmin}
+    read -s -p "Masukkan kata sandi database: " DATABASE_PASSWORD
+    echo
+    read -p "Masukkan host database (default: localhost): " DATABASE_HOST
+    DATABASE_HOST=${DATABASE_HOST:-localhost}
+    read -p "Masukkan awalan tabel database (default: wp_): " DATABASE_PREFIX
+    DATABASE_PREFIX=${DATABASE_PREFIX:-wp_}
+    clear
+    sudo wp core download --path="$DIRECTORY" --skip-content
+    sudo wp core config --path="$DIRECTORY" --dbname="$DATABASE_NAME" --dbuser="$DATABASE_USER" --dbpass="$DATABASE_PASSWORD" --dbhost="$DATABASE_HOST" --dbprefix="$DATABASE_PREFIX"
+    sudo wp db create --path="$DIRECTORY"
+}
+
+core_wp-install () {
+    clear
+    # Input untuk wp core install
+    WEBSITE_URL=${WEBSITE_URL:-https://$DOMAIN}
+    read -p "Masukkan judul situs WordPress: " WEBSITE_TITLE
+    WEBSITE_TITLE=${WEBSITE_TITLE:-Myblog}
+    read -p "Masukkan nama pengguna administrator: " ADMIN_USERNAME
+    ADMIN_USERNAME=${ADMIN_USERNAME:-Admin}
+    read -s -p "Masukkan kata sandi administrator: " ADMIN_PASSWORD
+    echo
+    read -p "Masukkan alamat email administrator: " ADMIN_EMAIL
+    ADMIN_EMAIL=${ADMIN_EMAIL:-webmin@$DOMAIN}
+    # Input untuk pengindeksan mesin pencari
+    read -p "Apakah Anda ingin mengizinkan pengindeksan mesin pencari? (y/n): " SEARCH_ENGINE_INDEXING
+
+    if [[ "$SEARCH_ENGINE_INDEXING" == "y" || "$SEARCH_ENGINE_INDEXING" == "Y" ]]; then
+        SEARCH_ENGINE_INDEXING="1"
+    else
+        SEARCH_ENGINE_INDEXING="0"
+    fi
+
+    sudo wp core install --path="$WORDPRESS_PATH" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --skip-email --skip-plugins --skip-themes --skip-content --skip-check --skip-cdn --search-engine-indexing="$SEARCH_ENGINE_INDEXING"
+}
+
+core_wp-uninstall () {
+    # Minta input untuk menghapus atau melewati penghapusan basis data
+    read -p "Apakah Anda ingin menghapus basis data juga? (y/n): " DELETE_DATABASE
+
+    # Jika user memilih untuk menghapus basis data
+    if [[ $DELETE_DATABASE == "y" ]]; then
+        # Jalankan perintah untuk menghapus situs WordPress dan basis data
+        wp site empty --yes --url=$WEBSITE_URL && wp site delete --yes --url=$WEBSITE_URL
+    else
+        # Jalankan perintah untuk hanya menghapus situs WordPress tanpa menghapus basis data
+        wp site empty --yes --url=$WEBSITE_URL && wp site delete --yes --skip-delete-db --url=$WEBSITE_URL
+    fi
+}
+
 domain_input () {
     # Meminta input dari pengguna untuk DOMAIN
     read -p "Masukkan nama domain wordpress kamu :" DOMAIN
+    WEBSITE_URL=${WEBSITE_URL:-https://$DOMAIN}
     clear
     # Menentukan direktori instalasi WordPress
     DIRECTORY="/var/www/$DOMAIN/public_html"
@@ -78,65 +134,6 @@ restore_backup_docroot () {
     mv $BAC/* $DIRECTORY
     #Menghapus folder backup
     rm -rf $BAC
-}
-
-var_collect () {
-    # Nilai default untuk variabel database
-    DEFAULT_DB_NAME="wordpress"
-    DEFAULT_DB_USER="wp-db-admin"
-    DEFAULT_DB_PASSWORD="123456"
-    DEFAULT_DB_HOST="localhost"
-
-    # Nilai default untuk variabel WordPress
-    DEFAULT_WP_URL="https://$DOMAIN"
-    DEFAULT_WP_TITLE="Judul_Situs"
-    DEFAULT_WP_ADMIN_USER="wp_admin"
-    DEFAULT_WP_ADMIN_PASSWORD="wp_pass"
-    DEFAULT_WP_ADMIN_EMAIL="wp@$DOMAIN"
-    DEFAULT_DB_PREFIX="wp_"
-}
-
-download_wp () {
-    # Mengunduh dan menginstal WordPress
-    wget https://wordpress.org/latest.tar.gz
-    tar -xvf latest.tar.gz
-    sudo mv wordpress/* $DIRECTORY
-    sudo chown -R www-data:www-data $DIRECTORY
-    sudo chmod -R 755 $DIRECTORY
-}
-
-input_config () {
-    # Meminta input dari pengguna untuk variabel database
-    read -p "Masukkan nama database Default: [$DEFAULT_DB_NAME]: " DB_NAME
-    DB_NAME=${DB_NAME:-$DEFAULT_DB_NAME}
-
-    read -p "Masukkan nama pengguna database Default: [$DEFAULT_DB_USER]: " DB_USER
-    DB_USER=${DB_USER:-$DEFAULT_DB_USER}
-
-    read -sp "Masukkan kata sandi database Default: [$DEFAULT_DB_PASSWORD]: " DB_PASSWORD
-    DB_PASSWORD=${DB_PASSWORD:-$DEFAULT_DB_PASSWORD}
-    echo
-    read -p "Masukkan host database Default: [$DEFAULT_DB_HOST]: " DB_HOST
-    DB_HOST=${DB_HOST:-$DEFAULT_DB_HOST}
-
-    read -p "Masukkan database table prefix: [$DEFAULT_DB_PREFIX]: " DB_PREFIX
-    DB_PREFIX=${DB_PREFIX:-$DEFAULT_DB_PREFIX}
-
-    clear
-    read -p "Masukkan judul situs WordPress Default: [$DEFAULT_WP_TITLE]: " WP_TITLE
-    WP_TITLE=${WP_TITLE:-$DEFAULT_WP_TITLE}
-
-    read -p "Masukkan nama pengguna admin WordPress Default: [$DEFAULT_WP_ADMIN_USER]: " WP_ADMIN_USER
-    WP_ADMIN_USER=${WP_ADMIN_USER:-$DEFAULT_WP_ADMIN_USER}
-
-    read -sp "Masukkan kata sandi admin WordPress Default: [$DEFAULT_WP_ADMIN_PASSWORD]: " WP_ADMIN_PASSWORD
-    WP_ADMIN_PASSWORD=${WP_ADMIN_PASSWORD:-$DEFAULT_WP_ADMIN_PASSWORD}
-    echo
-    read -p "Masukkan email admin WordPress Default: [$DEFAULT_WP_ADMIN_EMAIL]: " WP_ADMIN_EMAIL
-    WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL:-$DEFAULT_WP_ADMIN_EMAIL}
-
-    # Meminta input dari pengguna untuk opsi Ketampakan di Mesin Pencari
-    # read -p "Apakah Anda ingin menghalangi mesin pencari untuk mengindeks situs ini? (y/n) " ROBOTS_OPTION
 }
 
 set_db () {
@@ -168,45 +165,6 @@ set_db () {
     mysql -u root -p$ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
 }
 
-set_config () {
-    # Konfigurasi WordPress
-    sudo cp $DIRECTORY/wp-config-sample.php $DIRECTORY/wp-config.php
-    sudo sed -i "s/database_name_here/$DB_NAME/" $DIRECTORY/wp-config.php
-    sudo sed -i "s/username_here/$DB_USER/" $DIRECTORY/wp-config.php
-    sudo sed -i "s/password_here/$DB_PASSWORD/" $DIRECTORY/wp-config.php
-    sudo sed -i "s/localhost/$DB_HOST/" $DIRECTORY/wp-config.php
-    sudo sed -i "s/wp_/$DB_PREFIX/" $DIRECTORY/wp-config.php
-
-    # Mengatur informasi situs WordPress
-    sudo sed -i "s/http:\/\/example.com/$WP_URL/" $DIRECTORY/wp-config.php
-    sudo sed -i "s/My Blog/$WP_TITLE/" $DIRECTORY/wp-config.php
-
-    # Mendapatkan output dari curl command
-    output=$(curl -s https://api.wordpress.org/secret-key/1.1/salt/)
-
-    # Memisahkan baris-baris output
-    IFS=$'\n' read -rd '' -a lines <<< "$output"
-
-    # Menentukan baris yang akan dihapus
-    start_line=51
-    end_line=58
-
-    # Menghapus baris 51-58 di wp-config.php
-    sed -i "${start_line},${end_line}d" $DIRECTORY/wp-config.php
-
-    # Mengganti baris yang dihapus dengan output perulangan
-    for ((i=0; i<${#lines[@]}; i++)); do
-        line_number=$((start_line+i))
-        sed -i "${line_number}i${lines[i]}" $DIRECTORY/wp-config.php
-    done
-
-    # Menambahkan opsi Ketampakan di Mesin Pencari
-    # if [ "$ROBOTS_OPTION" == "y" ]; then
-    #     echo "User-agent: *" | sudo tee -a $DIRECTORY/robots.txt
-    #     echo "Disallow: /" | sudo tee -a $DIRECTORY/robots.txt
-    # fi
-}
-
 show_result () {
     # Tampilan hasil setiap inputan
     clear
@@ -214,18 +172,17 @@ show_result () {
     echo "  Hasil Konfigurasi Instalasi WordPress  "
     echo "      Silahkan dicopy untuk Disimpan     "
     echo "========================================="
-    echo -e "WP Admin Silahkan akses\t: $WP_URL/wp-admin"
-    echo -e "Database Silahkan akses\t: $WP_URL/phpmyadmin"
+    echo -e "WP Admin Silahkan akses\t: $WEBSITE_URL/wp-admin"
+    echo -e "Database Silahkan akses\t: $WEBSITE_URL/phpmyadmin"
     echo -e "Wordpress Directory \t: $DIRECTORY"
     echo "========================================="
-    echo -e "Nama Database\t\t: $DB_NAME"
-    echo -e "Nama Pengguna Database\t: $DB_USER"
-    echo -e "Kata Sandi Database\t: $DB_PASSWORD"
+    echo -e "Nama Database\t\t: $DATABASE_NAME"
+    echo -e "Nama Pengguna Database\t: $DATABASE_USER"
+    echo -e "Kata Sandi Database\t: $DATABASE_PASSWORD"
     echo "========================================="
-    echo -e "Nama Pengguna Admin WordPress\t: $WP_ADMIN_USER"
-    echo -e "Kata Sandi Admin WordPress\t: $WP_ADMIN_PASSWORD"
-    echo -e "Email Admin WordPress\t\t: $WP_ADMIN_EMAIL"
-    echo -e "Opsi Ketampakan di Mesin Pencari: $ROBOTS_OPTION"
+    echo -e "Nama Pengguna Admin WordPress\t: $ADMIN_USERNAME"
+    echo -e "Kata Sandi Admin WordPress\t: $ADMIN_PASSWORD"
+    echo -e "Email Admin WordPress\t\t: $ADMIN_EMAIL"
     echo "========================================="
     sleep 5
 }
