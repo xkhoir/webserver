@@ -40,6 +40,8 @@ manage_wp-cli () {
         echo "Menghapus WP-CLI..."
         sudo rm "$WP_CLI_PATH"
         echo "WP-CLI berhasil dihapus."
+        echo -e "\nPress any key to continue..."
+        read -n 1 -s -r key
     else
         # WP-CLI belum terinstal, lakukan proses instalasi
         echo "Menginstal WP-CLI..."
@@ -47,6 +49,8 @@ manage_wp-cli () {
         sudo chmod +x wp-cli.phar
         sudo mv wp-cli.phar "$WP_CLI_PATH"
         echo "WP-CLI berhasil diinstal."
+        echo -e "\nPress any key to continue..."
+        read -n 1 -s -r key
     fi
 }
 
