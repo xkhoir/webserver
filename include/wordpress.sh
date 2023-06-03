@@ -58,6 +58,8 @@ db_wp-config () {
     read -p "Masukkan awalan tabel database (default: wp_): " DATABASE_PREFIX
     DATABASE_PREFIX=${DATABASE_PREFIX:-wp_}
     clear
+    set_db
+    clear
     wp core download --path="$DIRECTORY" --skip-content --allow-root
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
@@ -155,18 +157,18 @@ set_db () {
     EXISTING_DB=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DB_NAME';")
     if [ "$EXISTING_DB" -eq 0 ]; then
         # Membuat database
-        mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DB_NAME;"
+        mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DATABASE_USER'_'$DATABASE_NAME;"
     fi
 
     # Mengecek apakah pengguna sudah ada di database
-    EXISTING_USER=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM mysql.user WHERE user = '$DB_USER';")
+    EXISTING_USER=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM mysql.user WHERE user = '$DATABASE_USER';")
     if [ "$EXISTING_USER" -eq 0 ]; then
         # Membuat pengguna
-        mysql -u root -p$ROOT_PASSWORD -e "CREATE USER '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
+        mysql -u root -p$ROOT_PASSWORD -e "CREATE USER '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD';"
     fi
 
     # Memberikan hak akses ke database untuk pengguna
-    mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'localhost';"
+    mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DATABASE_USER'_'$DATABASE_NAME.* TO '$DATABASE_USER'@'localhost';"
     mysql -u root -p$ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
 }
 
@@ -181,7 +183,7 @@ show_result () {
     echo -e "Database Silahkan akses\t: $WEBSITE_URL/phpmyadmin"
     echo -e "Wordpress Directory \t: $DIRECTORY"
     echo "========================================="
-    echo -e "Nama Database\t\t: $DATABASE_NAME"
+    echo -e "Nama Database\t\t: $DATABASE_USER'_'$DATABASE_NAME"
     echo -e "Nama Pengguna Database\t: $DATABASE_USER"
     echo -e "Kata Sandi Database\t: $DATABASE_PASSWORD"
     echo "========================================="
