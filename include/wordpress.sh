@@ -92,7 +92,7 @@ core_wp-install () {
         SEARCH_ENGINE_INDEXING="0"
     fi
 
-    wp core install --path="$WORDPRESS_PATH" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --skip-email --skip-plugins --skip-themes --skip-content --skip-check --skip-cdn --search-engine-indexing="$SEARCH_ENGINE_INDEXING" --allow-root
+    wp core install --path="$DIRECTORY" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --skip-email --skip-plugins --skip-themes --skip-content --skip-check --skip-cdn --search-engine-indexing="$SEARCH_ENGINE_INDEXING" --allow-root
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
 }
@@ -104,10 +104,10 @@ core_wp-uninstall () {
     # Jika user memilih untuk menghapus basis data
     if [[ $DELETE_DATABASE == "y" ]]; then
         # Jalankan perintah untuk menghapus situs WordPress dan basis data
-        wp site empty --yes --url=$WEBSITE_URL --allow-root && wp site delete --yes --url=$WEBSITE_URL --allow-root
+        wp site empty --yes --url=$WEBSITE_URL --allow-root && wp site delete --path="$DIRECTORY" --yes --url=$WEBSITE_URL --allow-root
     else
         # Jalankan perintah untuk hanya menghapus situs WordPress tanpa menghapus basis data
-        wp site empty --yes --url=$WEBSITE_URL --allow-root && wp site delete --yes --skip-delete-db --url=$WEBSITE_URL --allow-root
+        wp site empty --yes --url=$WEBSITE_URL --allow-root && wp site delete --path="$DIRECTORY" --yes --skip-delete-db --url=$WEBSITE_URL --allow-root
     fi
 }
 
@@ -157,7 +157,7 @@ set_db () {
     EXISTING_DB=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DB_NAME';")
     if [ "$EXISTING_DB" -eq 0 ]; then
         # Membuat database
-        mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DATABASE_USER'_'$DATABASE_NAME;"
+        mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DATABASE_NAME;"
     fi
 
     # Mengecek apakah pengguna sudah ada di database
@@ -168,7 +168,7 @@ set_db () {
     fi
 
     # Memberikan hak akses ke database untuk pengguna
-    mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DATABASE_USER'_'$DATABASE_NAME.* TO '$DATABASE_USER'@'localhost';"
+    mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost';"
     mysql -u root -p$ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
 }
 
@@ -183,7 +183,7 @@ show_result () {
     echo -e "Database Silahkan akses\t: $WEBSITE_URL/phpmyadmin"
     echo -e "Wordpress Directory \t: $DIRECTORY"
     echo "========================================="
-    echo -e "Nama Database\t\t: $DATABASE_USER'_'$DATABASE_NAME"
+    echo -e "Nama Database\t\t: $DATABASE_NAME"
     echo -e "Nama Pengguna Database\t: $DATABASE_USER"
     echo -e "Kata Sandi Database\t: $DATABASE_PASSWORD"
     echo "========================================="
