@@ -13,7 +13,12 @@ manage_wordpress() {
     domain_input
     core_wp-uninstall
     restore_backup_docroot
-    manage_wp-cli
+        # WP-CLI sudah terinstal, lakukan proses uninstall
+        echo "Menghapus WP-CLI..."
+        sudo rm -rf /usr/local/bin/wp
+        echo "WP-CLI berhasil dihapus."
+        echo -e "\nPress any key to continue..."
+        read -n 1 -s -r key
     echo -e "\nApps Wordpress pada $DIRECTORY telah dihapus"
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
@@ -21,7 +26,14 @@ manage_wordpress() {
   elif [ "$action" == "install" ]; then
     domain_input
     create_backup_docroot
-    manage_wp-cli
+        # WP-CLI belum terinstal, lakukan proses instalasi
+        echo "Menginstal WP-CLI..."
+        sudo curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        sudo chmod +x wp-cli.phar
+        sudo mv wp-cli.phar /usr/local/bin/wp
+        echo "WP-CLI berhasil diinstal."
+        echo -e "\nPress any key to continue..."
+        read -n 1 -s -r key
     db_wp-config
     core_wp-install
     show_result
@@ -30,28 +42,6 @@ manage_wordpress() {
   else
     echo "Usage: manage_wordpress [install|uninstall]"
   fi
-}
-
-manage_wp-cli () {
-    WP_CLI_PATH="/usr/local/bin/wp"
-
-    if [ -e "$WP_CLI_PATH" ]; then
-        # WP-CLI belum terinstal, lakukan proses instalasi
-        echo "Menginstal WP-CLI..."
-        sudo curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-        sudo chmod +x wp-cli.phar
-        sudo mv wp-cli.phar "$WP_CLI_PATH"
-        echo "WP-CLI berhasil diinstal."
-        echo -e "\nPress any key to continue..."
-        read -n 1 -s -r key
-    else
-        # WP-CLI sudah terinstal, lakukan proses uninstall
-        echo "Menghapus WP-CLI..."
-        sudo rm "$WP_CLI_PATH"
-        echo "WP-CLI berhasil dihapus."
-        echo -e "\nPress any key to continue..."
-        read -n 1 -s -r key
-    fi
 }
 
 db_wp-config () {
