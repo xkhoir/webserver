@@ -154,7 +154,7 @@ set_db () {
     done
 
     # Mengecek apakah database sudah ada
-    EXISTING_DB=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DB_NAME';")
+    EXISTING_DB=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DATABASE_NAME';")
     if [ "$EXISTING_DB" -eq 0 ]; then
         # Membuat database
         mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DATABASE_NAME;"
