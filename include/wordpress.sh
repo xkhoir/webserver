@@ -11,8 +11,8 @@ manage_wordpress() {
     action=$1
   if [ "$action" == "uninstall" ]; then
     domain_input
-    check_package "sendmail" "uninstall"
-    check_package "ssmtp" "uninstall"
+    # check_package "sendmail" "uninstall"
+    # check_package "ssmtp" "uninstall"
     core_wp-uninstall
     restore_backup_docroot
         # WP-CLI sudah terinstal, lakukan proses uninstall
@@ -27,8 +27,8 @@ manage_wordpress() {
 
   elif [ "$action" == "install" ]; then
     domain_input
-    check_package "sendmail" "install"
-    check_package "ssmtp" "install"
+    # check_package "sendmail" "install"
+    # check_package "ssmtp" "install"
     create_backup_docroot
         # WP-CLI belum terinstal, lakukan proses instalasi
         echo "Menginstal WP-CLI..."
@@ -61,6 +61,8 @@ db_wp-config () {
     DATABASE_HOST=${DATABASE_HOST:-localhost}
     read -p "Masukkan awalan tabel database (default: wp_): " DATABASE_PREFIX
     DATABASE_PREFIX=${DATABASE_PREFIX:-wp_}
+    clear
+    set_db
     clear
     wp core download --path="$DIRECTORY" --skip-content --allow-root
     echo -e "\nPress any key to continue..."
@@ -149,11 +151,11 @@ set_db () {
     done
 
     # Mengecek apakah database sudah ada
-    EXISTING_DB=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DATABASE_NAME';")
-    if [ "$EXISTING_DB" -eq 0 ]; then
-        # Membuat database
-        mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DATABASE_NAME;"
-    fi
+    # EXISTING_DB=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DATABASE_NAME';")
+    # if [ "$EXISTING_DB" -eq 0 ]; then
+    #     # Membuat database
+    #     mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DATABASE_NAME;"
+    # fi
 
     # Mengecek apakah pengguna sudah ada di database
     EXISTING_USER=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM mysql.user WHERE user = '$DATABASE_USER';")
@@ -163,8 +165,8 @@ set_db () {
     fi
 
     # Memberikan hak akses ke database untuk pengguna
-    mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost';"
-    mysql -u root -p$ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
+    # mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost';"
+    # mysql -u root -p$ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
 }
 
 show_result () {
