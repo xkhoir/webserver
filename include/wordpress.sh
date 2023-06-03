@@ -28,9 +28,9 @@ manage_wordpress() {
     create_backup_docroot
         # WP-CLI belum terinstal, lakukan proses instalasi
         echo "Menginstal WP-CLI..."
-        sudo curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-        sudo chmod +x wp-cli.phar
-        sudo mv wp-cli.phar /usr/local/bin/wp
+        curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        chmod +x wp-cli.phar
+        mv wp-cli.phar /usr/local/bin/wp
         echo "WP-CLI berhasil diinstal."
         echo -e "\nPress any key to continue..."
         read -n 1 -s -r key
@@ -58,13 +58,13 @@ db_wp-config () {
     read -p "Masukkan awalan tabel database (default: wp_): " DATABASE_PREFIX
     DATABASE_PREFIX=${DATABASE_PREFIX:-wp_}
     clear
-    wp core download --path="$DIRECTORY" --skip-content
+    wp core download --path="$DIRECTORY" --skip-content --allow-root
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
-    wp core config --path="$DIRECTORY" --dbname="$DATABASE_NAME" --dbuser="$DATABASE_USER" --dbpass="$DATABASE_PASSWORD" --dbhost="$DATABASE_HOST" --dbprefix="$DATABASE_PREFIX"
+    wp core config --path="$DIRECTORY" --dbname="$DATABASE_NAME" --dbuser="$DATABASE_USER" --dbpass="$DATABASE_PASSWORD" --dbhost="$DATABASE_HOST" --dbprefix="$DATABASE_PREFIX" --allow-root
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
-    wp db create --path="$DIRECTORY"
+    wp db create --path="$DIRECTORY" --allow-root
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
 }
@@ -90,7 +90,7 @@ core_wp-install () {
         SEARCH_ENGINE_INDEXING="0"
     fi
 
-    wp core install --path="$WORDPRESS_PATH" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --skip-email --skip-plugins --skip-themes --skip-content --skip-check --skip-cdn --search-engine-indexing="$SEARCH_ENGINE_INDEXING"
+    wp core install --path="$WORDPRESS_PATH" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --skip-email --skip-plugins --skip-themes --skip-content --skip-check --skip-cdn --search-engine-indexing="$SEARCH_ENGINE_INDEXING" --allow-root
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
 }
@@ -102,10 +102,10 @@ core_wp-uninstall () {
     # Jika user memilih untuk menghapus basis data
     if [[ $DELETE_DATABASE == "y" ]]; then
         # Jalankan perintah untuk menghapus situs WordPress dan basis data
-        wp site empty --yes --url=$WEBSITE_URL && wp site delete --yes --url=$WEBSITE_URL
+        wp site empty --yes --url=$WEBSITE_URL --allow-root && wp site delete --yes --url=$WEBSITE_URL --allow-root
     else
         # Jalankan perintah untuk hanya menghapus situs WordPress tanpa menghapus basis data
-        wp site empty --yes --url=$WEBSITE_URL && wp site delete --yes --skip-delete-db --url=$WEBSITE_URL
+        wp site empty --yes --url=$WEBSITE_URL --allow-root && wp site delete --yes --skip-delete-db --url=$WEBSITE_URL --allow-root
     fi
 }
 
