@@ -68,13 +68,13 @@ db_wp-config () {
     read -p "Masukkan awalan tabel database (default: wp_): " DATABASE_PREFIX
     DATABASE_PREFIX=${DATABASE_PREFIX:-wp_}
     clear
-    sudo -u xkhoir -i wp core download --path="$DIRECTORY" --skip-content
+    wp core download --path="$DIRECTORY" --skip-content
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
-    sudo -u xkhoir -i wp core config --path="$DIRECTORY" --dbname="$DATABASE_NAME" --dbuser="$DATABASE_USER" --dbpass="$DATABASE_PASSWORD" --dbhost="$DATABASE_HOST" --dbprefix="$DATABASE_PREFIX"
+    wp core config --path="$DIRECTORY" --dbname="$DATABASE_NAME" --dbuser="$DATABASE_USER" --dbpass="$DATABASE_PASSWORD" --dbhost="$DATABASE_HOST" --dbprefix="$DATABASE_PREFIX"
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
-    sudo -u xkhoir -i wp db create --path="$DIRECTORY"
+    wp db create --path="$DIRECTORY"
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
 }
@@ -100,7 +100,7 @@ core_wp-install () {
         SEARCH_ENGINE_INDEXING="0"
     fi
 
-    sudo -u xkhoir -i wp core install --path="$WORDPRESS_PATH" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --skip-email --skip-plugins --skip-themes --skip-content --skip-check --skip-cdn --search-engine-indexing="$SEARCH_ENGINE_INDEXING"
+    wp core install --path="$WORDPRESS_PATH" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --skip-email --skip-plugins --skip-themes --skip-content --skip-check --skip-cdn --search-engine-indexing="$SEARCH_ENGINE_INDEXING"
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
 }
@@ -112,10 +112,10 @@ core_wp-uninstall () {
     # Jika user memilih untuk menghapus basis data
     if [[ $DELETE_DATABASE == "y" ]]; then
         # Jalankan perintah untuk menghapus situs WordPress dan basis data
-        sudo -u xkhoir -i wp site empty --yes --url=$WEBSITE_URL && wp site delete --yes --url=$WEBSITE_URL
+        wp site empty --yes --url=$WEBSITE_URL && wp site delete --yes --url=$WEBSITE_URL
     else
         # Jalankan perintah untuk hanya menghapus situs WordPress tanpa menghapus basis data
-        sudo -u xkhoir -i wp site empty --yes --url=$WEBSITE_URL && wp site delete --yes --skip-delete-db --url=$WEBSITE_URL
+        wp site empty --yes --url=$WEBSITE_URL && wp site delete --yes --skip-delete-db --url=$WEBSITE_URL
     fi
 }
 
