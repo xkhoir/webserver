@@ -15,12 +15,11 @@ manage_wordpress() {
     # check_package "ssmtp" "uninstall"
     core_wp-uninstall
     restore_backup_docroot
-        # WP-CLI sudah terinstal, lakukan proses uninstall
-        echo "Menghapus WP-CLI..."
-        sudo rm -rf /usr/local/bin/wp
-        echo "WP-CLI berhasil dihapus."
-        echo -e "\nPress any key to continue..."
-        read -n 1 -s -r key
+    # WP-CLI sudah terinstal, lakukan proses uninstall
+    echo "Menghapus WP-CLI..."
+    sudo rm -rf /usr/local/bin/wp
+    echo "WP-CLI berhasil dihapus."
+
     echo -e "\nApps Wordpress pada $DIRECTORY telah dihapus"
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
@@ -30,14 +29,12 @@ manage_wordpress() {
     # check_package "sendmail" "install"
     # check_package "ssmtp" "install"
     create_backup_docroot
-        # WP-CLI belum terinstal, lakukan proses instalasi
-        echo "Menginstal WP-CLI..."
-        curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-        chmod +x wp-cli.phar
-        mv wp-cli.phar /usr/local/bin/wp
-        echo "WP-CLI berhasil diinstal."
-        echo -e "\nPress any key to continue..."
-        read -n 1 -s -r key
+    # WP-CLI belum terinstal, lakukan proses instalasi
+    echo "Menginstal WP-CLI..."
+    curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    chmod +x wp-cli.phar
+    mv wp-cli.phar /usr/local/bin/wp
+    echo "WP-CLI berhasil diinstal."
     db_wp-config
     core_wp-install
     show_result
@@ -88,10 +85,11 @@ core_wp-install () {
     ADMIN_EMAIL=${ADMIN_EMAIL:-webmin@$DOMAIN}
     chmod -R 755 $DIRECTORY
     chown -R www-data:www-data $DIRECTORY
+    clear
     echo -e "\nWp core install. please wait..."
     wp core install --path="$DIRECTORY" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --allow-root
+    echo "Set default theme"
     wp theme install twentytwentythree --path="$DIRECTORY" --activate --allow-root
-
 }
 
 core_wp-uninstall () {
