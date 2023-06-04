@@ -90,6 +90,8 @@ core_wp-install () {
     chown -R www-data:www-data $DIRECTORY
     echo -e "\nWp core install. please wait..."
     wp core install --path="$DIRECTORY" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --allow-root
+    wp theme install twentytwentythree --path="$DIRECTORY" --activate --allow-root
+
 }
 
 core_wp-uninstall () {
