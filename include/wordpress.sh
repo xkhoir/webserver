@@ -156,20 +156,32 @@ set_db () {
     EXISTING_DB=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DATABASE_WITH_PREFIX';")
     if [ "$EXISTING_DB" -eq 0 ]; then
         # Membuat database
+        echo "create db"
         mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DATABASE_WITH_PREFIX;"
+        echo -e "\nPress any key to continue..."
+        read -n 1 -s -r key
     fi
 
     # Mengecek apakah pengguna sudah ada di database
     EXISTING_USER=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM mysql.user WHERE user = '$DATABASE_USER';")
     if [ "$EXISTING_USER" -eq 0 ]; then
         # Membuat pengguna
+        echo "create user"
         mysql -u root -p$ROOT_PASSWORD -e "CREATE USER '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD';"
+        echo -e "\nPress any key to continue..."
+        read -n 1 -s -r key
     fi
 
     # Memberikan hak akses ke database untuk pengguna
+    echo "set privilage"
     mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DATABASE_WITH_PREFIX.* TO '$DATABASE_USER'@'localhost';"
     mysql -u root -p$ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
+    echo -e "\nPress any key to continue..."
+    read -n 1 -s -r key
+    echo "dropdb"
     mysql -u root -p$ROOT_PASSWORD -e "DROP DATABASE $DATABASE_WITH_PREFIX;"
+    echo -e "\nPress any key to continue..."
+    read -n 1 -s -r key
 }
 
 show_result () {
