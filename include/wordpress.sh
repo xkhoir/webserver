@@ -67,14 +67,11 @@ db_wp-config () {
     set_db
     clear
     wp core download --path="$DIRECTORY" --skip-content --allow-root
-    echo -e "\nPress any key to continue..."
-    read -n 1 -s -r key
+    sleep 2
     wp core config --path="$DIRECTORY" --dbname="$DATABASE_WITH_PREFIX" --dbuser="$DATABASE_USER" --dbpass="$DATABASE_PASSWORD" --dbhost="$DATABASE_HOST" --dbprefix="$TABLE_PREFIX" --allow-root
-    echo -e "\nPress any key to continue..."
-    read -n 1 -s -r key
+    sleep 2
     wp db create --path="$DIRECTORY" --allow-root
-    echo -e "\nPress any key to continue..."
-    read -n 1 -s -r key
+    sleep 2
 }
 
 core_wp-install () {
@@ -91,9 +88,8 @@ core_wp-install () {
     ADMIN_EMAIL=${ADMIN_EMAIL:-webmin@$DOMAIN}
     chmod -R 755 $DIRECTORY
     chown -R www-data:www-data $DIRECTORY
+    echo -e "\nWp core install. please wait..."
     wp core install --path="$DIRECTORY" --url="$WEBSITE_URL" --title="$WEBSITE_TITLE" --admin_user="$ADMIN_USERNAME" --admin_password="$ADMIN_PASSWORD" --admin_email="$ADMIN_EMAIL" --allow-root
-    echo -e "\nPress any key to continue..."
-    read -n 1 -s -r key
 }
 
 core_wp-uninstall () {
@@ -103,10 +99,12 @@ core_wp-uninstall () {
     # Jika user memilih untuk menghapus basis data
     if [[ $DELETE_DATABASE == "y" ]]; then
         # Jalankan perintah untuk menghapus situs WordPress dan basis data
-        wp site empty --path="$DIRECTORY" --yes --url=$WEBSITE_URL --allow-root && wp site delete --path="$DIRECTORY" --yes --url=$WEBSITE_URL --allow-root
+        wp site empty --path="$DIRECTORY" --yes --url=$WEBSITE_URL --allow-
+        sleep 2
     else
         # Jalankan perintah untuk hanya menghapus situs WordPress tanpa menghapus basis data
-        wp site empty --path="$DIRECTORY" --yes --url=$WEBSITE_URL --allow-root && wp site delete --path="$DIRECTORY" --yes --skip-delete-db --url=$WEBSITE_URL --allow-root
+        wp site empty --path="$DIRECTORY" --yes --url=$WEBSITE_URL --skip-delete-db --allow-root
+        sleep 2
     fi
 }
 
@@ -152,36 +150,31 @@ set_db () {
         ROOT_ACCESS=$(mysql -u root -p$ROOT_PASSWORD -e "SELECT user FROM mysql.user WHERE user='root' AND host='localhost';" 2>&1)
     done
 
-    Mengecek apakah database sudah ada
+    #Mengecek apakah database sudah ada
     EXISTING_DB=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DATABASE_WITH_PREFIX';")
     if [ "$EXISTING_DB" -eq 0 ]; then
         # Membuat database
-        echo "create db"
         mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DATABASE_WITH_PREFIX;"
-        echo -e "\nPress any key to continue..."
-        read -n 1 -s -r key
+        echo "Create database $DATABASE_WITH_PREFIX success"
+        sleep 2
     fi
 
     # Mengecek apakah pengguna sudah ada di database
     EXISTING_USER=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM mysql.user WHERE user = '$DATABASE_USER';")
     if [ "$EXISTING_USER" -eq 0 ]; then
         # Membuat pengguna
-        echo "create user"
         mysql -u root -p$ROOT_PASSWORD -e "CREATE USER '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD';"
-        echo -e "\nPress any key to continue..."
-        read -n 1 -s -r key
+        echo "Create user $DATABASE_USER success"
+        sleep 2
     fi
 
     # Memberikan hak akses ke database untuk pengguna
-    echo "set privilage"
     mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DATABASE_WITH_PREFIX.* TO '$DATABASE_USER'@'localhost';"
     mysql -u root -p$ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
-    echo -e "\nPress any key to continue..."
-    read -n 1 -s -r key
-    echo "dropdb"
+    echo "Set privilage for $DATABASE_USER to $DATABASE_WITH_PREFIX success"
+    sleep 2
     mysql -u root -p$ROOT_PASSWORD -e "DROP DATABASE $DATABASE_WITH_PREFIX;"
-    echo -e "\nPress any key to continue..."
-    read -n 1 -s -r key
+
 }
 
 show_result () {
@@ -203,5 +196,4 @@ show_result () {
     echo -e "Kata Sandi Admin WordPress\t: $ADMIN_PASSWORD"
     echo -e "Email Admin WordPress\t\t: $ADMIN_EMAIL"
     echo "========================================="
-    sleep 5
 }
