@@ -57,17 +57,19 @@ db_wp-config () {
     DATABASE_USER=${DATABASE_USER:-dbadmin}
     read -s -p "Masukkan kata sandi database: " DATABASE_PASSWORD
     echo
+    # Menambahkan prefix nama pengguna pada nama database
+    DATABASE_WITH_PREFIX="$DATABASE_USER"_"$DATABASE_NAME"
     read -p "Masukkan host database (default: localhost): " DATABASE_HOST
     DATABASE_HOST=${DATABASE_HOST:-localhost}
-    read -p "Masukkan awalan tabel database (default: wp_): " DATABASE_PREFIX
-    DATABASE_PREFIX=${DATABASE_PREFIX:-wp_}
+    read -p "Masukkan awalan tabel database (default: wp_): " TABLE_PREFIX
+    TABLE_PREFIX=${TABLE_PREFIX:-wp_}
     clear
-    # set_db
-    # clear
+    set_db
+    clear
     wp core download --path="$DIRECTORY" --skip-content --allow-root
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
-    wp core config --path="$DIRECTORY" --dbname="$DATABASE_NAME" --dbuser="$DATABASE_USER" --dbpass="$DATABASE_PASSWORD" --dbhost="$DATABASE_HOST" --dbprefix="$DATABASE_PREFIX" --allow-root
+    wp core config --path="$DIRECTORY" --dbname="$DATABASE_WITH_PREFIX" --dbuser="$DATABASE_USER" --dbpass="$DATABASE_PASSWORD" --dbhost="$DATABASE_HOST" --dbprefix="$TABLE_PREFIX" --allow-root
     echo -e "\nPress any key to continue..."
     read -n 1 -s -r key
     wp db create --path="$DIRECTORY" --allow-root
@@ -150,12 +152,12 @@ set_db () {
         ROOT_ACCESS=$(mysql -u root -p$ROOT_PASSWORD -e "SELECT user FROM mysql.user WHERE user='root' AND host='localhost';" 2>&1)
     done
 
-    # Mengecek apakah database sudah ada
-    # EXISTING_DB=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DATABASE_NAME';")
-    # if [ "$EXISTING_DB" -eq 0 ]; then
-    #     # Membuat database
-    #     mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DATABASE_NAME;"
-    # fi
+    Mengecek apakah database sudah ada
+    EXISTING_DB=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DATABASE_WITH_PREFIX';")
+    if [ "$EXISTING_DB" -eq 0 ]; then
+        # Membuat database
+        mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DATABASE_WITH_PREFIX;"
+    fi
 
     # Mengecek apakah pengguna sudah ada di database
     EXISTING_USER=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM mysql.user WHERE user = '$DATABASE_USER';")
@@ -165,8 +167,9 @@ set_db () {
     fi
 
     # Memberikan hak akses ke database untuk pengguna
-    mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost';"
+    mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DATABASE_WITH_PREFIX.* TO '$DATABASE_USER'@'localhost';"
     mysql -u root -p$ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
+    mysql -u root -p$ROOT_PASSWORD -e "DROP DATABASE $DATABASE_WITH_PREFIX;"
 }
 
 show_result () {
@@ -180,7 +183,7 @@ show_result () {
     echo -e "Database Silahkan akses\t: $WEBSITE_URL/phpmyadmin"
     echo -e "Wordpress Directory \t: $DIRECTORY"
     echo "========================================="
-    echo -e "Nama Database\t\t: $DATABASE_NAME"
+    echo -e "Nama Database\t\t: $DATABASE_WITH_PREFIX"
     echo -e "Nama Pengguna Database\t: $DATABASE_USER"
     echo -e "Kata Sandi Database\t: $DATABASE_PASSWORD"
     echo "========================================="
