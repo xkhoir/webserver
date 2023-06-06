@@ -144,36 +144,36 @@ set_db () {
     # Pengecekan pengguna root pada database
     ROOT_ACCESS=$(mysql -u root -e "SELECT user FROM mysql.user WHERE user='root' AND host='localhost';" 2>&1)
     while [[ $ROOT_ACCESS == *"Access denied for user 'root'@'localhost'"* ]]; do
-        echo "User root pada database terdapat kata sandi !!" 
-        read -sp "Masukkan kata sandi root:"  ROOT_PASSWORD	
+        echo "User root pada database terdapat kata sandi !!"
+        read -sp "Masukkan kata sandi root:"  ROOT_PASSWORD
         echo
-        ROOT_ACCESS=$(mysql -u root -p$ROOT_PASSWORD -e "SELECT user FROM mysql.user WHERE user='root' AND host='localhost';" 2>&1)
+        SET_ROOT_PASS="-p$ROOT_PASSWORD"
+        ROOT_ACCESS=$(mysql -u root $SET_ROOT_PASS -e "SELECT user FROM mysql.user WHERE user='root' AND host='localhost';" 2>&1)
     done
-
     #Mengecek apakah database sudah ada
-    EXISTING_DB=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DATABASE_WITH_PREFIX';")
+    EXISTING_DB=$(mysql -u root $SET_ROOT_PASS -sN -e "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = '$DATABASE_WITH_PREFIX';")
     if [ "$EXISTING_DB" -eq 0 ]; then
         # Membuat database
-        mysql -u root -p$ROOT_PASSWORD -e "CREATE DATABASE $DATABASE_WITH_PREFIX;"
+        mysql -u root $SET_ROOT_PASS -e "CREATE DATABASE $DATABASE_WITH_PREFIX;"
         echo "Create database $DATABASE_WITH_PREFIX success"
         sleep 2
     fi
 
     # Mengecek apakah pengguna sudah ada di database
-    EXISTING_USER=$(mysql -u root -p$ROOT_PASSWORD -sN -e "SELECT COUNT(*) FROM mysql.user WHERE user = '$DATABASE_USER';")
+    EXISTING_USER=$(mysql -u root $SET_ROOT_PASS -sN -e "SELECT COUNT(*) FROM mysql.user WHERE user = '$DATABASE_USER';")
     if [ "$EXISTING_USER" -eq 0 ]; then
         # Membuat pengguna
-        mysql -u root -p$ROOT_PASSWORD -e "CREATE USER '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD';"
+        mysql -u root $SET_ROOT_PASS -e "CREATE USER '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD';"
         echo "Create user $DATABASE_USER success"
         sleep 2
     fi
 
     # Memberikan hak akses ke database untuk pengguna
-    mysql -u root -p$ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DATABASE_WITH_PREFIX.* TO '$DATABASE_USER'@'localhost';"
-    mysql -u root -p$ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
+    mysql -u root $SET_ROOT_PASS -e "GRANT ALL PRIVILEGES ON $DATABASE_WITH_PREFIX.* TO '$DATABASE_USER'@'localhost';"
+    mysql -u root $SET_ROOT_PASS -e "FLUSH PRIVILEGES;"
     echo "Set privilage for $DATABASE_USER to $DATABASE_WITH_PREFIX success"
     sleep 2
-    mysql -u root -p$ROOT_PASSWORD -e "DROP DATABASE $DATABASE_WITH_PREFIX;"
+    mysql -u root $SET_ROOT_PASS -e "DROP DATABASE $DATABASE_WITH_PREFIX;"
 
 }
 
