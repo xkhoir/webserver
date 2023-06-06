@@ -75,13 +75,13 @@ core_wp-install () {
     clear
     # Input untuk wp core install
     WEBSITE_URL=${WEBSITE_URL:-https://$DOMAIN}
-    read -p "Masukkan judul situs WordPress: " WEBSITE_TITLE
+    read -p "Masukkan judul situs WordPress (default: Myblog): " WEBSITE_TITLE
     WEBSITE_TITLE=${WEBSITE_TITLE:-Myblog}
-    read -p "Masukkan nama pengguna administrator: " ADMIN_USERNAME
+    read -p "Masukkan nama pengguna administrator (default: Admin): " ADMIN_USERNAME
     ADMIN_USERNAME=${ADMIN_USERNAME:-Admin}
     read -s -p "Masukkan kata sandi administrator: " ADMIN_PASSWORD
     echo
-    read -p "Masukkan alamat email administrator: " ADMIN_EMAIL
+    read -p "Masukkan alamat email administrator (default: webmin@$DOMAIN): " ADMIN_EMAIL
     ADMIN_EMAIL=${ADMIN_EMAIL:-webmin@$DOMAIN}
     chmod -R 755 $DIRECTORY
     chown -R www-data:www-data $DIRECTORY
