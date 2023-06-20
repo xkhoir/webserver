@@ -23,7 +23,7 @@ cek_root
 cek_con
 
 #cek ditro
-cek_distro
+#cek_distro
 
 #cek available update on new server
 cek_new
