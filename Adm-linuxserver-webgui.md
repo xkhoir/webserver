@@ -15,7 +15,7 @@ berikut adalah perintah penambahan repo :
     sudo bash setup-repo.sh
 berikut adalah perintah install cockpit : 
 
-    sudo apt install cockpit-{storaged,storaged,packagekit,networkmanager,file-sharing,navigator} -y && sudo systemctl enable cockpit
+    sudo apt install cockpit-{storaged,storaged,packagekit,networkmanager,file-sharing,navigator,identities} -y && sudo systemctl enable cockpit
 Cek status service cockpit :
 
     sudo sudo systemctl status cockpit
