@@ -23,14 +23,14 @@ manage_cockpit() {
     check_package "$package-navigator" "$action"
     systemctl enable cockpit
 
-    # konfigurasi yang akan dimasukkan ke dalam file
-    isi="[keyfile]\nunmanaged-devices=none"
-    # Buat file 10-globally-managed-devices.conf
-    touch /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
-    # jalankan perintah echo untuk menambahkan konfigurasi ke dalam file
-    echo -e "$isi" >> /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
-    nmcli con add type dummy con-name fake ifname fake0 ip4 1.2.3.4/24 gw4 1.2.3.1
-    systemctl restart NetworkManager
+    # # konfigurasi yang akan dimasukkan ke dalam file
+    # isi="[keyfile]\nunmanaged-devices=none"
+    # # Buat file 10-globally-managed-devices.conf
+    # touch /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
+    # # jalankan perintah echo untuk menambahkan konfigurasi ke dalam file
+    # echo -e "$isi" >> /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
+    # nmcli con add type dummy con-name fake ifname fake0 ip4 1.2.3.4/24 gw4 1.2.3.1
+    # systemctl restart NetworkManager
 
     echo -e "\nMemasang cockpit di domain? (y/n)"
     read CEK
