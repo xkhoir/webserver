@@ -56,10 +56,10 @@ manage_php() {
     
   elif [ "$action" == "install" ]; then
     #install repo php
-    if ! grep -q "^deb .*ondrej/php" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
-      #echo "Repo ondrej/php tidak terinstal. Menambahkan repo..."
-      add-apt-repository -y ppa:ondrej/php
-    fi
+    # if ! grep -q "^deb .*ondrej/php" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
+    #   #echo "Repo ondrej/php tidak terinstal. Menambahkan repo..."
+    #   add-apt-repository -y ppa:ondrej/php
+    # fi
 
     check_package "$package-fpm" "$action"
     apt install $package-{bz2,cli,intl,common,mysql,zip,curl,gd,mbstring,xml,bcmath,phpdbg,cgi} -y
