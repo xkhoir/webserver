@@ -30,11 +30,11 @@ manage_apache() {
     #parsing data ke fungsi check_package
     check_package "$package" "$action"
   elif [ "$action" == "adddomain" ]; then
-      domain_setup "adddomain"
+      domain_setup "$action"
   elif [ "$action" == "addproxydomain" ]; then
-      domain_setup "addproxydomain"
+      domain_setup "$action"
   elif [ "$action" == "deletedomain" ]; then
-      domain_setup "deletedomain"
+      domain_setup "$action"
   elif [ "$action" == "ssl" ]; then
     #call function ssl setup
     ssl_setup "apache"
