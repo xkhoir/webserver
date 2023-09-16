@@ -5,10 +5,10 @@ source include/manage_script.sh
 source include/headermenu.sh
 source include/cockpit.sh
 source include/check_package.sh
+source include/domain_setup.sh
 source include/apache2.sh
 source include/caddy.sh
 source include/nginx.sh
-source include/domain_setup.sh
 source include/php.sh
 source include/mariadb.sh
 source include/phpmyadmin.sh
