@@ -397,13 +397,13 @@ add_caddy_blok () {
         if [ -z "$last_line" ]; then
             echo "Isi Caddyfile Kosong, Menambahkan blok konfigurasi baru..."
             sleep 2
-            echo -e "$DOMAIN{\n\troot * $DIRECTORY\n\tencode gzip\n\tphp_fastcgi unix//run/php/$DOMAIN.sock\n\tfile_server\n}\n" > "$CADDY_VHOST_DIR"
+            echo "$DOMAIN{\n\troot * $DIRECTORY\n\tencode gzip\n\tphp_fastcgi unix//run/php/$DOMAIN.sock\n\tfile_server\n}\n" > "$CADDY_VHOST_DIR" > /dev/null
             echo "Caddyfile telah diisi dengan konfigurasi untuk $DOMAIN"
             sleep 2
         else
             # Menambahkan blok konfigurasi setelah baris terakhir
             echo "Isi Caddyfile sudah ada, Menambahkan blok konfigurasi di baris baru..."
-            sed -i "${last_line}a\\ \n$DOMAIN{\n\troot * $DIRECTORY\n\tencode gzip\n\tphp_fastcgi unix//run/php/$DOMAIN.sock\n\tfile_server\n}\n" "$CADDY_VHOST_DIR "
+            sed -i "${last_line}a\\ \n$DOMAIN{\n\troot * $DIRECTORY\n\tencode gzip\n\tphp_fastcgi unix//run/php/$DOMAIN.sock\n\tfile_server\n}\n" "$CADDY_VHOST_DIR"
             echo "Caddyfile telah diisi dengan konfigurasi untuk $DOMAIN"
             sleep 2
         fi
@@ -424,7 +424,7 @@ add_caddy_proxy_blok () {
         if [ -z "$last_line" ]; then
             echo "Isi Caddyfile Kosong, Menambahkan blok konfigurasi baru..."
             sleep 2
-            echo -e "$DOMAIN{\n\treverse_proxy $destination:$port\n}\n" > "$CADDY_VHOST_DIR"
+            echo "$DOMAIN{\n\treverse_proxy $destination:$port\n}\n" > "$CADDY_VHOST_DIR"
             echo "Caddyfile telah diisi dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
             sleep 2
         else
@@ -462,7 +462,8 @@ delete_caddy_blok () {
 # Fungsi untuk mengecek apakah PHP-FPM telah terpasang dan mengembalikan versi yang terpasang
 check_php() {
     # Dapatkan daftar service PHP-FPM yang aktif
-    active_services=$(systemctl list-units --type=service | grep "php.*-fpm.service" | grep "running" | awk '{print $1}' | sed 's/\.service$//')
+    #active_services=$(systemctl list-units --type=service | grep "php.*-fpm.service" | grep "running" | awk '{print $1}' | sed 's/\.service$//')
+    active_services=$(systemctl list-units --type=service | grep "php.*-fpm.service" | grep "running" | awk '{print $1}' | sed 's/\.service$//' | sed 's/php//' | sed 's/-fpm//')
 
     # Cek apakah tidak ada service PHP-FPM yang aktif
     if [ -z "$active_services" ]; then
@@ -504,7 +505,9 @@ check_php() {
 }
 
 add_fpm_pool () {
-    echo -e "[$DOMAIN]\nuser = www-data\ngroup = www-data\nlisten = /run/php/$DOMAIN.sock\nlisten.owner = www-data\nlisten.group = www-data\nlisten.mode = 0660\npm = dynamic\npm.max_children = 5\npm.start_servers = 2\npm.min_spare_servers = 1\npm.max_spare_servers = 3\nrequest_terminate_timeout = 300" | tee /etc/php/$versi_terpilih/fpm/pool.d//$DOMAIN.conf
+    echo -e "[$DOMAIN]\nuser = www-data\ngroup = www-data\nlisten = /run/php/$DOMAIN.sock\nlisten.owner = www-data\nlisten.group = www-data\nlisten.mode = 0660\npm = dynamic\npm.max_children = 5\npm.start_servers = 2\npm.min_spare_servers = 1\npm.max_spare_servers = 3\nrequest_terminate_timeout = 300" | tee /etc/php/$versi_terpilih/fpm/pool.d/$DOMAIN.conf > /dev/null
+    echo -e "\npembuatan pool berhasil"
+    sleep 3
 }
 
 #ssl======================
