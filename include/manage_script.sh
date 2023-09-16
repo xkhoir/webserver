@@ -56,7 +56,7 @@ cek_distro () {
     if ! cat /etc/*-release | grep -q "ID_LIKE=debian"; then
         clear
         echo -e "\nSistem operasi ini bukan basis Debian."
-        echo -e "\nScript ini hanya bekerja pada linux dengan basis Debian ."
+        echo -e "\nScript ini hanya bekerja pada linux debian dan turunannya ."
         sleep 2
         clear
         exit 1
