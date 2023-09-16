@@ -24,7 +24,7 @@ manage_nginx() {
     #parsing data ke fungsi check_package
     check_package "$package" "$action"
   elif [ "$action" == "adddomain" ]; then
-      domain_setup"$action"
+      domain_setup "$action"
   elif [ "$action" == "addproxydomain" ]; then
       domain_setup "$action"
   elif [ "$action" == "deletedomain" ]; then
