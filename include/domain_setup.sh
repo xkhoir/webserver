@@ -49,12 +49,12 @@ domain_setup () {
                 add_apache_vhost
                 #call fungsi add_change_docroot_owner
                 change_docroot_owner
-            elif [[ "$1" == "addproxydomain" ]];
+            elif [[ "$1" == "addproxydomain" ]]; then
                 #call fungsi add_apache_log
                 add_apache_log
                 #call fungsi delete_apache_vhost
                 add_apache_proxy_vhost
-            elif [[ "$1" == "deletedomain" ]];
+            elif [[ "$1" == "deletedomain" ]]; then
                 #call fungsi delete_apache_vhost
                 delete_apache_vhost
             else
@@ -94,7 +94,7 @@ domain_setup () {
             else
                 echo "Silakan tentukan [adddomain|addproxydomain|deletedomain] sebagai argumen pertama."
             fi
-            reqsslnginx
+            req_nginx_ssl
         fi
     # cek apakah layanan Caddy aktif
     elif [ "$CADDY_STATUS" = "active" ]; then
@@ -126,7 +126,7 @@ domain_setup () {
         echo "caddy sudah auto sll"
     else
         # Jika tidak terdapat Nginx atau Apache yang aktif, keluarkan pesan kesalahan
-        echo -e"\nTidak ditemukan webserver di server ini. \ndiharap install dulu atau enable service\n"
+        echo -e "\nTidak ditemukan webserver di server ini. \ndiharap install dulu atau enable service\n"
         sleep 3
         clear
     fi
