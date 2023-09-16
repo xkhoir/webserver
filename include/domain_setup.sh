@@ -1,4 +1,6 @@
 domain_setup () {
+    echo "$1"
+    sleep 2
     read -p "Masukkan nama domain kamu :" DOMAIN
     clear
     
