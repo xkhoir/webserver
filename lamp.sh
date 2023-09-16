@@ -149,7 +149,7 @@ while true; do
       show_caddy_submenu
         read -p "Masukkan pilihan Anda: " caddy_choice
 
-        case $nginx_choice in
+        case $caddy_choice in
           1) # Install Caddy
             manage_caddy install
             ;;
