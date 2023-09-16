@@ -6,6 +6,7 @@ source include/headermenu.sh
 source include/cockpit.sh
 source include/check_package.sh
 source include/apache2.sh
+source include/caddy.sh
 source include/nginx.sh
 source include/domain_setup.sh
 source include/php.sh
@@ -52,25 +53,33 @@ while true; do
           2) # Uninstall Apache
             manage_apache uninstall
             ;;
-          3) # Domain Setup
-            manage_apache domainsetup
+          3) # adddomain
+            manage_apache adddomain
             sleep 2
             ;;
-          4) # SSL Setup
+          4) # addproxydomain
+            manage_apache addproxydomain
+            sleep 2
+            ;;
+          5) # deletedomain
+            manage_apache deletedomain
+            sleep 2
+            ;;
+          6) # SSL Setup
             manage_apache ssl
             sleep 2
             ;;
-          5) # SSL Renew
+          7) # SSL Renew
             manage_apache sslrenew
             sleep 2
             ;;
-          6) # a2enmod Rewrite
+          8) # a2enmod Rewrite
             manage_apache a2enmod
             ;;
-          7) # Restart Apache Services
+          9) # Restart Apache Services
             manage_apache restart
             ;;
-          8) # Kembali ke menu utama
+          10) # Kembali ke menu utama
 	          clear
       	    show_header
             show_menu
@@ -98,22 +107,28 @@ while true; do
           2) # Uninstall Nginx
             manage_nginx uninstall
             ;;
-          3) # Domain Setup
-            manage_nginx domainsetup
+          3) # adddomain
+            manage_nginx adddomain
+            sleep 2
             ;;
-          4) # SSL Setup
+          4) # addproxydomain
+            manage_nginx addproxydomain
+            sleep 2
+            ;;
+          5) # deletedomain
+            manage_nginx deletedomain
+            sleep 2
+            ;;
+          6) # SSL Setup
             manage_nginx ssl
             ;;
-          5) # SSL Renew
+          7) # SSL Renew
             manage_nginx sslrenew
             ;;
-          6) # a2enmod Rewrite
-            manage_nginx a2enmod
-            ;;
-          7) # Restart Nginx Services
+          8) # Restart Nginx Services
             manage_nginx restart
             ;;
-          8) # Kembali ke menu utama
+          9) # Kembali ke menu utama
 	          clear
       	    show_header
             show_menu
@@ -127,7 +142,47 @@ while true; do
         esac
       done
       ;;
-    3) # PHP
+    3) # Caddy
+      while true; do
+      clear
+      show_header
+      show_caddy_submenu
+        read -p "Masukkan pilihan Anda: " caddy_choice
+
+        case $nginx_choice in
+          1) # Install Caddy
+            manage_caddy install
+            ;;
+          2) # Uninstall Cadyy
+            manage_caddy uninstall
+            ;;
+          3) # Caddy add domain blok
+            manage_caddy adddomain
+            ;;
+          4) # Caddy add proxy domain blok
+            manage_caddy addproxydomain
+            ;;
+          5) # Caddy delete domain blok
+            manage_caddy deletedomain
+            ;;
+          6) # Restart Caddy Services
+            manage_caddy restart
+            ;;
+          7) # Kembali ke menu utama
+	          clear
+      	    show_header
+            show_menu
+            break
+            ;;
+          *) # Input salah
+            clear
+            echo -e "\nPilihan tidak valid.\n"
+            sleep 2
+            ;;
+        esac
+      done
+      ;;
+    4) # PHP
       while true; do
       clear
       show_header
@@ -155,7 +210,7 @@ while true; do
         esac
       done
       ;;
-    4) # Mariadb
+    5) # Mariadb
       while true; do
       clear
       show_header
@@ -189,7 +244,7 @@ while true; do
         esac
       done
       ;;
-    5) # PhpMyAdmin
+    6) # PhpMyAdmin
       while true; do
       clear
       show_header
@@ -220,7 +275,7 @@ while true; do
         esac
       done
       ;;
-    6) # Composer
+    7) # Composer
       while true; do
       clear
       show_header
@@ -248,7 +303,7 @@ while true; do
         esac
       done
       ;;
-    7) # Wordpress
+    8) # Wordpress
       while true; do
       clear
       show_header
@@ -276,7 +331,7 @@ while true; do
         esac
       done
       ;;
-    8) # Cockpit
+    9) # Cockpit
       while true; do
       clear
       show_header
@@ -304,7 +359,7 @@ while true; do
         esac
       done
       ;;
-    9) # Speedtest
+    10) # Speedtest
       while true; do
       clear
       show_header
@@ -332,7 +387,7 @@ while true; do
         esac
       done
       ;;
-    10) # Manage Server
+    11) # Manage Server
       while true; do
       clear
       show_header
@@ -363,7 +418,7 @@ while true; do
         esac
       done
       ;;
-    11) # Keluar
+    12) # Keluar
       clear
       echo -e "\nTerima kasih telah menggunakan program ini.\n"
       sleep 2
