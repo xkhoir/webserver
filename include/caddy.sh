@@ -128,11 +128,11 @@ manage_caddy() {
         # Parsing data ke fungsi check_package
         check_package "$package" "$action"
     elif [ "$action" == "adddomain" ]; then
-        domain_setup "$action"
+        domain_setup "adddomain"
     elif [ "$action" == "addproxydomain" ]; then
-        domain_setup "$action"
+        domain_setup "addproxydomain"
     elif [ "$action" == "deletedomain" ]; then
-        domain_setup "$action"
+        domain_setup "deletedomain"
     elif [ "$action" == "restart" ]; then
         # Proses restart/reload caddy service
         echo -e "Restart/reload service $package\n"
