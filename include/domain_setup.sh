@@ -209,7 +209,9 @@ add_apache_vhost () {
 
 add_apache_proxy_vhost () {
     # Meminta input domain dari pengguna
-    read -p "Masukkan alamat tujuan (URL atau IP): " destination
+    read -p "Masukkan domain/ip tujuan (default: localhost): " destination
+    # Jika variabel destination kosong, maka atur nilai default ke "localhost"
+    destination=${destination:-localhost}
     read -p "Masukkan port tujuan: " port
 
     # Membuat konfigurasi virtual host dengan proxy
@@ -395,16 +397,16 @@ add_caddy_blok () {
         last_line=$(grep -nE "^}" "$CADDY_VHOST_DIR" | tail -n 1 | cut -d ":" -f 1)
         # Cek apakah isi Caddyfile kosong
         if [ -z "$last_line" ]; then
-            echo "Isi Caddyfile Kosong, Menambahkan blok konfigurasi baru..."
+            echo -e "\nIsi Caddyfile Kosong, Menambahkan blok konfigurasi baru..."
             sleep 2
-            echo "$DOMAIN{\n\troot * $DIRECTORY\n\tencode gzip\n\tphp_fastcgi unix//run/php/$DOMAIN.sock\n\tfile_server\n}\n" > "$CADDY_VHOST_DIR" > /dev/null
-            echo "Caddyfile telah diisi dengan konfigurasi untuk $DOMAIN"
+            echo -e "$DOMAIN{\n\troot * $DIRECTORY\n\tencode gzip\n\tphp_fastcgi unix//run/php/$DOMAIN.sock\n\tfile_server\n}" > "$CADDY_VHOST_DIR"
+            echo -e "\nCaddyfile telah diisi dengan konfigurasi untuk $DOMAIN"
             sleep 2
         else
             # Menambahkan blok konfigurasi setelah baris terakhir
-            echo "Isi Caddyfile sudah ada, Menambahkan blok konfigurasi di baris baru..."
-            sed -i "${last_line}a\\ \n$DOMAIN{\n\troot * $DIRECTORY\n\tencode gzip\n\tphp_fastcgi unix//run/php/$DOMAIN.sock\n\tfile_server\n}\n" "$CADDY_VHOST_DIR"
-            echo "Caddyfile telah diisi dengan konfigurasi untuk $DOMAIN"
+            echo -e "\nIsi Caddyfile sudah ada, Menambahkan blok konfigurasi di baris baru..."
+            sed -i "${last_line}a\\ \n$DOMAIN{\n\troot * $DIRECTORY\n\tencode gzip\n\tphp_fastcgi unix//run/php/$DOMAIN.sock\n\tfile_server\n}" "$CADDY_VHOST_DIR"
+            echo -e "\nCaddyfile telah diisi dengan konfigurasi untuk $DOMAIN"
             sleep 2
         fi
     fi
@@ -418,19 +420,21 @@ add_caddy_proxy_blok () {
     else
         # Cari baris terakhir dalam Caddyfile
         last_line=$(grep -nE "^}" "$CADDY_VHOST_DIR" | tail -n 1 | cut -d ":" -f 1)
-        read -p "Masukkan domain/ip tujuan: " destination
+        read -p "Masukkan domain/ip tujuan (default: localhost): " destination
+        # Jika variabel destination kosong, maka atur nilai default ke "localhost"
+        destination=${destination:-localhost}
         read -p "Masukkan port tujuan: " port
         # Cek apakah isi Caddyfile kosong
         if [ -z "$last_line" ]; then
             echo "Isi Caddyfile Kosong, Menambahkan blok konfigurasi baru..."
             sleep 2
-            echo "$DOMAIN{\n\treverse_proxy $destination:$port\n}\n" > "$CADDY_VHOST_DIR"
+            echo -e "$DOMAIN{\n\treverse_proxy $destination:$port\n}" > "$CADDY_VHOST_DIR"
             echo "Caddyfile telah diisi dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
             sleep 2
         else
             # Menambahkan blok konfigurasi setelah baris terakhir
             echo "Isi Caddyfile sudah ada, Menambahkan blok konfigurasi di baris baru..."
-            sed -i "${last_line}a\\ \n$DOMAIN{\n\treverse_proxy $destination:$port\n}\n" "$CADDY_VHOST_DIR"
+            sed -i "${last_line}a\\ \n$DOMAIN{\n\treverse_proxy $destination:$port\n}" "$CADDY_VHOST_DIR"
             echo "Caddyfile telah diisi dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
             sleep 2
         fi
