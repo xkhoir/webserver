@@ -306,58 +306,78 @@ req_apache_ssl () {
 }
 
 #nginx====================
-add_nginx_blok () {
-    #masukkan
-    # Aktifkan blok server Nginx
-    ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/
-    echo -e "\nMengaktifkan blok server $DOMAIN\n"
-    sleep 1
+add_nginx_vhost () {
+    # Meminta input domain dari pengguna
+    read -p "Masukkan nama domain: " DOMAIN
 
+    # Membuat konfigurasi virtual host
+    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\n\tlocation / {\n\t\troot /var/www/$DOMAIN/public_html;\n\t\tindex index.html index.htm index.php;\n\t}\n\n\tlocation ~ \.php$ {\n\t\tinclude snippets/fastcgi-php.conf;\n\t\tfastcgi_pass unix:/var/run/php/$DOMAIN.sock;\n\t}\n\n\terror_log /var/log/nginx/$DOMAIN.error;\n\taccess_log /var/log/nginx/$DOMAIN.access;\n}" | sudo tee "/etc/nginx/sites-available/$DOMAIN" > /dev/null
+    echo "Vhost telah dibuat dengan konfigurasi untuk $DOMAIN"
+
+    # Aktifkan Virtual Host Nginx
+    echo -e "\nMengaktifkan vhost $DOMAIN"
+    sleep 1
+    sudo ln -s "/etc/nginx/sites-available/$DOMAIN" "/etc/nginx/sites-enabled/"
+    
     # Uji konfigurasi Nginx
-    nginx -t
-    echo -e "\nUji konfigurasi Nginx\n"
+    echo -e "\nUji konfigurasi Nginx"
     sleep 1
-
+    sudo nginx -t
+    
     # Restart Nginx
-    systemctl restart nginx
-    echo -e "\nRestart Nginx\n"
-    sleep 1
+    echo -e "\nRestart Nginx"
+    sleep 2
+    sudo systemctl restart nginx
     clear
 }
 
-add_nginx_proxy_blok () {
-    #masukkan
-    # Aktifkan blok server Nginx
-    ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/
-    echo -e "\nMengaktifkan blok server $DOMAIN\n"
+add_nginx_proxy_vhost () {
+    # Meminta input domain dari pengguna
+    read -p "Masukkan domain/ip tujuan (default: localhost): " destination
+    # Jika variabel destination kosong, maka atur nilai default ke "localhost"
+    destination=${destination:-localhost}
+    read -p "Masukkan port tujuan: " port
+
+    # Meminta input domain dari pengguna
+    read -p "Masukkan nama domain: " DOMAIN
+
+    # Membuat konfigurasi virtual host dengan proxy
+    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\n\tlocation / {\n\t\tproxy_pass http://$destination:$port;\n\t\tproxy_set_header Host \$host;\n\t\tproxy_set_header X-Real-IP \$remote_addr;\n\t}\n\n\terror_log /var/log/nginx/$DOMAIN.error;\n\taccess_log /var/log/nginx/$DOMAIN.access;\n}" | sudo tee "/etc/nginx/sites-available/$DOMAIN" > /dev/null
+    echo -e "\nVhost telah dibuat dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
     sleep 1
 
+    # Aktifkan Virtual Host Nginx
+    echo -e "\nMengaktifkan vhost $DOMAIN"
+    sleep 1
+    sudo ln -s "/etc/nginx/sites-available/$DOMAIN" "/etc/nginx/sites-enabled/"
+    
     # Uji konfigurasi Nginx
-    nginx -t
-    echo -e "\nUji konfigurasi Nginx\n"
+    echo -e "\nUji konfigurasi Nginx"
     sleep 1
-
+    sudo nginx -t
+    
     # Restart Nginx
-    systemctl restart nginx
-    echo -e "\nRestart Nginx\n"
-    sleep 1
+    echo -e "\nRestart Nginx"
+    sleep 2
+    sudo systemctl restart nginx
     clear
 }
 
-delete_nginx_blok () {
-    # Menonaktifkan server blok nginx
-    rm -rf /etc/nginx/sites-enabled/$DOMAIN
-    systemctl reload nginx
-    echo -e "\nMenonaktifkan server blok $DOMAIN"
+delete_nginx_vhost () {
+    # Menonaktifkan Virtual Host Nginx
+    sudo rm -f "/etc/nginx/sites-enabled/$DOMAIN"
+    sudo rm -f "/etc/nginx/sites-available/$DOMAIN"
+    sudo nginx -t
+    sudo systemctl restart nginx
+    echo -e "\nMenonaktifkan vhost $DOMAIN"
     sleep 1
     
-    read -p "Apakah Anda ingin menghapus server blok dari $DOMAIN? (y/t): " confirm
+    read -p "Apakah Anda ingin menghapus vhost dari $DOMAIN? (y/t): " confirm
     if [ "$confirm" == "y" ]; then
-        rm -rf $NGINX_VHOST_DIR
-        echo "Direktori $NGINX_VHOST_DIR telah dihapus."
+        echo "Direktori /etc/nginx/sites-available/$DOMAIN telah dihapus."
         sleep 1
     else
-        echo "direktori $NGINX_VHOST_DIR Tidak dihapus"
+        echo "Direktori /etc/nginx/sites-available/$DOMAIN Tidak dihapus"
         sleep 1
     fi
     
@@ -367,10 +387,11 @@ delete_nginx_blok () {
         echo "Direktori /var/www/$DOMAIN telah dihapus."
         sleep 1
     else
-        echo "direktori /var/www/$DOMAIN Tidak dihapus"
+        echo "Direktori /var/www/$DOMAIN Tidak dihapus"
         sleep 1
     fi
 }
+
 
 req_nginx_ssl () {
     echo -e"\nApakah Anda ingin menginstal SSL untuk $DOMAIN? (y/n)"
@@ -426,16 +447,16 @@ add_caddy_proxy_blok () {
         read -p "Masukkan port tujuan: " port
         # Cek apakah isi Caddyfile kosong
         if [ -z "$last_line" ]; then
-            echo "Isi Caddyfile Kosong, Menambahkan blok konfigurasi baru..."
+            echo -e "\nIsi Caddyfile Kosong, Menambahkan blok konfigurasi baru..."
             sleep 2
             echo -e "$DOMAIN{\n\treverse_proxy $destination:$port\n}" > "$CADDY_VHOST_DIR"
-            echo "Caddyfile telah diisi dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
+            echo -e "\nCaddyfile telah diisi dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
             sleep 2
         else
             # Menambahkan blok konfigurasi setelah baris terakhir
-            echo "Isi Caddyfile sudah ada, Menambahkan blok konfigurasi di baris baru..."
+            echo -e "\nIsi Caddyfile sudah ada, Menambahkan blok konfigurasi di baris baru..."
             sed -i "${last_line}a\\ \n$DOMAIN{\n\treverse_proxy $destination:$port\n}" "$CADDY_VHOST_DIR"
-            echo "Caddyfile telah diisi dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
+            echo -e "\nCaddyfile telah diisi dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
             sleep 2
         fi
     fi
@@ -444,19 +465,19 @@ add_caddy_proxy_blok () {
 delete_caddy_blok () {
     # Cek apakah domain sudah ada dalam Caddyfile
     if grep ! -q "$DOMAIN" "$CADDY_VHOST_DIR"; then
-        echo "Domain $DOMAIN sudah tidak ada dalam Caddyfile."
+        echo -e "\nDomain $DOMAIN sudah tidak ada dalam Caddyfile."
         sleep 2
     else 
         # Cari baris terakhir dalam Caddyfile
         last_line=$(grep -nE "^}" "$CADDY_VHOST_DIR" | tail -n 1 | cut -d ":" -f 1)
         # Cek apakah Caddyfile kosong
         if [ -z "$last_line" ]; then
-            echo "Konfigurasi Caddyfile sudah kosong"
+            echo -e "\nKonfigurasi Caddyfile sudah kosong"
             sleep 2
         else
             # Hapus konfigurasi domain dari Caddyfile
             sed -i "/$DOMAIN{/,/}/d" "$CADDY_VHOST_DIR"
-            echo "Konfigurasi untuk $DOMAIN telah dihapus dari Caddyfile"
+            echo -e "\nKonfigurasi untuk $DOMAIN telah dihapus dari Caddyfile"
             sleep 2
         fi
     fi
