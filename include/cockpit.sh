@@ -37,7 +37,7 @@ manage_cockpit() {
 
     if [ "$CEK" == "y" ]; then
         # call domain_setup
-        domain_setup "cockpit"
+        domain_setup "addproxydomain"
         clear
         echo -e "\nServer Akan reboot dalam 3 detik\n"
         sleep 3
