@@ -18,9 +18,11 @@ manage_cockpit() {
     check_package "apache2" "$action"
     check_package "$package" "$actionl"
     check_package "$package-storaged" "$action"
+    check_package "$package-networkmanager" "$action"
     check_package "$package-packagekit" "$action"
     check_package "$package-file-sharing" "$action"
     check_package "$package-navigator" "$action"
+    check_package "$package-identities" "$action"
     systemctl enable cockpit
 
     # # konfigurasi yang akan dimasukkan ke dalam file
@@ -38,10 +40,8 @@ manage_cockpit() {
     if [ "$CEK" == "y" ]; then
         # call domain_setup
         domain_setup "addproxydomain"
-        clear
-        echo -e "\nServer Akan reboot dalam 3 detik\n"
-        sleep 3
-        reboot
+        add_cockpit_conf
+        systemctl restart cockpit
     else
         echo -e "\nOK, akses cockpit di localhost anda pada port 9090,"
     fi
@@ -49,17 +49,22 @@ manage_cockpit() {
     #uninstall cockpit
     check_package "$package" "$action"
     echo "" > /etc/cockpit/cockpit.conf
-    echo "" > /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
-    nmcli con delete con-name fake
+    # echo "" > /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
+    # nmcli con delete con-name fake
     systemctl restart cockpit.service
     systemctl restart NetworkManager
-    clear
-    echo -e "\nServer Akan reboot dalam 3 detik\n"
-    sleep 3
-    reboot
   else
     echo "Perintah tidak valid."
   fi
+}
+
+add_cockpit_conf () {
+    # konfigurasi yang akan dimasukkan ke dalam file
+    config="[WebService]\nOrigins = https://$DOMAIN http://$DOMAIN http://localhost:9090\nProtocolHeader = X-Forwarded-Proto\nAllowUnencrypted = true"
+    # Buat file cockpit.conf
+    touch /etc/cockpit/cockpit.conf
+    # jalankan perintah echo untuk menambahkan konfigurasi ke dalam file
+    echo -e "$config" >> /etc/cockpit/cockpit.conf
 }
 
 

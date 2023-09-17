@@ -27,7 +27,12 @@ domain_setup () {
         sleep 2
         # cek apakah domain di layanan Apache sudah adagi
         if [ -f "$APACHE2_VHOST_DIR" ]; then
+            # Konfirmasi dengan argumen $1
+            if [[ "$1" == "deletedomain" ]]; then
+                delete_apache_vhost
+            fi
             echo -e "\nDomain $DOMAIN sudah ada di vhost Apache. \ntidak perlu ditambahkan lagi.."
+            sleep 2
         else
             #code apache2
             if [[ "$1" == "adddomain" ]]; then
@@ -52,9 +57,6 @@ domain_setup () {
                 add_apache_log
                 #call fungsi delete_apache_vhost
                 add_apache_proxy_vhost
-            elif [[ "$1" == "deletedomain" ]]; then
-                #call fungsi delete_apache_vhost
-                delete_apache_vhost
             else
                 echo "Silakan tentukan [adddomain|addproxydomain|deletedomain] sebagai argumen pertama."
             fi
@@ -67,7 +69,12 @@ domain_setup () {
         sleep 2
         # cek apakah domain di layanan Nginx sudah ada
         if [ -f "$NGINX_VHOST_DIR" ]; then
-            echo -e "\nDomain $DOMAIN sudah ada di vhost Nginx. \ntidak perlu ditambahkan lagi.."
+            # Konfirmasi dengan argumen $1
+            if [[ "$1" == "deletedomain" ]]; then
+                delete_nginx_blok
+            fi
+            echo -e "\nDomain $DOMAIN sudah ada di server blok Nginx. \ntidak perlu ditambahkan lagi.."
+            sleep 2
         else
             #code nginx
             if [[ "$1" == "adddomain" ]]; then
@@ -87,8 +94,6 @@ domain_setup () {
                 change_docroot_owner
             elif [[ "$1" == "addproxydomain" ]]; then
                 add_nginx_proxy_blok
-            elif [[ "$1" == "deletedomain" ]]; then
-                delete_nginx_blok
             else
                 echo "Silakan tentukan [adddomain|addproxydomain|deletedomain] sebagai argumen pertama."
             fi
@@ -133,23 +138,23 @@ domain_setup () {
 # Fungsi untuk tambah file info.php
 add_info () {
     # fungsi untuk membuat file php untuk info
-    echo -n "<?php phpinfo() ?>" | cat > $BACDIRECTORY/info.php
+    echo -n "<?php phpinfo() ?>" | cat > $DIRECTORY/info.php
     echo -n "<?php phpinfo() ?>" | cat > $BACDIRECTORY/info.php
 }
 
 # Fungsi untuk tambah file info.php
 add_index () {
     #Menyalin file "index.php" ke direktori yang ditentukan dalam variabel $DIRECTORY.
-    cp index.php $BACDIRECTORY
+    cp index.php $DIRECTORY
     cp index.php $BACDIRECTORY
     #mengganti kata "RDOMAIN" pada baris ke-56 dari file "index.php" dengan nilai dari variabel $DOMAIN.
-    sed -i "s#RDOMAIN#$DOMAIN#g" $BACDIRECTORY/index.php
+    sed -i "s#RDOMAIN#$DOMAIN#g" $DIRECTORY/index.php
     sed -i "s#RDOMAIN#$DOMAIN#g" $BACDIRECTORY/index.php
     #mengganti kata "RLOG" pada baris ke-78 dari file "index.php" dengan nilai dari variabel $LOG.
+    sed -i "s#RLOG#$APACHELOG#g" $DIRECTORY/index.php
     sed -i "s#RLOG#$APACHELOG#g" $BACDIRECTORY/index.php
-    sed -i "s#RLOG#$APACHELOG#g" $BACDIRECTORY/index.php
-    #mengganti kata "php-fpm7.4" pada baris ke-106 dari file "index.php" dengan nilai dari variabel $versi_terpilih.
-    sed -i "s#php-fpm#php$versi_terpilih-fpm#g" $BACDIRECTORY/index.php
+    #mengganti kata "php-fpm" pada baris ke-106 dari file "index.php" dengan nilai dari variabel $versi_terpilih.
+    sed -i "s#php-fpm#php$versi_terpilih-fpm#g" $DIRECTORY/index.php
     sed -i "s#php-fpm#php$versi_terpilih-fpm#g" $BACDIRECTORY/index.php
 }
 
@@ -170,15 +175,6 @@ change_docroot_owner () {
     chmod -R 755 $BACDIRECTORY
     echo -e "\nMengatur kepemilikan dan izin direktori Sukses"
     sleep 1
-}
-
-add_cockpit_conf () {
-    # konfigurasi yang akan dimasukkan ke dalam file
-    config="[WebService]\nOrigins = https://$DOMAIN http://$DOMAIN http://localhost:9090\nProtocolHeader = X-Forwarded-Proto\nAllowUnencrypted = true"
-    # Buat file cockpit.conf
-    touch /etc/cockpit/cockpit.conf
-    # jalankan perintah echo untuk menambahkan konfigurasi ke dalam file
-    echo -e "$config" >> /etc/cockpit/cockpit.conf
 }
 
 #apache===================
@@ -255,28 +251,28 @@ add_apache_proxy_vhost () {
 
 delete_apache_vhost () {
     # Menonaktifkan Virtual Host Apache
+    echo -e "\nMenonaktifkan vhost $DOMAIN.conf\n"
+    sleep 1
     a2dissite $DOMAIN.conf
     systemctl restart apache2
-    echo -e "\nMenonaktifkan vhost $DOMAIN.conf"
-    sleep 1
     
     read -p "Apakah Anda ingin menghapus vhost dari $DOMAIN? (y/t): " confirm
     if [ "$confirm" == "y" ]; then
         rm -rf $APACHE2_VHOST_DIR
-        echo "Direktori $APACHE2_VHOST_DIR telah dihapus."
+        echo -e "\nDirektori $APACHE2_VHOST_DIR telah dihapus."
         sleep 1
     else
-        echo "direktori $APACHE2_VHOST_DIR Tidak dihapus"
+        echo -e "\ndirektori $APACHE2_VHOST_DIR Tidak dihapus"
         sleep 1
     fi
     
     read -p "Apakah Anda ingin menghapus docroot dari $DOMAIN? (y/t): " confirm1
     if [ "$confirm1" == "y" ]; then
         rm -rf /var/www/$DOMAIN
-        echo "Direktori /var/www/$DOMAIN telah dihapus."
+        echo -e "\nDirektori /var/www/$DOMAIN telah dihapus."
         sleep 1
     else
-        echo "direktori /var/www/$DOMAIN Tidak dihapus"
+        echo -e "\ndirektori /var/www/$DOMAIN Tidak dihapus"
         sleep 1
     fi
 }
@@ -367,29 +363,28 @@ add_nginx_proxy_blok () {
 
 delete_nginx_blok () {
     # Menonaktifkan Server blok Nginx
+    echo -e "\nMenonaktifkan server blok $DOMAIN\n"
+    sleep 1
     sudo rm -f "/etc/nginx/sites-enabled/$DOMAIN"
     sudo rm -f "$NGINX_VHOST_DIR"
-    sudo nginx -t
     sudo systemctl restart nginx
-    echo -e "\nMenonaktifkan server blok $DOMAIN"
-    sleep 1
     
     read -p "Apakah Anda ingin menghapus server blok dari $DOMAIN? (y/t): " confirm
     if [ "$confirm" == "y" ]; then
-        echo "Direktori $NGINX_VHOST_DIR telah dihapus."
+        echo -e "\nDirektori $NGINX_VHOST_DIR telah dihapus."
         sleep 1
     else
-        echo "Direktori $NGINX_VHOST_DIR Tidak dihapus"
+        echo -e "\nDirektori $NGINX_VHOST_DIR Tidak dihapus"
         sleep 1
     fi
     
     read -p "Apakah Anda ingin menghapus docroot dari $DOMAIN? (y/t): " confirm1
     if [ "$confirm1" == "y" ]; then
         rm -rf /var/www/$DOMAIN
-        echo "Direktori /var/www/$DOMAIN telah dihapus."
+        echo -e "\nDirektori /var/www/$DOMAIN telah dihapus."
         sleep 1
     else
-        echo "Direktori /var/www/$DOMAIN Tidak dihapus"
+        echo -e "\nDirektori /var/www/$DOMAIN Tidak dihapus"
         sleep 1
     fi
 }
