@@ -311,7 +311,8 @@ req_apache_ssl () {
 #nginx====================
 add_nginx_blok () {
     # Membuat konfigurasi Server Blok
-    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\troot /var/www/$DOMAIN/public_html;\n\tindex index.php index.html index.htm;\n\n\t# Konfigurasi untuk akses log\n\taccess_log /var/log/nginx/$DOMAIN-access.log;\n\terror_log /var/log/nginx/$DOMAIN-error.log error;\n\n\t# Konfigurasi untuk menangani permintaan HTTP\n\tlocation / {\n\t\t# Mengizinkan akses ke file index.html dan lainnya\n\t\ttry_files $uri $uri/ /index.html;\n\t}\n\n\t# Konfigurasi untuk menangani permintaan PHP (jika diperlukan)\n\tlocation ~ \.php$ {\n\t\tinclude snippets/fastcgi-php.conf;\n\t\tfastcgi_pass unix:/run/php/$DOMAIN.sock;\n\t}\n}" | tee "$NGINX_VHOST_DIR" > /dev/null
+    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\n\troot /var/www/$DOMAIN;\n\tindex index.php index.html index.htm;\n\n\tlocation / {\n\t\ttry_files \$uri \$uri/ /index.php?\$query_string;\n\t}\n\n\tlocation ~ \\.php\$ {\n\t\tinclude snippets/fastcgi-php.conf;\n\t\tfastcgi_pass unix:/run/php/php7.4-fpm.sock; # Sesuaikan dengan versi PHP-FPM Anda\n\t}\n\n\tlocation ~ /\\.ht {\n\t\tdeny all;\n\t}\n}" | tee "$NGINX_VHOST_DIR" > /dev/null
+    #echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\troot /var/www/$DOMAIN/public_html;\n\tindex index.php index.html index.htm;\n\n\t# Konfigurasi untuk akses log\n\taccess_log /var/log/nginx/$DOMAIN-access.log;\n\terror_log /var/log/nginx/$DOMAIN-error.log error;\n\n\t# Konfigurasi untuk menangani permintaan HTTP\n\n\t# Konfigurasi untuk menangani permintaan PHP (jika diperlukan)\n\tlocation ~ \.php$ {\n\t\tinclude snippets/fastcgi-php.conf;\n\t\tfastcgi_pass unix:/run/php/$DOMAIN.sock;\n\t}\n}" | tee "$NGINX_VHOST_DIR" > /dev/null
     echo -e "\nServer Blok telah dibuat dengan konfigurasi untuk $DOMAIN"
     sleep 1
 
@@ -366,11 +367,12 @@ delete_nginx_blok () {
     echo -e "\nMenonaktifkan server blok $DOMAIN\n"
     sleep 1
     sudo rm -f "/etc/nginx/sites-enabled/$DOMAIN"
-    sudo rm -f "$NGINX_VHOST_DIR"
+    sudo systemctl reload nginx
     sudo systemctl restart nginx
     
     read -p "Apakah Anda ingin menghapus server blok dari $DOMAIN? (y/t): " confirm
     if [ "$confirm" == "y" ]; then
+        sudo rm -f "$NGINX_VHOST_DIR"
         echo -e "\nDirektori $NGINX_VHOST_DIR telah dihapus."
         sleep 1
     else
@@ -385,6 +387,17 @@ delete_nginx_blok () {
         sleep 1
     else
         echo -e "\nDirektori /var/www/$DOMAIN Tidak dihapus"
+        sleep 1
+    fi
+    
+    read -p "Apakah Anda ingin menghapus file log dari $DOMAIN? (y/t): " confirm1
+    if [ "$confirm1" == "y" ]; then
+        rm -rf /var/log/nginx/$DOMAIN-access.log
+        rm -rf /var/log/nginx/$DOMAIN-error.log
+        echo -e "\nFile log dari $DOMAIN telah dihapus."
+        sleep 1
+    else
+        echo -e "\nFile log dari $DOMAIN Tidak dihapus"
         sleep 1
     fi
 }
