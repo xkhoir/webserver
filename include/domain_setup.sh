@@ -165,7 +165,9 @@ add_docroot () {
 change_docroot_owner () {
     # Atur kepemilikan dan izin direktori
     chown -R www-data:www-data $DIRECTORY
+    chown -R www-data:www-data $BACDIRECTORY
     chmod -R 755 $DIRECTORY
+    chmod -R 755 $BACDIRECTORY
     echo -e "\nMengatur kepemilikan dan izin direktori Sukses"
     sleep 1
 }
@@ -313,8 +315,7 @@ req_apache_ssl () {
 #nginx====================
 add_nginx_blok () {
     # Membuat konfigurasi Server Blok
-    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\tindex index.html index.htm index.php;\n\troot /var/www/$DOMAIN/public_html;\n\taccess_log /var/log/nginx/$DOMAIN-access.log;\n\terror_log /var/log/nginx/$DOMAIN-error.log error;\n\tlocation / {\n\t\ttry_files \$uri \$uri/ /index.html;\n\t}\n\tlocation ~ \.php$ {\n\t\tinclude snippets/fastcgi-php.conf;\n\t\tfastcgi_pass unix:/run/php/$DOMAIN.sock;\n\t}\n\t# Lokasi tambahan jika Anda ingin menyimpan file statis khusus, seperti gambar\n\t# location /static/ {\n\t# \talias /var/www/$DOMAIN/static/;\n\t# }\n\t# Konfigurasi tambahan jika Anda ingin menggunakan gzip untuk mengompresi konten\n\t# gzip on;\n\t# gzip_types text/plain text/css application/json application/javascript text/xml;\n\t# Konfigurasi tambahan keamanan (opsional)\n\t# include snippets/security.conf;\n\t# Konfigurasi tambahan kecepatan (opsional)\n\t# include snippets/optimization.conf;\n}" | sudo tee "$NGINX_VHOST_DIR" > /dev/null
-    #echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\n\tlocation / {\n\t\troot /var/www/$DOMAIN/public_html;\n\t\tindex index.html index.htm index.php;\n\t}\n\n\tlocation ~ \.php$ {\n\t\tinclude snippets/fastcgi-php.conf;\n\t\tfastcgi_pass unix:/var/run/php/$DOMAIN.sock;\n\t}\n\n\terror_log /var/log/nginx/$DOMAIN.error;\n\taccess_log /var/log/nginx/$DOMAIN.access;\n}" | sudo tee "$NGINX_VHOST_DIR" > /dev/null
+    echo -e "server {\n\tlisten 80;  # Port yang digunakan oleh server untuk mendengarkan HTTP\n\tserver_name $DOMAIN;  # Nama domain situs Anda\n\n\t# Lokasi root direktori situs Anda\n\troot /var/www/$DOMAIN/public_html;\n\tindex index.html index.htm index.php;\n\n\t# Konfigurasi untuk akses log\n\taccess_log /var/log/nginx/$DOMAIN-access.log;\n\terror_log /var/log/nginx/$DOMAIN-error.log error;\n\n\t# Konfigurasi untuk menangani permintaan HTTP\n\tlocation / {\n\t\t# Mengizinkan akses ke file index.html dan lainnya\n\t\ttry_files $uri $uri/ /index.html;\n\t}\n\n\t# Konfigurasi untuk menangani permintaan PHP (jika diperlukan)\n\tlocation ~ \.php$ {\n\t\tinclude snippets/fastcgi-php.conf;\n\t\tfastcgi_pass unix:/run/php/$DOMAIN.sock;  # Sesuaikan dengan versi PHP Anda\n\t}\n\n\t# Lokasi tambahan jika Anda ingin menyimpan file statis khusus, seperti gambar\n\t# location /static/ {\n\t# \talias /var/www/$DOMAIN/static/;\n\t# }\n\n\t# Konfigurasi tambahan jika Anda ingin menggunakan gzip untuk mengompresi konten\n\t# gzip on;\n\t# gzip_types text/plain text/css application/json application/javascript text/xml;\n\n\t# Konfigurasi tambahan keamanan (opsional)\n\t# include snippets/security.conf;\n\n\t# Konfigurasi tambahan kecepatan (opsional)\n\t# include snippets/optimization.conf;\n}" | tee "$NGINX_VHOST_DIR" > /dev/null
     echo -e "\nServer Blok telah dibuat dengan konfigurasi untuk $DOMAIN"
     sleep 1
 
