@@ -306,18 +306,15 @@ req_apache_ssl () {
 }
 
 #nginx====================
-add_nginx_vhost () {
-    # Meminta input domain dari pengguna
-    read -p "Masukkan nama domain: " DOMAIN
+add_nginx_blok () {
+    # Membuat konfigurasi Server Blok
+    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\n\tlocation / {\n\t\troot /var/www/$DOMAIN/public_html;\n\t\tindex index.html index.htm index.php;\n\t}\n\n\tlocation ~ \.php$ {\n\t\tinclude snippets/fastcgi-php.conf;\n\t\tfastcgi_pass unix:/var/run/php/$DOMAIN.sock;\n\t}\n\n\terror_log /var/log/nginx/$DOMAIN.error;\n\taccess_log /var/log/nginx/$DOMAIN.access;\n}" | sudo tee "$NGINX_VHOST_DIR" > /dev/null
+    echo "Server Blok telah dibuat dengan konfigurasi untuk $DOMAIN"
 
-    # Membuat konfigurasi virtual host
-    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\n\tlocation / {\n\t\troot /var/www/$DOMAIN/public_html;\n\t\tindex index.html index.htm index.php;\n\t}\n\n\tlocation ~ \.php$ {\n\t\tinclude snippets/fastcgi-php.conf;\n\t\tfastcgi_pass unix:/var/run/php/$DOMAIN.sock;\n\t}\n\n\terror_log /var/log/nginx/$DOMAIN.error;\n\taccess_log /var/log/nginx/$DOMAIN.access;\n}" | sudo tee "/etc/nginx/sites-available/$DOMAIN" > /dev/null
-    echo "Vhost telah dibuat dengan konfigurasi untuk $DOMAIN"
-
-    # Aktifkan Virtual Host Nginx
-    echo -e "\nMengaktifkan vhost $DOMAIN"
+    # Aktifkan Server Blok Nginx
+    echo -e "\nMengaktifkan Server Blok $DOMAIN"
     sleep 1
-    sudo ln -s "/etc/nginx/sites-available/$DOMAIN" "/etc/nginx/sites-enabled/"
+    sudo ln -s "$NGINX_VHOST_DIR" "/etc/nginx/sites-enabled/"
     
     # Uji konfigurasi Nginx
     echo -e "\nUji konfigurasi Nginx"
@@ -331,25 +328,22 @@ add_nginx_vhost () {
     clear
 }
 
-add_nginx_proxy_vhost () {
+add_nginx_proxy_blok () {
     # Meminta input domain dari pengguna
     read -p "Masukkan domain/ip tujuan (default: localhost): " destination
     # Jika variabel destination kosong, maka atur nilai default ke "localhost"
     destination=${destination:-localhost}
     read -p "Masukkan port tujuan: " port
 
-    # Meminta input domain dari pengguna
-    read -p "Masukkan nama domain: " DOMAIN
-
-    # Membuat konfigurasi virtual host dengan proxy
-    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\n\tlocation / {\n\t\tproxy_pass http://$destination:$port;\n\t\tproxy_set_header Host \$host;\n\t\tproxy_set_header X-Real-IP \$remote_addr;\n\t}\n\n\terror_log /var/log/nginx/$DOMAIN.error;\n\taccess_log /var/log/nginx/$DOMAIN.access;\n}" | sudo tee "/etc/nginx/sites-available/$DOMAIN" > /dev/null
-    echo -e "\nVhost telah dibuat dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
+    # Membuat konfigurasi server blok dengan proxy
+    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\n\tlocation / {\n\t\tproxy_pass http://$destination:$port;\n\t\tproxy_set_header Host \$host;\n\t\tproxy_set_header X-Real-IP \$remote_addr;\n\t}\n\n\terror_log /var/log/nginx/$DOMAIN.error;\n\taccess_log /var/log/nginx/$DOMAIN.access;\n}" | sudo tee "$NGINX_VHOST_DIR" > /dev/null
+    echo -e "\nServer Blok telah dibuat dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
     sleep 1
 
-    # Aktifkan Virtual Host Nginx
-    echo -e "\nMengaktifkan vhost $DOMAIN"
+    # Aktifkan Server Blok Nginx
+    echo -e "\nMengaktifkan Server Blok $DOMAIN"
     sleep 1
-    sudo ln -s "/etc/nginx/sites-available/$DOMAIN" "/etc/nginx/sites-enabled/"
+    sudo ln -s "$NGINX_VHOST_DIR" "/etc/nginx/sites-enabled/"
     
     # Uji konfigurasi Nginx
     echo -e "\nUji konfigurasi Nginx"
@@ -363,21 +357,21 @@ add_nginx_proxy_vhost () {
     clear
 }
 
-delete_nginx_vhost () {
-    # Menonaktifkan Virtual Host Nginx
+delete_nginx_blok () {
+    # Menonaktifkan Server blok Nginx
     sudo rm -f "/etc/nginx/sites-enabled/$DOMAIN"
-    sudo rm -f "/etc/nginx/sites-available/$DOMAIN"
+    sudo rm -f "$NGINX_VHOST_DIR"
     sudo nginx -t
     sudo systemctl restart nginx
-    echo -e "\nMenonaktifkan vhost $DOMAIN"
+    echo -e "\nMenonaktifkan server blok $DOMAIN"
     sleep 1
     
-    read -p "Apakah Anda ingin menghapus vhost dari $DOMAIN? (y/t): " confirm
+    read -p "Apakah Anda ingin menghapus server blok dari $DOMAIN? (y/t): " confirm
     if [ "$confirm" == "y" ]; then
-        echo "Direktori /etc/nginx/sites-available/$DOMAIN telah dihapus."
+        echo "Direktori $NGINX_VHOST_DIR telah dihapus."
         sleep 1
     else
-        echo "Direktori /etc/nginx/sites-available/$DOMAIN Tidak dihapus"
+        echo "Direktori $NGINX_VHOST_DIR Tidak dihapus"
         sleep 1
     fi
     
