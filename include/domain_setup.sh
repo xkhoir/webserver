@@ -145,7 +145,7 @@ add_index () {
     #mengganti kata "RLOG" pada baris ke-78 dari file "index.php" dengan nilai dari variabel $LOG.
     sed -i "s#RLOG#$APACHELOG#g" $BACDIRECTORY/index.php
     #mengganti kata "php-fpm7.4" pada baris ke-106 dari file "index.php" dengan nilai dari variabel $versi_terpilih.
-    sed -i "s#php-fpm#$versi_terpilih#g" $BACDIRECTORY/index.php
+    sed -i "s#php-fpm#php$versi_terpilih-fpm#g" $BACDIRECTORY/index.php
 }
 
 add_docroot () {
@@ -308,8 +308,10 @@ req_apache_ssl () {
 #nginx====================
 add_nginx_blok () {
     # Membuat konfigurasi Server Blok
-    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\n\tlocation / {\n\t\troot /var/www/$DOMAIN/public_html;\n\t\tindex index.html index.htm index.php;\n\t}\n\n\tlocation ~ \.php$ {\n\t\tinclude snippets/fastcgi-php.conf;\n\t\tfastcgi_pass unix:/var/run/php/$DOMAIN.sock;\n\t}\n\n\terror_log /var/log/nginx/$DOMAIN.error;\n\taccess_log /var/log/nginx/$DOMAIN.access;\n}" | sudo tee "$NGINX_VHOST_DIR" > /dev/null
-    echo "Server Blok telah dibuat dengan konfigurasi untuk $DOMAIN"
+    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\tindex index.html index.htm index.php;\n\troot /var/www/$DOMAIN/public_html;\n\taccess_log /var/log/nginx/$DOMAIN-access.log;\n\terror_log /var/log/nginx/$DOMAIN-error.log error;\n\tlocation / {\n\t\ttry_files \$uri \$uri/ /index.html;\n\t}\n\tlocation ~ \.php$ {\n\t\tinclude snippets/fastcgi-php.conf;\n\t\tfastcgi_pass unix:/run/php/$DOMAIN.sock;\n\t}\n\t# Lokasi tambahan jika Anda ingin menyimpan file statis khusus, seperti gambar\n\t# location /static/ {\n\t# \talias /var/www/$DOMAIN/static/;\n\t# }\n\t# Konfigurasi tambahan jika Anda ingin menggunakan gzip untuk mengompresi konten\n\t# gzip on;\n\t# gzip_types text/plain text/css application/json application/javascript text/xml;\n\t# Konfigurasi tambahan keamanan (opsional)\n\t# include snippets/security.conf;\n\t# Konfigurasi tambahan kecepatan (opsional)\n\t# include snippets/optimization.conf;\n}" | sudo tee "$NGINX_VHOST_DIR" > /dev/null
+    #echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\n\tlocation / {\n\t\troot /var/www/$DOMAIN/public_html;\n\t\tindex index.html index.htm index.php;\n\t}\n\n\tlocation ~ \.php$ {\n\t\tinclude snippets/fastcgi-php.conf;\n\t\tfastcgi_pass unix:/var/run/php/$DOMAIN.sock;\n\t}\n\n\terror_log /var/log/nginx/$DOMAIN.error;\n\taccess_log /var/log/nginx/$DOMAIN.access;\n}" | sudo tee "$NGINX_VHOST_DIR" > /dev/null
+    echo -e "\nServer Blok telah dibuat dengan konfigurasi untuk $DOMAIN"
+    sleep 1
 
     # Aktifkan Server Blok Nginx
     echo -e "\nMengaktifkan Server Blok $DOMAIN"
@@ -336,7 +338,7 @@ add_nginx_proxy_blok () {
     read -p "Masukkan port tujuan: " port
 
     # Membuat konfigurasi server blok dengan proxy
-    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\n\tlocation / {\n\t\tproxy_pass http://$destination:$port;\n\t\tproxy_set_header Host \$host;\n\t\tproxy_set_header X-Real-IP \$remote_addr;\n\t}\n\n\terror_log /var/log/nginx/$DOMAIN.error;\n\taccess_log /var/log/nginx/$DOMAIN.access;\n}" | sudo tee "$NGINX_VHOST_DIR" > /dev/null
+    echo -e "server {\n\tlisten 80;\n\tserver_name $DOMAIN;\n\n\tlocation / {\n\t\tproxy_pass http://$destination:$port;\n\t\tproxy_set_header Host \$host;\n\t\tproxy_set_header X-Real-IP \$remote_addr;\n\t}\n\n\taccess_log /var/log/nginx/$DOMAIN-access.log;\n\terror_log /var/log/nginx/$DOMAIN-error.log error;\n}" | sudo tee "$NGINX_VHOST_DIR" > /dev/null
     echo -e "\nServer Blok telah dibuat dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
     sleep 1
 
