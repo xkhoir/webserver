@@ -134,17 +134,22 @@ domain_setup () {
 add_info () {
     # fungsi untuk membuat file php untuk info
     echo -n "<?php phpinfo() ?>" | cat > $BACDIRECTORY/info.php
+    echo -n "<?php phpinfo() ?>" | cat > $BACDIRECTORY/info.php
 }
 
 # Fungsi untuk tambah file info.php
 add_index () {
     #Menyalin file "index.php" ke direktori yang ditentukan dalam variabel $DIRECTORY.
     cp index.php $BACDIRECTORY
+    cp index.php $BACDIRECTORY
     #mengganti kata "RDOMAIN" pada baris ke-56 dari file "index.php" dengan nilai dari variabel $DOMAIN.
+    sed -i "s#RDOMAIN#$DOMAIN#g" $BACDIRECTORY/index.php
     sed -i "s#RDOMAIN#$DOMAIN#g" $BACDIRECTORY/index.php
     #mengganti kata "RLOG" pada baris ke-78 dari file "index.php" dengan nilai dari variabel $LOG.
     sed -i "s#RLOG#$APACHELOG#g" $BACDIRECTORY/index.php
+    sed -i "s#RLOG#$APACHELOG#g" $BACDIRECTORY/index.php
     #mengganti kata "php-fpm7.4" pada baris ke-106 dari file "index.php" dengan nilai dari variabel $versi_terpilih.
+    sed -i "s#php-fpm#php$versi_terpilih-fpm#g" $BACDIRECTORY/index.php
     sed -i "s#php-fpm#php$versi_terpilih-fpm#g" $BACDIRECTORY/index.php
 }
 
