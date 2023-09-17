@@ -541,6 +541,7 @@ check_php() {
 
 add_fpm_pool () {
     echo -e "[$DOMAIN]\nuser = www-data\ngroup = www-data\nlisten = /run/php/$DOMAIN.sock\nlisten.owner = www-data\nlisten.group = www-data\nlisten.mode = 0660\npm = dynamic\npm.max_children = 5\npm.start_servers = 2\npm.min_spare_servers = 1\npm.max_spare_servers = 3\nrequest_terminate_timeout = 300" | tee /etc/php/$versi_terpilih/fpm/pool.d/$DOMAIN.conf > /dev/null
+    systemctl restart php$versi_terpilih-fpm
     echo -e "\npembuatan pool berhasil"
     sleep 3
 }
