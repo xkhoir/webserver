@@ -52,7 +52,7 @@ manage_cockpit() {
     echo "" > /etc/cockpit/cockpit.conf
     # echo "" > /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
     # nmcli con delete con-name fake
-    systemctl restart cockpit.service
+    #systemctl restart cockpit.service
     #systemctl restart NetworkManager
   else
     echo "Perintah tidak valid."

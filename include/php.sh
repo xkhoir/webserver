@@ -55,7 +55,7 @@ manage_php() {
     rm -rf /etc/php/$version
     
   elif [ "$action" == "install" ]; then
-    install repo php
+    #install repo php
     if ! grep -q "^deb .*ondrej/php" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
       #echo "Repo ondrej/php tidak terinstal. Menambahkan repo..."
       add-apt-repository -y ppa:ondrej/php jammy
