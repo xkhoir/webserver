@@ -62,7 +62,7 @@ manage_speedtest() {
     sed -i "276s/LibreSpeed Example/$TITLE/" $DIRECTORY/index.html
     sed -i "279s/LibreSpeed Example/$TITLE/" $DIRECTORY/index.html
     sed -i '282d' $DIRECTORY/index.html
-    sed -i '320d' $DIRECTORY/index.html
+    sed -i '319d' $DIRECTORY/index.html
 
     echo -e "\nApp Speedtest telah terinstall di $DIRECTORY"
     echo -e "\nSilahkan akses $DOMAIN"
