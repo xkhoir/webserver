@@ -53,7 +53,7 @@ manage_cockpit() {
     # echo "" > /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
     # nmcli con delete con-name fake
     systemctl restart cockpit.service
-    systemctl restart NetworkManager
+    #systemctl restart NetworkManager
   else
     echo "Perintah tidak valid."
   fi
@@ -84,6 +84,7 @@ add_cockpit_proxy () {
     sed -i '/ProxyPassReverse \/ http:\/\/localhost:9090\//a ProxyPreserveHost On\n\tProxyRequests Off\n\n\t# allow for upgrading to websockets\n\tRewriteEngine On\n\tRewriteCond %{HTTP:UPGRADE} ^WebSocket$ [NC]\n\tRewriteCond %{HTTP:CONNECTION} ^Upgrade$ [NC]\n\tRewriteRule .* ws://localhost:9090/%{REQUEST_URI} [P]' $APACHE2_VHOST_DIR
     echo -e "\nMenambahkan script proxy untuk cockpit"
     sleep 2
+    sudo a2enmod proxy proxy_wstunnel proxy_http ssl rewrite
     systemctl restart apache2
   fi
 }

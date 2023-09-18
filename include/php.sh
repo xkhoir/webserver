@@ -36,7 +36,7 @@ manage_php() {
             [yY])
                 echo "Menghapus repo ondrej/php..."
                 sleep 3
-                sudo add-apt-repository -y --remove ppa:ondrej/php
+                sudo add-apt-repository -y --remove ppa:ondrej/php jammy
                 ;;
             [nN])
                 echo "Melewati penghapusan repo ondrej/php."
@@ -55,19 +55,14 @@ manage_php() {
     rm -rf /etc/php/$version
     
   elif [ "$action" == "install" ]; then
-    #install repo php
-    # if ! grep -q "^deb .*ondrej/php" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
-    #   #echo "Repo ondrej/php tidak terinstal. Menambahkan repo..."
-    #   add-apt-repository -y ppa:ondrej/php
-    # fi
+    install repo php
+    if ! grep -q "^deb .*ondrej/php" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
+      #echo "Repo ondrej/php tidak terinstal. Menambahkan repo..."
+      add-apt-repository -y ppa:ondrej/php jammy
+    fi
 
     check_package "$package-fpm" "$action"
     apt install $package-{bz2,cli,intl,common,mysql,zip,curl,gd,mbstring,xml,bcmath,phpdbg,cgi} -y
-    # Instalasi PHP & ekstensi
-    # for ext in "${extensions[@]}"; do
-    #   ext_package="$package-$ext"
-    #   #parsing data ke fungsi check_package
-    #   check_package "$ext_package" "install"
     # done
     a2enmod proxy_fcgi setenvif
     a2enconf $package-fpm
