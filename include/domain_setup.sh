@@ -275,6 +275,17 @@ delete_apache_vhost () {
         echo -e "\ndirektori /var/www/$DOMAIN Tidak dihapus"
         sleep 1
     fi
+
+    read -p "Apakah Anda ingin menghapus file log dari $DOMAIN? (y/t): " confirm1
+    if [ "$confirm1" == "y" ]; then
+        rm -rf /var/log/apache2/$DOMAIN-access.log
+        rm -rf /var/log/apache2/$DOMAIN-error.log
+        echo -e "\nFile log dari $DOMAIN telah dihapus."
+        sleep 1
+    else
+        echo -e "\nFile log dari $DOMAIN Tidak dihapus"
+        sleep 1
+    fi
 }
 
 # Fungsi untuk tambah file log
