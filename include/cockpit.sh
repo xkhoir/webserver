@@ -15,7 +15,6 @@ manage_cockpit() {
     curl -sSL https://repo.45drives.com/setup -o setup-repo.sh
     sudo bash setup-repo.sh
     #install cockpit
-    check_package "apache2" "$action"
     check_package "$package" "$actionl"
     check_package "$package-storaged" "$action"
     check_package "$package-networkmanager" "$action"
