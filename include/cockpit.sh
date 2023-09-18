@@ -42,6 +42,7 @@ manage_cockpit() {
         domain_setup "addproxydomain"
         add_cockpit_conf
         systemctl restart cockpit
+        add_cockpit_proxy
     else
         echo -e "\nOK, akses cockpit di localhost anda pada port 9090,"
     fi
@@ -65,6 +66,24 @@ add_cockpit_conf () {
     touch /etc/cockpit/cockpit.conf
     # jalankan perintah echo untuk menambahkan konfigurasi ke dalam file
     echo -e "$config" >> /etc/cockpit/cockpit.conf
+
+    
 }
 
-
+add_cockpit_proxy () {
+  # Cek status web server aktif
+  if [ "$NGINX_STATUS" = "active" ]; then
+    # Fungsi untuk menambahkan konfigurasi proxy ke nginx
+    sed -i '/location \/ {/,/}/c\
+      location \/ {\n\t\tproxy_pass https:\/\/localhost:9090;\n\t\tproxy_set_header Host $host;\n\t\tproxy_set_header X-Forwarded-Proto $scheme;\n\n\t\t# Required for web sockets to function\n\t\tproxy_http_version 1.1;\n\t\tproxy_buffering off;\n\t\tproxy_set_header Upgrade $http_upgrade;\n\t\tproxy_set_header Connection "upgrade";\n\t\tgzip off;\n\t}' $NGINX_VHOST_DIR
+    echo -e "\nMenambahkan script proxy untuk cockpit"
+    sleep 2
+    systemctl restart nginx
+  elif [ "$APACHE2_STATUS" = "active" ]; then
+    # Fungsi untuk menambahkan konfigurasi proxy ke apache2
+    sed -i '/ProxyPassReverse \/ http:\/\/localhost:9090\//a ProxyPreserveHost On\n\tProxyRequests Off\n\n\t# allow for upgrading to websockets\n\tRewriteEngine On\n\tRewriteCond %{HTTP:UPGRADE} ^WebSocket$ [NC]\n\tRewriteCond %{HTTP:CONNECTION} ^Upgrade$ [NC]\n\tRewriteRule .* ws://localhost:9090/%{REQUEST_URI} [P]' $APACHE2_VHOST_DIR
+    echo -e "\nMenambahkan script proxy untuk cockpit"
+    sleep 2
+    systemctl restart apache2
+  fi
+}
