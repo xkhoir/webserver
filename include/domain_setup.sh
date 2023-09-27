@@ -441,13 +441,13 @@ add_caddy_blok () {
         if [ -z "$last_line" ]; then
             echo -e "\nIsi Caddyfile Kosong, Menambahkan blok konfigurasi baru..."
             sleep 2
-            echo -e "$DOMAIN{\n\troot * $DIRECTORY\n\tencode gzip\n\tphp_fastcgi unix//run/php/$DOMAIN.sock\n\tfile_server\n}" > "$CADDY_VHOST_DIR"
+            echo -e "$DOMAIN {\n\troot * $DIRECTORY\n\tencode gzip\n\tphp_fastcgi unix//run/php/$DOMAIN.sock\n\tfile_server\n}" > "$CADDY_VHOST_DIR"
             echo -e "\nCaddyfile telah diisi dengan konfigurasi untuk $DOMAIN"
             sleep 2
         else
             # Menambahkan blok konfigurasi setelah baris terakhir
             echo -e "\nIsi Caddyfile sudah ada, Menambahkan blok konfigurasi di baris baru..."
-            sed -i "${last_line}a\\ \n$DOMAIN{\n\troot * $DIRECTORY\n\tencode gzip\n\tphp_fastcgi unix//run/php/$DOMAIN.sock\n\tfile_server\n}" "$CADDY_VHOST_DIR"
+            sed -i "${last_line}a\\ \n$DOMAIN {\n\troot * $DIRECTORY\n\tencode gzip\n\tphp_fastcgi unix//run/php/$DOMAIN.sock\n\tfile_server\n}" "$CADDY_VHOST_DIR"
             echo -e "\nCaddyfile telah diisi dengan konfigurasi untuk $DOMAIN"
             sleep 2
         fi
@@ -470,13 +470,13 @@ add_caddy_proxy_blok () {
         if [ -z "$last_line" ]; then
             echo -e "\nIsi Caddyfile Kosong, Menambahkan blok konfigurasi baru..."
             sleep 2
-            echo -e "$DOMAIN{\n\treverse_proxy $destination:$port\n}" > "$CADDY_VHOST_DIR"
+            echo -e "$DOMAIN {\n\treverse_proxy $destination:$port\n}" > "$CADDY_VHOST_DIR"
             echo -e "\nCaddyfile telah diisi dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
             sleep 2
         else
             # Menambahkan blok konfigurasi setelah baris terakhir
             echo -e "\nIsi Caddyfile sudah ada, Menambahkan blok konfigurasi di baris baru..."
-            sed -i "${last_line}a\\ \n$DOMAIN{\n\treverse_proxy $destination:$port\n}" "$CADDY_VHOST_DIR"
+            sed -i "${last_line}a\\ \n$DOMAIN {\n\treverse_proxy $destination:$port\n}" "$CADDY_VHOST_DIR"
             echo -e "\nCaddyfile telah diisi dengan konfigurasi proxy untuk $DOMAIN ke $destination:$port"
             sleep 2
         fi
