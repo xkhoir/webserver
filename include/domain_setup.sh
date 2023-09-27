@@ -452,6 +452,11 @@ add_caddy_blok () {
             sleep 2
         fi
     fi
+
+    # Restart Caddy
+    echo -e "\nRestart Caddy"
+    sleep 2
+    sudo systemctl restart caddy
 }
 
 add_caddy_proxy_blok () {
@@ -481,6 +486,11 @@ add_caddy_proxy_blok () {
             sleep 2
         fi
     fi
+
+    # Restart Caddy
+    echo -e "\nRestart Caddy"
+    sleep 2
+    sudo systemctl restart caddy
 }
 
 delete_caddy_blok () {
@@ -502,6 +512,11 @@ delete_caddy_blok () {
             sleep 2
         fi
     fi
+
+    # Restart Caddy
+    echo -e "\nRestart Caddy"
+    sleep 2
+    sudo systemctl restart caddy
 }
 
 #php======================
