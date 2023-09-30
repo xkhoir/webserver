@@ -62,7 +62,7 @@ manage_php() {
     fi
 
     check_package "$package-fpm" "$action"
-    apt install $package-{bz2,cli,common,mysql,zip,curl,gd,mbstring,xml,bcmath,phpdbg,cgi} -y
+    apt install $package-{intl,bz2,cli,common,mysql,zip,curl,gd,mbstring,xml,bcmath,phpdbg,cgi} -y
     # done
     a2enmod proxy_fcgi setenvif
     a2enconf $package-fpm
