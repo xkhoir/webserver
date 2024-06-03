@@ -9,7 +9,7 @@ show_php_submenu() {
 # fungsi untuk proses PHP
 manage_php() {
   clear
-  read -p "Masukkan versi PHP (contoh: 7.4/8.0/8.1/8.2): " version
+  read -p "Masukkan versi PHP (contoh: 7.4/8.2/8.3): " version
 
   package="php$version"
   action=$1

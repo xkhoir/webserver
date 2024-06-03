@@ -15,9 +15,9 @@ domain_setup () {
     #caddy block dir
     CADDY_VHOST_DIR="/etc/caddy/Caddyfile"
     #Document root
-    DIRECTORY="/var/www/$DOMAIN/public_html/"
+    DIRECTORY="/var/www/$DOMAIN/"
     #Document root
-    BACDIRECTORY="/var/www/$DOMAIN/backup/"
+    BACDIRECTORY="/var/www/$DOMAIN/"
     #apache log dir
     APACHELOG="/var/log/apache2/$DOMAIN"
 
