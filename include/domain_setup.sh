@@ -16,8 +16,6 @@ domain_setup () {
     CADDY_VHOST_DIR="/etc/caddy/Caddyfile"
     #Document root
     DIRECTORY="/var/www/$DOMAIN/"
-    #Document root
-    BACDIRECTORY="/var/www/$DOMAIN/"
     #apache log dir
     APACHELOG="/var/log/apache2/$DOMAIN"
 
@@ -139,30 +137,23 @@ domain_setup () {
 add_info () {
     # fungsi untuk membuat file php untuk info
     echo -n "<?php phpinfo() ?>" | cat > $DIRECTORY/info.php
-    echo -n "<?php phpinfo() ?>" | cat > $BACDIRECTORY/info.php
 }
 
 # Fungsi untuk tambah file info.php
 add_index () {
     #Menyalin file "index.php" ke direktori yang ditentukan dalam variabel $DIRECTORY.
     cp index.php $DIRECTORY
-    cp index.php $BACDIRECTORY
     #mengganti kata "RDOMAIN" pada baris ke-56 dari file "index.php" dengan nilai dari variabel $DOMAIN.
     sed -i "s#RDOMAIN#$DOMAIN#g" $DIRECTORY/index.php
-    sed -i "s#RDOMAIN#$DOMAIN#g" $BACDIRECTORY/index.php
     #mengganti kata "RLOG" pada baris ke-78 dari file "index.php" dengan nilai dari variabel $LOG.
     sed -i "s#RLOG#$APACHELOG#g" $DIRECTORY/index.php
-    sed -i "s#RLOG#$APACHELOG#g" $BACDIRECTORY/index.php
     #mengganti kata "php-fpm" pada baris ke-106 dari file "index.php" dengan nilai dari variabel $versi_terpilih.
     sed -i "s#php-fpm#php$versi_terpilih-fpm#g" $DIRECTORY/index.php
-    sed -i "s#php-fpm#php$versi_terpilih-fpm#g" $BACDIRECTORY/index.php
 }
 
 add_docroot () {
     # Buat direktori public_html untuk website files
     mkdir -p $DIRECTORY
-    # Buat direktori backup
-    mkdir -p $BACDIRECTORY
     echo -e "\nPembuatan Direktori webiste files Sukses"
     sleep 1
 }
@@ -170,9 +161,7 @@ add_docroot () {
 change_docroot_owner () {
     # Atur kepemilikan dan izin direktori
     chown -R www-data:www-data $DIRECTORY
-    chown -R www-data:www-data $BACDIRECTORY
     chmod -R 755 $DIRECTORY
-    chmod -R 755 $BACDIRECTORY
     echo -e "\nMengatur kepemilikan dan izin direktori Sukses"
     sleep 1
 }

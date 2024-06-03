@@ -9,14 +9,12 @@ show_speedtest_submenu() {
 manage_speedtest() {
     clear
     action=$1
-    if [ "$action" == "uninstall" ]; then
+  if [ "$action" == "uninstall" ]; then
     #Terima input domain
     read -p "Masukkan nama domain speedtest kamu :" DOMAIN
     clear
     #Deklarasi direktori docroot web
-    DIRECTORY="/var/www/$DOMAIN/public_html"
-    #Deklarasi direktori backup
-    BAC="/var/www/$DOMAIN/backup"
+    DIRECTORY="/var/www/$DOMAIN"
     #Menghapus semua file yang ada di dalam docroot web
     rm -rf $DIRECTORY/*
     #Memindah kan semua isi di folder backup ke docroot web
@@ -38,7 +36,7 @@ manage_speedtest() {
     #cek paket zip
     check_package "zip" "$action"
     #Deklarasi direktori docroot web
-    DIRECTORY="/var/www/$DOMAIN/public_html"
+    DIRECTORY="/var/www/$DOMAIN"
     #Deklarasi direktori backup
     BAC="/var/www/$DOMAIN/backup"
     #Membuat folder backup
