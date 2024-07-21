@@ -114,7 +114,7 @@ domain_input () {
     WEBSITE_URL=${WEBSITE_URL:-https://$DOMAIN}
     clear
     # Menentukan direktori instalasi WordPress
-    DIRECTORY="/var/www/$DOMAIN/public_html"
+    DIRECTORY="/var/www/$DOMAIN"
 }
 
 create_backup_docroot () {
