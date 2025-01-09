@@ -39,8 +39,9 @@ manage_apache() {
     #call function ssl setup
     ssl_setup "apache"
   elif [ "$action" == "sslrenew" ]; then
-    #call function ssl renew
-    ssl_renew
+    read -p "Ketikkan Nama Domain Anda (contoh: example.com): " dns
+    #call function ssl setup
+    ssl_setup "apache" "$dns"
   elif [ "$action" == "a2enmod" ]; then
     #call function ssl renew
     a2enmod rewrite

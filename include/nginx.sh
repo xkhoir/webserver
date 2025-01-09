@@ -30,8 +30,9 @@ manage_nginx() {
   elif [ "$action" == "deletedomain" ]; then
       domain_setup "$action"
   elif [ "$action" == "ssl" ]; then
-    #code
-    ssl_setup "nginx"
+    read -p "Ketikkan Nama Domain Anda (contoh: example.com): " dns
+    #call function ssl setup
+    ssl_setup "nginx" "$dns"
   elif [ "$action" == "sslrenew" ]; then
     #code
     ssl_renew
